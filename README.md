@@ -87,6 +87,7 @@ set -g @tokyo-night-tmux_widgets_order "datetime,git"
 
 **Available widgets:**
 - `battery` - Battery status widget
+- `cpu` - CPU usage widget
 - `path` - Current path widget
 - `music` - Now playing music widget
 - `netspeed` - Network speed widget
@@ -170,6 +171,35 @@ set -g @tokyo-night-tmux_netspeed_refresh 1     # Update interval in seconds (de
 set -g @tokyo-night-tmux_show_path 1
 set -g @tokyo-night-tmux_path_format relative # 'relative' or 'full'
 ```
+
+#### CPU Widget
+
+The CPU widget shows real-time CPU usage percentage with dynamic icons and colors based on load.
+
+```bash
+set -g @tokyo-night-tmux_show_cpu 1
+```
+
+**Features:**
+- **Cross-platform:** Works on macOS and Linux without compiled binaries
+- **macOS:** Uses `top` command (matches Activity Monitor)
+- **Linux:** Reads from `/proc/stat` for accurate CPU usage
+- **Smart coloring:**
+  - 🔥 Red (≥80%): High CPU usage
+  - ⚠️  Yellow (≥50%): Medium CPU usage
+  - ❄️  Cyan (<50%): Low CPU usage
+
+**Optional: Load Average**
+
+You can also display the system load average alongside CPU usage:
+
+```bash
+set -g @tokyo-night-tmux_show_load_average 1
+```
+
+This shows the 1-minute load average next to the CPU percentage.
+
+Set variable value `0` to disable the widget. Remember to restart `tmux` after changing values.
 
 #### Battery Widget
 

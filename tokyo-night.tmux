@@ -55,6 +55,7 @@ zoom_number="#($SCRIPTS_PATH/custom-number.sh #P $zoom_id_style)"
 datetime="#($SCRIPTS_PATH/datetime-widget.sh)"
 path="#($SCRIPTS_PATH/path-widget.sh #{pane_current_path})"
 battery="#($SCRIPTS_PATH/battery-widget.sh)"
+cpu="#($SCRIPTS_PATH/cpu-widget.sh)"
 
 # Legacy variable names for compatibility
 cmus_status="$music"
@@ -80,12 +81,13 @@ WIDGETS_ORDER="$(tmux show-option -gv @tokyo-night-tmux_widgets_order 2>/dev/nul
 
 # Default order if not specified
 if [[ -z "$WIDGETS_ORDER" ]]; then
-  WIDGETS_ORDER="battery,path,music,netspeed,git,wbg,datetime"
+  WIDGETS_ORDER="battery,cpu,path,music,netspeed,git,wbg,datetime"
 fi
 
 # Build status-right based on widget order
 declare -A WIDGET_MAP=(
   ["battery"]="$battery"
+  ["cpu"]="$cpu"
   ["path"]="$path"
   ["music"]="$music"
   ["netspeed"]="$netspeed"
