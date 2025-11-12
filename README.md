@@ -221,6 +221,24 @@ set -g @tokyo-night-tmux_show_memory 1
 
 **Note:** On macOS, the calculation matches Activity Monitor's "App Memory" (active + wired + compressed pages), excluding cached memory.
 
+**Optional: Memory Pressure Indicator**
+
+You can also display a memory pressure indicator to show system memory stress:
+
+```bash
+set -g @tokyo-night-tmux_show_memory_pressure 1
+```
+
+This shows a colored dot (●) after the percentage:
+- **macOS:** Based on swapouts from `vm_stat`
+  - 🟢 Green: No pressure (< 1M swapouts)
+  - 🟡 Yellow: Medium pressure (1M - 5M swapouts)
+  - 🔴 Red: Critical pressure (> 5M swapouts)
+- **Linux:** Based on PSI (Pressure Stall Information) or swap usage
+  - 🟢 Green: No pressure (< 10%)
+  - 🟡 Yellow: Medium pressure (10% - 50%)
+  - 🔴 Red: Critical pressure (> 50%)
+
 Set variable value `0` to disable the widget. Remember to restart `tmux` after changing values.
 
 #### Battery Widget
