@@ -75,26 +75,47 @@ set -g @plugin "janoamaral/tokyo-night-tmux"
 Customize the order of widgets in the status bar. You can also omit widgets to hide them.
 
 ```bash
-# Default order (if not specified)
-set -g @tokyo-night-tmux_widgets_order "battery,path,music,netspeed,git,wbg,datetime"
+# Default order (organized by logical context)
+# System → Development → Network → Environment → Time
+set -g @tokyo-night-tmux_widgets_order "cpu,gpu,memory,disk,battery,git,wbg,path,ssh,clients,sync,weather,music,netspeed,datetime"
 
-# Custom order - rearrange as you prefer
-set -g @tokyo-night-tmux_widgets_order "datetime,git,battery,netspeed"
+# Developer-focused setup
+set -g @tokyo-night-tmux_widgets_order "cpu,memory,git,wbg,path,datetime"
 
-# Minimal setup - only show datetime and git
-set -g @tokyo-night-tmux_widgets_order "datetime,git"
+# System monitoring setup
+set -g @tokyo-night-tmux_widgets_order "cpu,gpu,memory,disk,battery,netspeed,datetime"
+
+# Minimal setup
+set -g @tokyo-night-tmux_widgets_order "git,datetime"
 ```
 
-**Available widgets:**
-- `battery` - Battery status widget
-- `cpu` - CPU usage widget
-- `memory` - Memory usage widget
-- `path` - Current path widget
-- `music` - Now playing music widget
-- `netspeed` - Network speed widget
-- `git` - Local git status widget
-- `wbg` - Web-based git widget (GitHub/GitLab)
-- `datetime` - Date and time widget
+**Available widgets (organized by context):**
+
+**System Resources:**
+- `cpu` - CPU usage percentage with load average
+- `gpu` - GPU usage (Apple Silicon, NVIDIA, AMD)
+- `memory` - Memory usage percentage with pressure indicator
+- `ram` - RAM usage in GB/TB format (alternative to memory%)
+- `disk` - Disk usage percentage
+- `battery` - Battery status and percentage
+
+**Development & Git:**
+- `git` - Local git status (changes, branch, sync)
+- `wbg` - Web-based git (GitHub/GitLab PRs, issues)
+- `path` - Current working directory path
+
+**Network & Connectivity:**
+- `netspeed` - Network speed (up/down) with IP and VPN
+- `ssh` - SSH session indicator with user@host
+
+**Environment & Context:**
+- `weather` - Weather information with temperature coloring
+- `music` - Now playing with progress bar
+- `datetime` - Date and time with timezone
+
+**Session & Meta:**
+- `clients` - Number of attached tmux clients
+- `sync` - Pane synchronization indicator
 
 **Note:** Only widgets included in the order will be displayed. This allows you to completely customize your status bar layout.
 
@@ -261,6 +282,140 @@ This shows a colored dot (●) after the percentage:
   - 🔴 Red: Critical pressure (> 50%)
 
 Set variable value `0` to disable the widget. Remember to restart `tmux` after changing values.
+
+#### Disk Widget
+
+The disk widget shows disk usage percentage with 4 levels of warning indicators.
+
+```bash
+set -g @tokyo-night-tmux_show_disk 1
+set -g @tokyo-night-tmux_disk_path "/"  # Path to monitor (default: /)
+```
+
+**Features:**
+- **4-level warnings** (more granular than other widgets):
+  - 🟢 Cyan (<50%): Normal
+  - 🔵 Blue (50-74%): Moderate
+  - 🟡 Yellow (75-89%): High
+  - 🔴 Red (≥90%): Critical
+- **Configurable path:** Monitor /, /home, or any mount point
+- **Cross-platform:** Works on macOS and Linux
+
+Set variable value `0` to disable the widget.
+
+#### GPU Widget
+
+The GPU widget shows GPU usage percentage with support for multiple GPU types.
+
+```bash
+set -g @tokyo-night-tmux_show_gpu 1
+```
+
+**Supported GPUs:**
+- **Apple Silicon** (M1/M2/M3): Estimates from WindowServer activity
+- **NVIDIA:** Via `nvidia-smi` command
+- **AMD:** Via `rocm-smi` command
+- **Intel:** Detection support (limited data availability)
+
+**Auto-detection:** The widget automatically detects your GPU type and shows usage accordingly.
+
+**Note:** For NVIDIA/AMD, ensure drivers and monitoring tools are installed. Apple Silicon works out of the box.
+
+Set variable value `0` to disable the widget.
+
+#### RAM Widget
+
+Alternative to memory widget that shows RAM in GB/TB format instead of percentage.
+
+```bash
+set -g @tokyo-night-tmux_show_ram 1
+```
+
+**Difference from Memory Widget:**
+- **Memory Widget:** Shows percentage (e.g., `25%`)
+- **RAM Widget:** Shows absolute values (e.g., `8G/32G`)
+
+Choose one based on preference. Both use the same underlying calculation.
+
+**Features:**
+- Cross-platform (macOS + Linux)
+- Dynamic coloring based on usage
+- Automatic unit conversion (GB/TB)
+
+Set variable value `0` to disable the widget.
+
+#### Weather Widget
+
+The weather widget shows current weather with temperature-based coloring and caching.
+
+```bash
+set -g @tokyo-night-tmux_show_weather 1
+set -g @tokyo-night-tmux_weather_location ""        # Leave empty for auto-location
+set -g @tokyo-night-tmux_weather_format "%t"        # %t=temp, %c=condition, %C=detailed
+set -g @tokyo-night-tmux_weather_units "m"          # m=metric, u=US, M=SI
+set -g @tokyo-night-tmux_weather_show_icon 1
+```
+
+**Features:**
+- **Smart caching:** Updates every 15 minutes to reduce API calls
+- **Temperature coloring:**
+  - 🔴 Red (≥30°C): Very hot
+  - 🟡 Yellow (20-29°C): Warm
+  - 🔵 Cyan (10-19°C): Cool
+  - 🔵 Blue (0-9°C): Cold
+  - 🟣 Magenta (<0°C): Freezing
+- **Powered by wttr.in:** No API key required
+- **Requires:** curl or wget
+
+Set variable value `0` to disable the widget.
+
+#### SSH Session Widget
+
+Shows SSH session information with user@hostname and optional port.
+
+```bash
+set -g @tokyo-night-tmux_show_ssh 1
+set -g @tokyo-night-tmux_ssh_only_when_connected 1  # Only show when SSH active
+set -g @tokyo-night-tmux_ssh_show_port 0            # Show port if non-standard
+```
+
+**Features:**
+- Auto-detects SSH sessions
+- Shows user@hostname format
+- Optional port display (for non-22 ports)
+- Color changes when SSH active (cyan → green)
+- Can show always or only during SSH
+
+Set variable value `0` to disable the widget.
+
+#### Attached Clients Widget
+
+Shows number of clients attached to the tmux session.
+
+```bash
+set -g @tokyo-night-tmux_show_clients 1
+set -g @tokyo-night-tmux_clients_minimum 2  # Only show if >= this many clients
+```
+
+**Use case:** Useful when pair programming or when multiple terminals connect to the same session.
+
+Set variable value `0` to disable the widget.
+
+#### Pane Synchronization Widget
+
+Shows indicator when pane synchronization is active (Prefix + S).
+
+```bash
+set -g @tokyo-night-tmux_show_sync 1
+set -g @tokyo-night-tmux_sync_label "SYNC"  # Customize label
+```
+
+**Features:**
+- Only appears when panes are synchronized
+- Visual warning to prevent accidental commands to all panes
+- Customizable label text
+
+Set variable value `0` to disable the widget.
 
 #### Battery Widget
 
