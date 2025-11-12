@@ -19,8 +19,9 @@ RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounde
 # Highlight colors
 tmux set -g mode-style "fg=${THEME[bgreen]},bg=${THEME[bblack]}"
 
-tmux set -g message-style "bg=${THEME[blue]},fg=${THEME[background]}"
-tmux set -g message-command-style "fg=${THEME[white]},bg=${THEME[black]}"
+# Message styles with improved contrast for better readability
+tmux set -g message-style "bg=${THEME[bblack]},fg=${THEME[blue]},bold"
+tmux set -g message-command-style "bg=${THEME[bblack]},fg=${THEME[white]},bold"
 
 tmux set -g pane-border-style "fg=${THEME[bblack]}"
 tmux set -g pane-active-border-style "fg=${THEME[blue]}"
