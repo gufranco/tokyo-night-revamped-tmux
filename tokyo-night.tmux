@@ -44,16 +44,25 @@ window_id_style="${window_id_style:-$default_window_id_style}"
 pane_id_style="${pane_id_style:-$default_pane_id_style}"
 zoom_id_style="${zoom_id_style:-$default_zoom_id_style}"
 
+# Widget definitions
 netspeed="#($SCRIPTS_PATH/netspeed.sh)"
-cmus_status="#($SCRIPTS_PATH/music-tmux-statusbar.sh)"
-git_status="#($SCRIPTS_PATH/git-status.sh #{pane_current_path})"
-wb_git_status="#($SCRIPTS_PATH/wb-git-status.sh #{pane_current_path} &)"
+music="#($SCRIPTS_PATH/music-tmux-statusbar.sh)"
+git="#($SCRIPTS_PATH/git-status.sh #{pane_current_path})"
+wbg="#($SCRIPTS_PATH/wb-git-status.sh #{pane_current_path} &)"
 window_number="#($SCRIPTS_PATH/custom-number.sh #I $window_id_style)"
 custom_pane="#($SCRIPTS_PATH/custom-number.sh #P $pane_id_style)"
 zoom_number="#($SCRIPTS_PATH/custom-number.sh #P $zoom_id_style)"
-date_and_time="#($SCRIPTS_PATH/datetime-widget.sh)"
-current_path="#($SCRIPTS_PATH/path-widget.sh #{pane_current_path})"
-battery_status="#($SCRIPTS_PATH/battery-widget.sh)"
+datetime="#($SCRIPTS_PATH/datetime-widget.sh)"
+path="#($SCRIPTS_PATH/path-widget.sh #{pane_current_path})"
+battery="#($SCRIPTS_PATH/battery-widget.sh)"
+
+# Legacy variable names for compatibility
+cmus_status="$music"
+git_status="$git"
+wb_git_status="$wbg"
+date_and_time="$datetime"
+current_path="$path"
+battery_status="$battery"
 
 #+--- Bars LEFT ---+
 # Session name
@@ -66,5 +75,35 @@ tmux set -g window-status-current-format "$RESET#[fg=${THEME[green]},bg=${THEME[
 tmux set -g window-status-format "$RESET#[fg=${THEME[foreground]}] #{?#{==:#{pane_current_command},ssh},󰣀 ,  }${RESET}$window_number#W#[nobold,dim]#{?window_zoomed_flag, $zoom_number, $custom_pane}#[fg=${THEME[yellow]}]#{?window_last_flag,󰁯  , }"
 
 #+--- Bars RIGHT ---+
-tmux set -g status-right "$battery_status$current_path$cmus_status$netspeed$git_status$wb_git_status$date_and_time"
+# Widget order configuration
+WIDGETS_ORDER="$(tmux show-option -gv @tokyo-night-tmux_widgets_order 2>/dev/null)"
+
+# Default order if not specified
+if [[ -z "$WIDGETS_ORDER" ]]; then
+  WIDGETS_ORDER="battery,path,music,netspeed,git,wbg,datetime"
+fi
+
+# Build status-right based on widget order
+declare -A WIDGET_MAP=(
+  ["battery"]="$battery"
+  ["path"]="$path"
+  ["music"]="$music"
+  ["netspeed"]="$netspeed"
+  ["git"]="$git"
+  ["wbg"]="$wbg"
+  ["datetime"]="$datetime"
+)
+
+STATUS_RIGHT=""
+IFS=',' read -ra WIDGETS <<< "$WIDGETS_ORDER"
+for widget in "${WIDGETS[@]}"; do
+  # Trim whitespace
+  widget=$(echo "$widget" | xargs)
+  
+  if [[ -n "${WIDGET_MAP[$widget]}" ]]; then
+    STATUS_RIGHT="${STATUS_RIGHT}${WIDGET_MAP[$widget]}"
+  fi
+done
+
+tmux set -g status-right "$STATUS_RIGHT"
 tmux set -g window-status-separator ""

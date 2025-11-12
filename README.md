@@ -70,6 +70,32 @@ set -g @plugin "janoamaral/tokyo-night-tmux"
 
 ## Configuration
 
+### Widget Ordering
+
+Customize the order of widgets in the status bar. You can also omit widgets to hide them.
+
+```bash
+# Default order (if not specified)
+set -g @tokyo-night-tmux_widgets_order "battery,path,music,netspeed,git,wbg,datetime"
+
+# Custom order - rearrange as you prefer
+set -g @tokyo-night-tmux_widgets_order "datetime,git,battery,netspeed"
+
+# Minimal setup - only show datetime and git
+set -g @tokyo-night-tmux_widgets_order "datetime,git"
+```
+
+**Available widgets:**
+- `battery` - Battery status widget
+- `path` - Current path widget
+- `music` - Now playing music widget
+- `netspeed` - Network speed widget
+- `git` - Local git status widget
+- `wbg` - Web-based git widget (GitHub/GitLab)
+- `datetime` - Date and time widget
+
+**Note:** Only widgets included in the order will be displayed. This allows you to completely customize your status bar layout.
+
 ### Minimal Mode
 
 Create a lightweight tmux session without widgets. Perfect for SSH sessions or resource-constrained environments.
