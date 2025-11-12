@@ -68,7 +68,8 @@ elif command -v media-control >/dev/null; then
     MEDIA_TITLE=$(echo "$MEDIA_JSON" | grep -o '"title":"[^"]*"' | sed 's|"title":"||' | sed 's|"$||')
     MEDIA_ARTIST=$(echo "$MEDIA_JSON" | grep -o '"artist":"[^"]*"' | sed 's|"artist":"||' | sed 's|"$||')
     DURATION=$(echo "$MEDIA_JSON" | grep -o '"duration":[0-9.]*' | cut -d':' -f2 | cut -d'.' -f1)
-    POSITION=$(echo "$MEDIA_JSON" | grep -o '"elapsedTimeNow":[0-9.]*' | cut -d':' -f2 | cut -d'.' -f1)
+    # Use elapsedTime instead of elapsedTimeNow for accurate position
+    POSITION=$(echo "$MEDIA_JSON" | grep -o '"elapsedTime":[0-9.]*' | cut -d':' -f2 | cut -d'.' -f1)
 
     # Determine playback status
     if [ "$PLAYBACK_RATE" -gt 0 ] 2>/dev/null; then
