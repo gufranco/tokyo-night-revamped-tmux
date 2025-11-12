@@ -75,13 +75,13 @@ if [[ -n "$TEMP" ]]; then
     COLOR="${THEME[magenta]}"
   fi
   
-  ICON=""
-  if [[ "$SHOW_ICON" == "1" ]]; then
-    ICON=" "
+  ICON=" "
+  if [[ "$SHOW_ICON" != "1" ]]; then
+    ICON=""
   fi
   
   # Build output (consistent format: separator + icon + value)
-  OUTPUT="#[fg=${COLOR},bg=default]░${ICON} ${WEATHER_DATA} "
+  OUTPUT="#[fg=${COLOR},bg=default]░ ${ICON}${RESET} ${WEATHER_DATA} "
   
   # Cache the result
   echo "$OUTPUT" > "$CACHE_FILE"
