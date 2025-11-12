@@ -158,18 +158,50 @@ This widget is enabled by default. To disable it:
 
 ```bash
 set -g @tokyo-night-tmux_show_datetime 0
-set -g @tokyo-night-tmux_date_format MYD
-set -g @tokyo-night-tmux_time_format 12H
+set -g @tokyo-night-tmux_date_format YMD
+set -g @tokyo-night-tmux_time_format 24H
 ```
 
 ##### Available Options
 
+**Date formats:**
 - `YMD`: (Year Month Day), 2024-01-31
 - `MDY`: (Month Day Year), 01-31-2024
 - `DMY`: (Day Month Year), 31-01-2024
+- `hide`: Hide date completely
 
-- `24H`: 18:30
+**Time formats:**
+- `24H`: 18:30 (default)
 - `12H`: 6:30 PM
+- `hide`: Hide time completely
+
+##### Timezone Support
+
+Display additional timezones alongside your local time:
+
+```bash
+set -g @tokyo-night-tmux_show_timezone 1
+set -g @tokyo-night-tmux_timezone "America/Los_Angeles,America/New_York,Europe/London"
+```
+
+**Features:**
+- **Multiple timezones:** Comma-separated list
+- **Auto abbreviation:** Shows PST, EST, GMT, etc.
+- **Visual indicator:** 󰥔 icon for each timezone
+- **Color coded:** Blue for timezone display
+
+**Example output:**
+```
+2024-11-12 ❬ 18:30 󰥔 PST 15:30 󰥔 EST 18:30 󰥔 GMT 23:30
+```
+
+**Common timezones:**
+- Americas: `America/New_York`, `America/Chicago`, `America/Los_Angeles`, `America/Sao_Paulo`
+- Europe: `Europe/London`, `Europe/Paris`, `Europe/Berlin`, `Europe/Moscow`
+- Asia: `Asia/Tokyo`, `Asia/Shanghai`, `Asia/Dubai`, `Asia/Kolkata`
+- Pacific: `Australia/Sydney`, `Pacific/Auckland`
+
+See [TZ database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for complete list.
 
 #### Now Playing widget
 
