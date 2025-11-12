@@ -88,6 +88,7 @@ set -g @tokyo-night-tmux_widgets_order "datetime,git"
 **Available widgets:**
 - `battery` - Battery status widget
 - `cpu` - CPU usage widget
+- `memory` - Memory usage widget
 - `path` - Current path widget
 - `music` - Now playing music widget
 - `netspeed` - Network speed widget
@@ -198,6 +199,27 @@ set -g @tokyo-night-tmux_show_load_average 1
 ```
 
 This shows the 1-minute load average next to the CPU percentage.
+
+Set variable value `0` to disable the widget. Remember to restart `tmux` after changing values.
+
+#### Memory Widget
+
+The memory widget shows real-time memory usage percentage with dynamic icons and colors based on load.
+
+```bash
+set -g @tokyo-night-tmux_show_memory 1
+```
+
+**Features:**
+- **Cross-platform:** Works on macOS and Linux without compiled binaries
+- **macOS:** Uses `vm_stat` and `sysctl` (matches Activity Monitor)
+- **Linux:** Uses `free` command for accurate memory usage
+- **Smart coloring:**
+  - 🔥 Red (≥80%): Critical memory usage
+  - ⚠️  Yellow (≥60%): High memory usage
+  - ❄️  Cyan (<60%): Normal memory usage
+
+**Note:** On macOS, the calculation matches Activity Monitor's "App Memory" (active + wired + compressed pages), excluding cached memory.
 
 Set variable value `0` to disable the widget. Remember to restart `tmux` after changing values.
 
