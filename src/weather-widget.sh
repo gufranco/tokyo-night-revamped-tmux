@@ -75,13 +75,29 @@ if [[ -n "$TEMP" ]]; then
     COLOR="${THEME[magenta]}"
   fi
   
-  ICON=" "
-  if [[ "$SHOW_ICON" != "1" ]]; then
-    ICON=""
+  # Weather icon (using common Nerd Font icon)
+  ICON=""
+  if [[ "$SHOW_ICON" == "1" ]]; then
+    # Temperature-based icon
+    if (( TEMP >= 30 )); then
+      ICON="󰖙"  # Sun hot
+    elif (( TEMP >= 20 )); then
+      ICON="󰖙"  # Sun
+    elif (( TEMP >= 10 )); then
+      ICON="󰖐"  # Cloud sun
+    elif (( TEMP >= 0 )); then
+      ICON="󰖐"  # Cloud
+    else
+      ICON="󰜗"  # Snowflake
+    fi
   fi
   
   # Build output (consistent format: separator + icon + value)
-  OUTPUT="#[fg=${COLOR},bg=default]░ ${ICON}${RESET} ${WEATHER_DATA} "
+  if [[ -n "$ICON" ]]; then
+    OUTPUT="#[fg=${COLOR},bg=default]░ ${ICON}${RESET} ${WEATHER_DATA} "
+  else
+    OUTPUT="#[fg=${COLOR},bg=default]░${RESET} ${WEATHER_DATA} "
+  fi
   
   # Cache the result
   echo "$OUTPUT" > "$CACHE_FILE"
