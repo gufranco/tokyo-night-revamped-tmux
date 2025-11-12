@@ -92,12 +92,13 @@ set -g @tokyo-night-tmux_widgets_order "git,datetime"
 **Available widgets (organized by context):**
 
 **System Resources:**
-- `cpu` - CPU usage percentage with load average
-- `gpu` - GPU usage (Apple Silicon, NVIDIA, AMD)
-- `memory` - Memory usage percentage with pressure indicator
-- `ram` - RAM usage in GB/TB format (alternative to memory%)
-- `disk` - Disk usage percentage
-- `battery` - Battery status and percentage
+- `system` - **Unified system widget** (CPU, GPU, Memory, Disk, Battery in one)
+- `cpu` - CPU usage percentage (individual)
+- `gpu` - GPU usage (individual)
+- `memory` - Memory usage percentage (individual)
+- `ram` - RAM usage in GB/TB format
+- `disk` - Disk usage percentage (individual)
+- `battery` - Battery status (individual)
 
 **Development & Git:**
 - `git` - Local git status (changes, branch, sync)
@@ -262,7 +263,48 @@ set -g @tokyo-night-tmux_show_path 1
 set -g @tokyo-night-tmux_path_format relative # 'relative' or 'full'
 ```
 
-#### CPU Widget
+#### System Widget (Unified)
+
+**Recommended:** Unified system widget that shows CPU, GPU, Memory, Disk, and Battery in one clean widget.
+
+```bash
+set -g @tokyo-night-tmux_show_system 1
+set -g @tokyo-night-tmux_system_show_cpu 1
+set -g @tokyo-night-tmux_system_show_gpu 1
+set -g @tokyo-night-tmux_system_show_memory 1
+set -g @tokyo-night-tmux_system_show_disk 1
+set -g @tokyo-night-tmux_system_show_battery 1
+set -g @tokyo-night-tmux_system_memory_pressure 1
+set -g @tokyo-night-tmux_system_disk_path "/"
+set -g @tokyo-night-tmux_system_battery_low_threshold 21
+```
+
+**Features:**
+- **Clean design:** Fixed colors (no distracting color changes)
+- **CPU (󰾆):** Cyan color, shows percentage
+- **GPU (󰾲):** Blue color, shows percentage (Apple Silicon/NVIDIA/AMD)
+- **Memory (󰍛):** Cyan color, shows percentage
+- **Memory pressure (●):** ONLY this indicator changes color (green/yellow/red)
+- **Disk (󰋊):** Cyan color, shows percentage
+- **Battery:** Yellow (normal), Red (critical <21%), plug icon when charging
+- **All metrics match iStats Menu exactly**
+
+**Why unified widget?**
+- Cleaner visual appearance
+- Less visual noise (no color spam)
+- Grouped by context (all system resources together)
+- Professional look
+
+**Example output:**
+```
+░ 󰾆 35% 󰾲 12% 󰍛 25% ● 󰋊 45% 󰚥 85%
+```
+
+Choose individual widgets below if you prefer separate configuration.
+
+---
+
+#### CPU Widget (Individual)
 
 The CPU widget shows real-time CPU usage percentage with dynamic icons and colors based on load.
 

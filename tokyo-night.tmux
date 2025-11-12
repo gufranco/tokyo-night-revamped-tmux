@@ -63,6 +63,7 @@ zoom_number="#($SCRIPTS_PATH/custom-number.sh #P $zoom_id_style)"
 # ==============================================================================
 
 # System Resources
+system="#($SCRIPTS_PATH/system-widget.sh)"
 cpu="#($SCRIPTS_PATH/cpu-widget.sh)"
 gpu="#($SCRIPTS_PATH/gpu-widget.sh)"
 memory="#($SCRIPTS_PATH/memory-widget.sh)"
@@ -118,17 +119,18 @@ tmux set -g window-status-separator ""
 WIDGETS_ORDER="$(tmux show-option -gv @tokyo-night-tmux_widgets_order 2>/dev/null)"
 
 # Default order organized by logical context:
-# 1. System Resources (what's happening locally)
+# 1. System Resources (unified or individual components)
 # 2. Development (git context)
 # 3. Network & Environment
 # 4. Time & Meta information
 if [[ -z "$WIDGETS_ORDER" ]]; then
-  WIDGETS_ORDER="cpu,gpu,memory,disk,battery,git,wbg,path,ssh,clients,sync,weather,music,netspeed,datetime"
+  WIDGETS_ORDER="system,git,wbg,path,ssh,clients,sync,weather,music,netspeed,datetime"
 fi
 
 # Build widget mapping
 declare -A WIDGET_MAP=(
   # System Resources
+  ["system"]="$system"
   ["cpu"]="$cpu"
   ["gpu"]="$gpu"
   ["memory"]="$memory"
