@@ -156,6 +156,30 @@ set -g @tokyo-night-tmux_battery_low_threshold 21 # default
 Set variable value `0` to disable the widget. Remember to restart `tmux` after
 changing values.
 
+#### Git Status Widget
+
+The git status widget shows local git repository information including branch name, changed files, insertions, deletions, and sync status with remote.
+
+```bash
+set -g @tokyo-night-tmux_show_git 1
+```
+
+##### Performance Options for Large Repositories
+
+To prevent performance issues in large repositories, you can configure auto-fetch behavior:
+
+```bash
+# Disable automatic git fetch (recommended for very large repos)
+set -g @tokyo-night-tmux_git_disable_auto_fetch 1
+
+# Set fetch timeout in seconds (default: 5)
+set -g @tokyo-night-tmux_git_fetch_timeout 10
+```
+
+**Note:** The auto-fetch runs in background with timeout to prevent blocking. If you work with very large repositories and experience slowdowns, disable auto-fetch and manually fetch when needed.
+
+Set variable value `0` to disable the widget. Remember to restart `tmux` after changing values.
+
 #### Web-based Git Widget
 
 This widget shows GitHub/GitLab statistics including PR counts and issues assigned to you. It requires `gh` (GitHub CLI) or `glab` (GitLab CLI) to be installed and authenticated.
