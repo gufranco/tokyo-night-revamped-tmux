@@ -62,19 +62,19 @@ fi
 [[ "$cpu_usage" -lt 0 ]] && cpu_usage="0"
 [[ "$cpu_usage" -gt 100 ]] && cpu_usage="100"
 
-# Set icon and color based on CPU usage
+# Set icon and color based on CPU usage (matches iStats thresholds)
 if [[ $cpu_usage -ge 80 ]]; then
   icon="󰀪"  # High CPU (hot)
-  color="#[fg=#f7768e,bg=default,bold]"  # Red
+  color="#[fg=${THEME[red]},bg=default,bold]"  # Red
 elif [[ $cpu_usage -ge 50 ]]; then
   icon="󰾅"  # Medium CPU
-  color="#[fg=#e0af68,bg=default]"  # Yellow
+  color="#[fg=${THEME[yellow]},bg=default]"  # Yellow
 else
   icon="󰾆"  # Low CPU (cool)
-  color="#[fg=#73daca,bg=default]"  # Cyan
+  color="#[fg=${THEME[cyan]},bg=default]"  # Cyan
 fi
 
-# Build output
+# Build output (consistent format: separator + icon + value)
 output="${color}░ ${icon}${RESET} ${cpu_usage}%"
 
 # Add load average if enabled

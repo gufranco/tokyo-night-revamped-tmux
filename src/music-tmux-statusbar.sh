@@ -57,9 +57,9 @@ if command -v playerctl >/dev/null; then
     POSITION=0
   fi
 
-# media-control (modern replacement for deprecated nowplaying-cli)
+# media-control (macOS)
 # https://github.com/ungive/media-control
-elif command -v media-control >/dev/null; then
+elif command -v media-control >/dev/null && [[ "$OSTYPE" == "darwin"* ]]; then
   MEDIA_JSON=$(media-control get --now 2>/dev/null)
 
   if [ -n "$MEDIA_JSON" ]; then

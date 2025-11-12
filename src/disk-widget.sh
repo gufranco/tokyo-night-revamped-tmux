@@ -32,20 +32,21 @@ fi
 [[ "$usage_percent" -lt 0 ]] && usage_percent="0"
 [[ "$usage_percent" -gt 100 ]] && usage_percent="100"
 
-# 4 levels of warning (more granular than CPU/Memory)
+# 4 levels of warning (more granular than CPU/Memory, matches iStats)
 if (( usage_percent >= 90 )); then
-  icon="󰀪"  # Critical - different icon
-  color="#[fg=#f7768e,bg=default,bold]"  # Red bold
+  icon="󰀪"  # Critical - alert icon
+  color="#[fg=${THEME[red]},bg=default,bold]"  # Red bold
 elif (( usage_percent >= 75 )); then
   icon="󰪥"  # High - warning icon
-  color="#[fg=#e0af68,bg=default]"  # Yellow
+  color="#[fg=${THEME[yellow]},bg=default]"  # Yellow
 elif (( usage_percent >= 50 )); then
   icon="󰋊"  # Medium
-  color="#[fg=#7aa2f7,bg=default]"  # Blue
+  color="#[fg=${THEME[blue]},bg=default]"  # Blue
 else
   icon="󰋊"  # Normal
-  color="#[fg=#73daca,bg=default]"  # Cyan
+  color="#[fg=${THEME[cyan]},bg=default]"  # Cyan
 fi
 
+# Build output (consistent format: separator + icon + value)
 echo "${color}░ ${icon}${RESET} ${usage_percent}% "
 

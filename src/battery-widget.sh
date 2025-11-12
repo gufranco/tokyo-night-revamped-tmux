@@ -120,15 +120,15 @@ fi
 # Determine icon based on battery status
 BATTERY_STATUS_LOWER=$(echo "$BATTERY_STATUS" | tr '[:upper:]' '[:lower:]')
 
+# Logic: Plugged in (AC) = plug icon, On battery = battery icons by level
 case "${BATTERY_STATUS_LOWER}" in
-charging|charged)
-  ICON="${CHARGING_ICONS[$icon_idx]}"
+charging|charged|full|ac)
+  # Plugged into AC power - show plug icon
+  ICON="${AC_POWER_ICON}"
   ;;
 discharging)
+  # Running on battery - show battery level icon
   ICON="${DISCHARGING_ICONS[$icon_idx]}"
-  ;;
-full|ac)
-  ICON="${AC_POWER_ICON}"
   ;;
 *)
   ICON="${NO_BATTERY_ICON}"
@@ -137,13 +137,14 @@ esac
 
 ICON="${ICON:-$NO_BATTERY_ICON}"
 
-# Set color based on battery percentage
+# Set color based on battery percentage (matches iStats)
 if [[ $BATTERY_PERCENTAGE -lt $BATTERY_LOW ]]; then
-  color="#[fg=#f7768e,bg=default,bold]"  # Red
+  color="#[fg=${THEME[red]},bg=default,bold]"  # Red - critical
 elif [[ $BATTERY_PERCENTAGE -ge 100 ]]; then
-  color="#[fg=#73daca,bg=default]"  # Cyan
+  color="#[fg=${THEME[cyan]},bg=default]"  # Cyan - fully charged
 else
-  color="#[fg=#e0af68,bg=default]"  # Yellow
+  color="#[fg=${THEME[yellow]},bg=default]"  # Yellow - normal
 fi
 
+# Build output (consistent format: separator + icon + value)
 echo "${color}░ ${ICON}${RESET} ${BATTERY_PERCENTAGE}% "

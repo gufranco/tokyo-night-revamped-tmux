@@ -95,21 +95,24 @@ render_ram_widget() {
   read -r used total percent <<< "$(get_ram_stats)"
   
   local icon color
+  
+  # Color coding (matches iStats thresholds)
   if (( percent >= 80 )); then
     icon="󰀪"
-    color="#[fg=#f7768e,bg=default,bold]"  # Red
+    color="#[fg=${THEME[red]},bg=default,bold]"  # Red
   elif (( percent >= 60 )); then
     icon="󰍜"
-    color="#[fg=#e0af68,bg=default]"  # Yellow
+    color="#[fg=${THEME[yellow]},bg=default]"  # Yellow
   else
     icon="󰍛"
-    color="#[fg=#73daca,bg=default]"  # Cyan
+    color="#[fg=${THEME[cyan]},bg=default]"  # Cyan
   fi
   
   local used_formatted total_formatted
   used_formatted=$(format_ram_size "$used")
   total_formatted=$(format_ram_size "$total")
   
+  # Build output (consistent format: separator + icon + value)
   echo "${color}░ ${icon}${RESET} ${used_formatted}/${total_formatted} "
 }
 

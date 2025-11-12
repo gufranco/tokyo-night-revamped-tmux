@@ -64,12 +64,14 @@ render_ssh_widget() {
   local icon="󰣀"
   local color
   
+  # Color changes when SSH is active
   if [[ "$is_ssh" == "1" ]]; then
-    color="${THEME[green]}"
+    color="${THEME[green]}"  # Green - active SSH
   else
-    color="${THEME[cyan]}"
+    color="${THEME[cyan]}"  # Cyan - no SSH
   fi
   
+  # Build output (consistent format: separator + icon + value)
   echo "#[fg=${color},bg=default]░ ${icon}${RESET} ${ssh_info} "
 }
 

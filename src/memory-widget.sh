@@ -57,18 +57,19 @@ fi
 [[ "$memory_percent" -lt 0 ]] && memory_percent="0"
 [[ "$memory_percent" -gt 100 ]] && memory_percent="100"
 
-# Set icon and color based on memory usage
+# Set icon and color based on memory usage (matches iStats thresholds)
 if [[ $memory_percent -ge 80 ]]; then
   icon="󰀪"  # High memory (critical)
-  color="#[fg=#f7768e,bg=default,bold]"  # Red
+  color="#[fg=${THEME[red]},bg=default,bold]"  # Red
 elif [[ $memory_percent -ge 60 ]]; then
   icon="󰍜"  # Medium-high memory
-  color="#[fg=#e0af68,bg=default]"  # Yellow
+  color="#[fg=${THEME[yellow]},bg=default]"  # Yellow
 else
   icon="󰍛"  # Low memory
-  color="#[fg=#73daca,bg=default]"  # Cyan
+  color="#[fg=${THEME[cyan]},bg=default]"  # Cyan
 fi
 
+# Build output (consistent format: separator + icon + value)
 output="${color}░ ${icon}${RESET} ${memory_percent}% "
 
 # Add memory pressure indicator if enabled

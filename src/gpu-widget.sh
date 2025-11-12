@@ -143,14 +143,16 @@ render_gpu_widget() {
   local icon="󰾲"
   local color
   
+  # Color coding (matches iStats thresholds)
   if (( usage >= 80 )); then
-    color="#[fg=#f7768e,bg=default,bold]"  # Red
-  elif (( usage >= 50 )); then
-    color="#[fg=#e0af68,bg=default]"  # Yellow
+    color="#[fg=${THEME[red]},bg=default,bold]"  # Red
+  elif (( usage >= 50 )]; then
+    color="#[fg=${THEME[yellow]},bg=default]"  # Yellow
   else
-    color="#[fg=#7aa2f7,bg=default]"  # Blue
+    color="#[fg=${THEME[blue]},bg=default]"  # Blue
   fi
   
+  # Build output (consistent format: separator + icon + value)
   echo "${color}░ ${icon}${RESET} ${usage}% "
 }
 

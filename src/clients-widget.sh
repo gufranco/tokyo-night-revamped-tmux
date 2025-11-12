@@ -31,6 +31,7 @@ render_clients_widget() {
   local icon="󰀫"
   local color="${THEME[cyan]}"
   
+  # Build output (consistent format: separator + icon + value)
   echo "#[fg=${color},bg=default]░ ${icon}${RESET} ${count} "
 }
 

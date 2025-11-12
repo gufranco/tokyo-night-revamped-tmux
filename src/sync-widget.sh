@@ -29,8 +29,9 @@ render_sync_widget() {
   fi
   
   local icon="󰓦"
-  local color="${THEME[yellow]}"
+  local color="${THEME[yellow]}"  # Yellow - warning/attention
   
+  # Build output (consistent format: separator + icon + value)
   echo "#[fg=${color},bg=default]░ ${icon}${RESET} ${SYNC_LABEL} "
 }
 

@@ -80,7 +80,8 @@ if [[ -n "$TEMP" ]]; then
     ICON=" "
   fi
   
-  OUTPUT="#[fg=${COLOR},bg=default]░${ICON}${WEATHER_DATA} "
+  # Build output (consistent format: separator + icon + value)
+  OUTPUT="#[fg=${COLOR},bg=default]░${ICON} ${WEATHER_DATA} "
   
   # Cache the result
   echo "$OUTPUT" > "$CACHE_FILE"
