@@ -181,7 +181,8 @@ fi
 # Disk Component
 # ==============================================================================
 if [[ $SHOW_DISK -eq 1 ]]; then
-  DISK_PATH=$(get_tmux_option "@tokyo-night-tmux_system_disk_path" "/")
+  DISK_PATH=$(tmux show-option -gv @tokyo-night-tmux_system_disk_path 2>/dev/null)
+  DISK_PATH="${DISK_PATH:-/}"
   disk_info=$(df -h "$DISK_PATH" 2>/dev/null | awk 'NR==2 {print $5}')
   
   if [[ -n "$disk_info" ]]; then
@@ -202,8 +203,9 @@ fi
 # Battery Component
 # ==============================================================================
 if [[ $SHOW_BATTERY -eq 1 ]]; then
-  BATTERY_NAME=$(get_tmux_option "@tokyo-night-tmux_system_battery_name" "")
-  BATTERY_LOW=$(get_tmux_option "@tokyo-night-tmux_system_battery_low_threshold" "21")
+  BATTERY_NAME=$(tmux show-option -gv @tokyo-night-tmux_system_battery_name 2>/dev/null)
+  BATTERY_LOW=$(tmux show-option -gv @tokyo-night-tmux_system_battery_low_threshold 2>/dev/null)
+  BATTERY_LOW="${BATTERY_LOW:-21}"
   
   if [[ "$(uname)" == "Darwin" ]]; then
     default_battery_name="InternalBattery-0"
