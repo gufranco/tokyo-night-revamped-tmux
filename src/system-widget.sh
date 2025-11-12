@@ -15,7 +15,9 @@ source "${SCRIPT_DIR}/themes.sh"
 
 # Check if system widget is enabled
 SHOW_SYSTEM=$(tmux show-option -gv @tokyo-night-tmux_show_system 2>/dev/null)
-[[ ${SHOW_SYSTEM} -ne 1 ]] && exit 0
+if [[ "${SHOW_SYSTEM}" != "1" ]]; then
+  exit 0
+fi
 
 RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"
 
