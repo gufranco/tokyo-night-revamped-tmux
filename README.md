@@ -219,7 +219,7 @@ set -g @tokyo-night-tmux_show_memory 1
   - ⚠️  Yellow (≥60%): High memory usage
   - ❄️  Cyan (<60%): Normal memory usage
 
-**Note:** On macOS, the calculation matches Activity Monitor's "App Memory" (active + wired + compressed pages), excluding cached memory.
+**Note:** On macOS, the calculation matches iStats Menu's memory calculation (wired + compressed pages only), which represents non-swappable memory actively in use. This excludes active pages that can be freed, providing a more accurate representation of actual memory pressure.
 
 **Optional: Memory Pressure Indicator**
 

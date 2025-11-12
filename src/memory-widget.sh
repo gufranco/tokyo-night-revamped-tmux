@@ -26,19 +26,19 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   # Parse vm_stat output using $NF (last field) for robustness
   vm_stats=$(vm_stat)
   pages_wired=$(echo "$vm_stats" | awk '/Pages wired down/ {print $NF}' | tr -d '.')
-  pages_active=$(echo "$vm_stats" | awk '/Pages active/ {print $NF}' | tr -d '.')
   pages_compressed=$(echo "$vm_stats" | awk '/Pages occupied by compressor/ {print $NF}' | tr -d '.')
 
-  # Calculate App Memory (same as Activity Monitor/iStats)
-  # Only includes: wired + active + compressed (excludes inactive/cached)
-  used_pages=$((pages_wired + pages_active + pages_compressed))
+  # Calculate App Memory (same as iStats Menu calculation)
+  # iStats uses: wired + compressed (NOT including active pages)
+  # This matches "Memory Used" in iStats Menu and represents non-swappable memory
+  used_pages=$((pages_wired + pages_compressed))
   used_mem=$((used_pages * page_size))
 
   # Calculate percentage
   memory_percent=$(( (used_mem * 100) / total_mem ))
   
 elif command -v free >/dev/null 2>&1; then
-  # Linux: use free command
+  # Linux: use /proc/meminfo for accurate calculation
   total_mem=$(awk '/MemTotal/ {print $2 * 1024}' /proc/meminfo)
   available_mem=$(awk '/MemAvailable/ {print $2 * 1024}' /proc/meminfo)
   
