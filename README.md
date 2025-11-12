@@ -156,6 +156,27 @@ set -g @tokyo-night-tmux_time_format 12H
 set -g @tokyo-night-tmux_show_music 1
 ```
 
+**Supported music players:**
+- **Linux:** [playerctl](https://github.com/altdesktop/playerctl) - Universal media player controller
+- **macOS:** [media-control](https://github.com/ungive/media-control) - Modern alternative to nowplaying-cli
+
+**Installation:**
+```bash
+# macOS
+brew tap ungive/media-control
+brew install media-control
+
+# Linux
+apt-get install playerctl  # Ubuntu/Debian
+pacman -S playerctl        # Arch
+```
+
+**Features:**
+- Shows artist and song title
+- Progress bar with time display
+- Pause/play state indicator
+- No jq dependency (uses pure shell parsing)
+
 #### Netspeed widget
 ![Snap netspeed](snaps/netspeed.png)
 

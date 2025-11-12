@@ -20,10 +20,9 @@ if [ "$SHOW_MUSIC" != "1" ]; then
 fi
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source $CURRENT_DIR/themes.sh
+source "$CURRENT_DIR/themes.sh"
 
 ACCENT_COLOR="${THEME[blue]}"
-SECONDARY_COLOR="${THEME[background]}"
 BG_COLOR="${THEME[background]}"
 BG_BAR="${THEME[background]}"
 TIME_COLOR="${THEME[black]}"
@@ -58,47 +57,63 @@ if command -v playerctl >/dev/null; then
     POSITION=0
   fi
 
-# nowplaying-cli
-elif command -v nowplaying-cli >/dev/null; then
-  NPCLI_PROPERTIES=(title duration elapsedTime playbackRate isAlwaysLive)
-  mapfile -t NPCLI_OUTPUT < <(nowplaying-cli get "${NPCLI_PROPERTIES[@]}")
-  declare -A NPCLI_VALUES
-  for ((i = 0; i < ${#NPCLI_PROPERTIES[@]}; i++)); do
-    # Handle null values
-    [ "${NPCLI_OUTPUT[$i]}" = "null" ] && NPCLI_OUTPUT[$i]=""
-    NPCLI_VALUES[${NPCLI_PROPERTIES[$i]}]="${NPCLI_OUTPUT[$i]}"
-  done
-  if [ -n "${NPCLI_VALUES[playbackRate]}" ] && [ "${NPCLI_VALUES[playbackRate]}" -gt 0 ]; then
-    STATUS="playing"
-  else
-    STATUS="paused"
-  fi
-  TITLE="${NPCLI_VALUES[title]}"
-  if [ "${NPCLI_VALUES[isAlwaysLive]}" = "1" ]; then
-    DURATION=-1
-    POSITION=0
-  else
-    DURATION=$(printf "%.0f" "${NPCLI_VALUES[duration]}")
-    POSITION=$(printf "%.0f" "${NPCLI_VALUES[elapsedTime]}")
+# media-control (modern replacement for deprecated nowplaying-cli)
+# https://github.com/ungive/media-control
+elif command -v media-control >/dev/null; then
+  MEDIA_JSON=$(media-control get --now 2>/dev/null)
+
+  if [ -n "$MEDIA_JSON" ]; then
+    # Parse JSON fields (no jq dependency)
+    PLAYBACK_RATE=$(echo "$MEDIA_JSON" | grep -o '"playbackRate":[0-9]*' | cut -d':' -f2)
+    MEDIA_TITLE=$(echo "$MEDIA_JSON" | grep -o '"title":"[^"]*"' | sed 's|"title":"||' | sed 's|"$||')
+    MEDIA_ARTIST=$(echo "$MEDIA_JSON" | grep -o '"artist":"[^"]*"' | sed 's|"artist":"||' | sed 's|"$||')
+    DURATION=$(echo "$MEDIA_JSON" | grep -o '"duration":[0-9.]*' | cut -d':' -f2 | cut -d'.' -f1)
+    POSITION=$(echo "$MEDIA_JSON" | grep -o '"elapsedTimeNow":[0-9.]*' | cut -d':' -f2 | cut -d'.' -f1)
+
+    # Determine playback status
+    if [ "$PLAYBACK_RATE" -gt 0 ] 2>/dev/null; then
+      STATUS="playing"
+    else
+      STATUS="paused"
+    fi
+
+    # Build title
+    if [ -n "$MEDIA_ARTIST" ] && [ -n "$MEDIA_TITLE" ]; then
+      TITLE="$MEDIA_ARTIST - $MEDIA_TITLE"
+    elif [ -n "$MEDIA_TITLE" ]; then
+      TITLE="$MEDIA_TITLE"
+    fi
+
+    # Handle live streams or unknown duration
+    if [ -z "$DURATION" ] || [ "$DURATION" -eq 0 ]; then
+      DURATION=-1
+      POSITION=0
+    fi
   fi
 fi
 
 # Calculate the progress bar for sane durations
 if [ -n "$DURATION" ] && [ -n "$POSITION" ] && [ "$DURATION" -gt 0 ] && [ "$DURATION" -lt 3600 ]; then
-  TIME="[$(date -d@$POSITION -u +%M:%S) / $(date -d@$DURATION -u +%M:%S)]"
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS: manual conversion (date -d@ is not supported)
+    TIME=$(printf "[%02d:%02d / %02d:%02d]" $((POSITION / 60)) $((POSITION % 60)) $((DURATION / 60)) $((DURATION % 60)))
+  else
+    # Linux: use GNU date
+    TIME="[$(date -d@"$POSITION" -u +%M:%S) / $(date -d@"$DURATION" -u +%M:%S)]"
+  fi
 else
   TIME="[--:--]"
 fi
 if [ -n "$TITLE" ]; then
   if [ "$STATUS" = "playing" ]; then
-    PLAY_STATE="░ $OUTPUT"
+    PLAY_STATE="░ $OUTPUT"
   else
     PLAY_STATE="░ 󰏤$OUTPUT"
   fi
   OUTPUT="$PLAY_STATE $TITLE"
 
   # Only show the song title if we are over $MAX_TITLE_WIDTH characters
-  if [ "${#OUTPUT}" -ge $MAX_TITLE_WIDTH ]; then
+  if [ "${#OUTPUT}" -ge "$MAX_TITLE_WIDTH" ]; then
     OUTPUT="$PLAY_STATE ${TITLE:0:$MAX_TITLE_WIDTH-1}…"
   fi
 else
@@ -106,7 +121,7 @@ else
 fi
 
 MAX_TITLE_WIDTH=25
-if [ "${#OUTPUT}" -ge $MAX_TITLE_WIDTH ]; then
+if [ "${#OUTPUT}" -ge "$MAX_TITLE_WIDTH" ]; then
   OUTPUT="$PLAY_STATE ${TITLE:0:$MAX_TITLE_WIDTH-1}"
   # Remove trailing spaces
   OUTPUT="${OUTPUT%"${OUTPUT##*[![:space:]]}"}…"
@@ -123,7 +138,7 @@ else
   PROGRESS=$((OUTPUT_LENGTH * PERCENT / 100))
   O="$OUTPUT"
 
-  if [ $PROGRESS -le $TIME_INDEX ]; then
+  if [ "$PROGRESS" -le "$TIME_INDEX" ]; then
     echo "#[nobold,fg=$BG_COLOR,bg=$ACCENT_COLOR]${O:0:PROGRESS}#[fg=$ACCENT_COLOR,bg=$BG_BAR]${O:PROGRESS:TIME_INDEX} #[fg=$TIME_COLOR,bg=$BG_BAR]$TIME "
   else
     DIFF=$((PROGRESS - TIME_INDEX))
