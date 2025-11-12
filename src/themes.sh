@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 SELECTED_THEME="$(tmux show-option -gv @tokyo-night-tmux_theme)"
-TRANSPARENT_THEME="$(tmux show-option -gv @tokyo-night-tmux_transparent)"
 
 case $SELECTED_THEME in
 "storm")
@@ -77,11 +76,6 @@ case $SELECTED_THEME in
   )
   ;;
 esac
-
-# Override background with "default" if transparent theme is enabled
-if [ "${TRANSPARENT_THEME}" == 1 ]; then
-  THEME["background"]="default"
-fi
 
 THEME['ghgreen']="#3fb950"
 THEME['ghmagenta']="#A371F7"

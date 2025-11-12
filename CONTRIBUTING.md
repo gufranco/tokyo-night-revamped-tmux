@@ -2,6 +2,14 @@
 
 Thank you for your interest in contributing to the tokyo-night-tmux project! We welcome contributions from the community to help improve and enhance the project. To ensure a smooth collaboration process, please follow the guidelines outlined below.
 
+## Code of Conduct
+
+This project adheres to the Contributor Covenant [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior via GitHub issues.
+
+## Security
+
+If you discover a security vulnerability, please follow our [Security Policy](SECURITY.md) for responsible disclosure.
+
 ## Before Making a Pull Request
 
 1. **Open an Issue**: Before starting to work on a new feature or bug fix, please open an issue on the GitHub repository. This allows for discussion and helps avoid duplication of efforts. Clearly describe the problem or feature you want to address in the issue.

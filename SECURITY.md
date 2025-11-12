@@ -1,44 +1,31 @@
 # Security Policy
 
-## Reporting a Vulnerability
-
-We take the security of our open-source project, tokyo-night-tmux, very seriously. If you discover a potential security vulnerability in our codebase, we appreciate your help in disclosing it to us responsibly.
-
-To report a security vulnerability, please follow these steps:
-
-1. Email us at [hola@logico.com.ar](mailto:hola@logico.com.ar) with a detailed description of the vulnerability you have discovered. Please include the following information:
-   - A clear and concise description of the vulnerability
-   - Steps to reproduce the vulnerability
-   - Potential impact of the vulnerability
-   - Any additional information that may help us understand and address the issue
-
-2. We will acknowledge receipt of your report within 48 hours and provide an estimated timeline for addressing the vulnerability.
-
-3. We kindly request that you do not disclose the vulnerability publicly until we have had sufficient time to investigate and address the issue.
-
-4. Once the vulnerability has been addressed, we will publicly acknowledge your responsible disclosure, if you wish.
-
 ## Supported Versions
 
-We actively maintain and support the latest version of tokyo-night-tmux. We encourage all users to keep their installations up to date with the latest release to ensure they have the most recent security fixes.
+We release patches for security vulnerabilities. Which versions are eligible for receiving such patches depends on the CVSS v3.0 Rating:
 
 | Version | Supported          |
 | ------- | ------------------ |
-| Latest  | :white_check_mark: |
-| < Latest| :x:                |
+| 1.x.x   | :white_check_mark: |
+| < 1.0   | :x:                |
+
+## Reporting a Vulnerability
+
+Please report (suspected) security vulnerabilities to the repository maintainers via GitHub Security Advisories. You will receive a response from us within 48 hours. If the issue is confirmed, we will release a patch as soon as possible depending on complexity but historically within a few days.
 
 ## Security Best Practices
 
-To ensure the security of your tokyo-night-tmux installation, we recommend following these best practices:
+When using this tmux theme:
 
-- Keep your tokyo-night-tmux installation up to date with the latest version.
-- Regularly review and update any dependencies used by tokyo-night-tmux to address any known vulnerabilities.
-- Follow secure coding practices and guidelines when contributing to the tokyo-night-tmux codebase.
-- Use strong and unique passwords for any accounts associated with tokyo-night-tmux.
-- Regularly monitor your installation for any suspicious activity or unauthorized access attempts.
+1. **Keep Dependencies Updated**: Regularly update bash, tmux, and all required dependencies
+2. **Review Scripts**: All widget scripts run with your user permissions - review them before use
+3. **API Tokens**: If using GitHub/GitLab widgets, ensure your tokens have minimal required permissions
+4. **Network Widgets**: The netspeed widget accesses network interfaces - ensure you trust the implementation
 
-## Acknowledgments
+## Known Security Considerations
 
-We would like to express our gratitude to the security researchers and community members who responsibly disclose vulnerabilities to us. Your efforts help us maintain the security and integrity of tokyo-night-tmux.
+- Widget scripts execute with user-level permissions
+- Some widgets may make external API calls (GitHub, GitLab, weather services)
+- Network-related widgets access system network configuration
 
-If you have any further questions or concerns regarding the security of tokyo-night-tmux, please don't hesitate to contact us at [hola@logico.com.ar](mailto:hola@logico.com.ar).
+If you discover a security issue, please report it responsibly.
