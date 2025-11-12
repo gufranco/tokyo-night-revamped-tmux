@@ -19,32 +19,34 @@ SHOW_MEMORY_PRESSURE="${SHOW_MEMORY_PRESSURE:-0}"
 memory_percent=0
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  # macOS: use vm_stat and sysctl (no compilation needed)
-  page_size=$(sysctl -n hw.pagesize)
+  # macOS: use vm_stat and sysctl (matches iStats Menu calculation)
   total_mem=$(sysctl -n hw.memsize)
+  page_size=$(pagesize 2>/dev/null || sysctl -n hw.pagesize)
 
-  # Parse vm_stat output
+  # Parse vm_stat output using $NF (last field) for robustness
   vm_stats=$(vm_stat)
-  pages_active=$(echo "$vm_stats" | awk '/Pages active/ {print $3}' | tr -d '.')
-  pages_wired=$(echo "$vm_stats" | awk '/Pages wired down/ {print $4}' | tr -d '.')
-  pages_compressed=$(echo "$vm_stats" | awk '/Pages occupied by compressor/ {print $5}' | tr -d '.')
+  pages_wired=$(echo "$vm_stats" | awk '/Pages wired down/ {print $NF}' | tr -d '.')
+  pages_active=$(echo "$vm_stats" | awk '/Pages active/ {print $NF}' | tr -d '.')
+  pages_compressed=$(echo "$vm_stats" | awk '/Pages occupied by compressor/ {print $NF}' | tr -d '.')
 
   # Calculate App Memory (same as Activity Monitor/iStats)
-  # Only includes: active + wired + compressed (excludes inactive/cached)
-  used_pages=$((pages_active + pages_wired + pages_compressed))
+  # Only includes: wired + active + compressed (excludes inactive/cached)
+  used_pages=$((pages_wired + pages_active + pages_compressed))
   used_mem=$((used_pages * page_size))
 
   # Calculate percentage
-  memory_percent=$(( used_mem * 100 / total_mem ))
+  memory_percent=$(( (used_mem * 100) / total_mem ))
   
 elif command -v free >/dev/null 2>&1; then
   # Linux: use free command
-  mem_info=$(free -b | awk 'NR==2 {print $2, $3}')
-  total_mem=$(echo "$mem_info" | awk '{print $1}')
-  used_mem=$(echo "$mem_info" | awk '{print $2}')
+  total_mem=$(awk '/MemTotal/ {print $2 * 1024}' /proc/meminfo)
+  available_mem=$(awk '/MemAvailable/ {print $2 * 1024}' /proc/meminfo)
+  
+  # Calculate used memory (total - available)
+  used_mem=$(( total_mem - available_mem ))
   
   # Calculate percentage
-  memory_percent=$(( used_mem * 100 / total_mem ))
+  memory_percent=$(( (used_mem * 100) / total_mem ))
 else
   echo "#[nobold,fg=${THEME[cyan]}]░ 󰍛 ${RESET}N/A "
   exit 0
@@ -75,8 +77,8 @@ if [[ "${SHOW_MEMORY_PRESSURE}" == "1" ]]; then
   pressure_icon="●"
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS: Check swapouts from vm_stat
-    swapouts=$(echo "$vm_stats" | grep "Swapouts:" | awk '{print $2}' | tr -d '.')
+    # macOS: Check swapouts from vm_stat (reuse existing vm_stats)
+    swapouts=$(echo "$vm_stats" | grep "Swapouts:" | awk '{print $NF}' | tr -d '.')
 
     if (( swapouts > 5000000 )); then
       pressure_color="${THEME[red]}"      # Critical pressure
