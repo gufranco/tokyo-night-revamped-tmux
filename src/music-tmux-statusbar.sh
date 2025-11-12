@@ -90,11 +90,20 @@ elif command -v media-control >/dev/null; then
       DURATION=-1
       POSITION=0
     fi
+    
+    # Detect invalid data from media-control for streaming content
+    # If duration and position are exactly the same, it's likely incorrect
+    if [ "$DURATION" -eq "$POSITION" ] && [ "$DURATION" -lt 300 ]; then
+      # Likely chunked streaming data (YouTube, etc), hide time display
+      DURATION=-1
+      POSITION=0
+    fi
   fi
 fi
 
 # Calculate the progress bar for sane durations
-if [ -n "$DURATION" ] && [ -n "$POSITION" ] && [ "$DURATION" -gt 0 ] && [ "$DURATION" -lt 3600 ]; then
+# Exclude if duration < 10 seconds (likely invalid streaming data)
+if [ -n "$DURATION" ] && [ -n "$POSITION" ] && [ "$DURATION" -gt 10 ] && [ "$DURATION" -lt 3600 ]; then
   if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS: manual conversion (date -d@ is not supported)
     TIME=$(printf "[%02d:%02d / %02d:%02d]" $((POSITION / 60)) $((POSITION % 60)) $((DURATION / 60)) $((DURATION % 60)))
