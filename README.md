@@ -393,7 +393,7 @@ Set variable value `0` to disable the widget.
 
 #### Weather Widget
 
-The weather widget shows current weather with temperature-based coloring and caching.
+The weather widget shows current weather with temperature-based coloring and caching. Supports multiple locations!
 
 ```bash
 set -g @tokyo-night-tmux_show_weather 1
@@ -403,14 +403,42 @@ set -g @tokyo-night-tmux_weather_units "m"          # m=metric, u=US, M=SI
 set -g @tokyo-night-tmux_weather_show_icon 1
 ```
 
+##### Multiple Locations
+
+Track weather in multiple cities simultaneously. **Your current location is always shown first**, then additional cities.
+
+```bash
+# Show current location + Los Angeles + New York
+set -g @tokyo-night-tmux_weather_location "Los_Angeles,New_York"
+
+# Show current location + multiple cities (comma or space-separated)
+set -g @tokyo-night-tmux_weather_location "Tokyo,London,Paris"
+
+# Show only current location (leave empty)
+set -g @tokyo-night-tmux_weather_location ""
+```
+
+**City name format:**
+- Use underscores for spaces: `Los_Angeles`, `New_York`, `San_Francisco`
+- The widget will display the city name from the API (beautifully formatted)
+- Use city names in English for best results
+
+**Example output:**
+```
+░ 󰖙 San Francisco 22°C 󰖙 Los Angeles 28°C 󰖐 New York 8°C
+```
+
+**Note:** Current location (auto-detected by IP) is always shown first, then your configured cities.
+
 **Features:**
+- **Multiple locations:** Comma or space-separated
+- **Dynamic icons:** Changes based on temperature
+  - 🔥 ≥30°C: 󰖙 Sun hot (red)
+  - ☀️ 20-29°C: 󰖙 Sun (yellow)
+  - ⛅ 10-19°C: 󰖐 Cloud sun (cyan)
+  - ☁️ 0-9°C: 󰖐 Cloud (blue)
+  - ❄️ <0°C: 󰜗 Snowflake (magenta)
 - **Smart caching:** Updates every 15 minutes to reduce API calls
-- **Temperature coloring:**
-  - 🔴 Red (≥30°C): Very hot
-  - 🟡 Yellow (20-29°C): Warm
-  - 🔵 Cyan (10-19°C): Cool
-  - 🔵 Blue (0-9°C): Cold
-  - 🟣 Magenta (<0°C): Freezing
 - **Powered by wttr.in:** No API key required
 - **Requires:** curl or wget
 
