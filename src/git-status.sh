@@ -42,7 +42,14 @@ if [[ $STATUS -ne 0 ]]; then
   SYNC_MODE=1
 fi
 
-UNTRACKED_COUNT="$(git ls-files --other --exclude-standard | wc -l | bc)"
+# Check if we should check untracked files
+CHECK_UNTRACKED=$(tmux show-option -gv @tokyo-night-tmux_git_check_untracked 2>/dev/null)
+CHECK_UNTRACKED="${CHECK_UNTRACKED:-1}"
+
+UNTRACKED_COUNT=0
+if [[ $CHECK_UNTRACKED -eq 1 ]]; then
+  UNTRACKED_COUNT="$(git ls-files --other --exclude-standard | wc -l | bc)"
+fi
 
 if [[ $CHANGED_COUNT -gt 0 ]]; then
   STATUS_CHANGED="${RESET}#[fg=${THEME[yellow]},bg=${THEME[background]},bold] ${CHANGED_COUNT} "

@@ -235,10 +235,25 @@ pacman -S playerctl        # Arch
 
 ```bash
 set -g @tokyo-night-tmux_show_netspeed 1
-set -g @tokyo-night-tmux_netspeed_iface "wlan0" # Detected via default route
-set -g @tokyo-night-tmux_netspeed_showip 1      # Display IPv4 address (default 0)
-set -g @tokyo-night-tmux_netspeed_refresh 1     # Update interval in seconds (default 1)
+set -g @tokyo-night-tmux_netspeed_iface "wlan0"     # Detected via default route
+set -g @tokyo-night-tmux_netspeed_showip 1          # Display IPv4 address (default: 0)
+set -g @tokyo-night-tmux_netspeed_showping 1        # Display ping latency (default: 0)
+set -g @tokyo-night-tmux_netspeed_refresh 1         # Update interval in seconds (default: 1)
+set -g @tokyo-night-tmux_netspeed_show_vpn 1        # Show VPN indicator (default: 1)
+set -g @tokyo-night-tmux_netspeed_vpn_verbose 0     # Show VPN interface name (default: 0)
 ```
+
+**Features:**
+- **Network speed:** Upload/download with icons
+- **Interface type:** Auto-detects WiFi vs Ethernet
+- **VPN detection:** Detects active VPN connections (utun, tun, tap, WireGuard, Tailscale, NordLynx)
+- **IP display:** Shows current IPv4 address
+- **Ping monitor:** Shows latency to 8.8.8.8 with color coding
+  - 🟢 Cyan (<50ms): Excellent
+  - 🔵 Blue (50-99ms): Good
+  - 🟡 Yellow (100-199ms): Fair
+  - 🔴 Red (≥200ms): Poor
+- **Smart caching:** Ping cached for 10s to avoid network spam
 
 #### Path Widget
 
@@ -466,7 +481,14 @@ The git status widget shows local git repository information including branch na
 
 ```bash
 set -g @tokyo-night-tmux_show_git 1
+set -g @tokyo-night-tmux_git_check_untracked 1  # Check untracked files (default: 1)
 ```
+
+**Options:**
+- **git_check_untracked:** Enable/disable checking for untracked files
+  - Set to `0` to disable in large repositories for better performance
+  - When disabled, the  icon (untracked files) won't appear
+  - Recommended to disable in monorepos or repos with many build artifacts
 
 ##### Performance Options for Large Repositories
 
