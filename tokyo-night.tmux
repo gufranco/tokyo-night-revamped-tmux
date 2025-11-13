@@ -64,12 +64,6 @@ zoom_number="#($SCRIPTS_PATH/custom-number.sh #P $zoom_id_style)"
 
 # System Resources
 system="#($SCRIPTS_PATH/system-widget.sh)"
-cpu="#($SCRIPTS_PATH/cpu-widget.sh)"
-gpu="#($SCRIPTS_PATH/gpu-widget.sh)"
-memory="#($SCRIPTS_PATH/memory-widget.sh)"
-ram="#($SCRIPTS_PATH/ram-widget.sh)"
-disk="#($SCRIPTS_PATH/disk-widget.sh)"
-battery="#($SCRIPTS_PATH/battery-widget.sh)"
 
 # Network & Connectivity
 netspeed="#($SCRIPTS_PATH/netspeed.sh)"
@@ -89,11 +83,9 @@ clients="#($SCRIPTS_PATH/clients-widget.sh)"
 sync="#($SCRIPTS_PATH/sync-widget.sh)"
 
 # Legacy variable names for compatibility
-cmus_status="$music"
 git_status="$git"
 date_and_time="$datetime"
 current_path="$path"
-battery_status="$battery"
 
 # ==============================================================================
 # Status Left (Session Name)
@@ -124,12 +116,6 @@ fi
 declare -A WIDGET_MAP=(
   # System Resources
   ["system"]="$system"
-  ["cpu"]="$cpu"
-  ["gpu"]="$gpu"
-  ["memory"]="$memory"
-  ["ram"]="$ram"
-  ["disk"]="$disk"
-  ["battery"]="$battery"
   
   # Development & Git
   ["git"]="$git"
