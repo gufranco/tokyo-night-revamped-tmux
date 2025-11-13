@@ -33,7 +33,7 @@ main() {
   
   display_path=$(format_path "$CURRENT_PATH" "$PATH_FORMAT")
   
-  echo "#[fg=${THEME[blue]},bg=default]░ ${ICON_PATH} ${RESET}${display_path} "
+  echo "#[fg=${THEME[cyan]},bg=default]░ ${ICON_PATH}${RESET} ${display_path} "
 }
 
 main

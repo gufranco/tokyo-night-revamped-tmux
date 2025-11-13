@@ -72,7 +72,7 @@ main() {
   used_fmt=$(format_ram_size "$used")
   total_fmt=$(format_ram_size "$total")
   
-  echo "#[fg=${color},bg=default]░ ${icon}${RESET} ${used_fmt}/${total_fmt} "
+  echo "#[fg=${THEME[cyan]},bg=default]░ ${icon}${RESET} ${used_fmt}/${total_fmt} "
 }
 
 main

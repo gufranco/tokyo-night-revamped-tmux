@@ -25,7 +25,7 @@ is_panes_synchronized() {
 main() {
   is_panes_synchronized || exit 0
   
-  echo "#[fg=${THEME[yellow]},bg=default]░ ${ICON_SYNC}${RESET} ${SYNC_LABEL} "
+  echo "#[fg=${THEME[cyan]},bg=default]░ ${ICON_SYNC}${RESET} ${SYNC_LABEL} "
 }
 
 main

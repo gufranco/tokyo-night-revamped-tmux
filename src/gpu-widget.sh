@@ -65,9 +65,7 @@ main() {
   
   (( gpu_usage == 0 )) && exit 0
   
-  color=$(get_color_3tier "$gpu_usage" "${THEME[red]}" "${THEME[yellow]}" "${THEME[blue]}")
-  
-  output=$(format_widget_output "$color" "${ICON_GPU}" "$gpu_usage" "%" "$RESET")
+  output=$(format_widget_output "${THEME[cyan]}" "${ICON_GPU}" "$gpu_usage" "%" "$RESET")
   
   echo "$output"
 }
