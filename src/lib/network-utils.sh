@@ -12,14 +12,20 @@ get_bytes() {
   fi
 }
 
-readable_format() {
+format_speed() {
   local bytes=$1
   local secs=${2:-1}
-
-  if (( bytes < 1048576 )); then
-    echo "$(bc -l <<<"scale=1; $bytes / 1024 / $secs")KB/s"
+  
+  local bps=$(( bytes / secs ))
+  
+  if (( bps < 1024 )); then
+    echo "${bps}B/s"
+  elif (( bps < 1048576 )); then
+    local kb=$(( (bps + 512) / 1024 ))
+    echo "${kb}KB/s"
   else
-    echo "$(bc -l <<<"scale=1; $bytes / 1048576 / $secs")MB/s"
+    local mb=$(( (bps + 524288) / 1048576 ))
+    echo "${mb}MB/s"
   fi
 }
 
@@ -147,7 +153,7 @@ get_ping_latency() {
 }
 
 export -f get_bytes
-export -f readable_format
+export -f format_speed
 export -f find_interface
 export -f interface_ipv4
 export -f detect_vpn_macos

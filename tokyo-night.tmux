@@ -67,25 +67,17 @@ system="#($SCRIPTS_PATH/system-widget.sh)"
 
 # Network & Connectivity
 netspeed="#($SCRIPTS_PATH/network-widget.sh)"
-ssh="#($SCRIPTS_PATH/ssh-widget.sh)"
 
 # Development & Git
 git="#($SCRIPTS_PATH/git-widget.sh #{pane_current_path})"
-path="#($SCRIPTS_PATH/path-widget.sh #{pane_current_path})"
 
 # Environment & Context
 weather="#($SCRIPTS_PATH/weather-widget.sh)"
-music="#($SCRIPTS_PATH/music-widget.sh)"
 datetime="#($SCRIPTS_PATH/datetime-widget.sh)"
-
-# Session & Meta
-clients="#($SCRIPTS_PATH/clients-widget.sh)"
-sync="#($SCRIPTS_PATH/sync-widget.sh)"
 
 # Legacy variable names for compatibility
 git_status="$git"
 date_and_time="$datetime"
-current_path="$path"
 
 # ==============================================================================
 # Status Left (Session Name)
@@ -109,30 +101,16 @@ tmux set -g window-status-separator ""
 WIDGETS_ORDER="$(tmux show-option -gv @tokyo-night-tmux_widgets_order 2>/dev/null)"
 
 if [[ -z "$WIDGETS_ORDER" ]]; then
-  WIDGETS_ORDER="system,git,path,ssh,clients,sync,weather,music,netspeed,datetime"
+  WIDGETS_ORDER="system,git,weather,netspeed,datetime"
 fi
 
 # Build widget mapping
 declare -A WIDGET_MAP=(
-  # System Resources
   ["system"]="$system"
-  
-  # Development & Git
   ["git"]="$git"
-  ["path"]="$path"
-  
-  # Network & Connection
-  ["netspeed"]="$netspeed"
-  ["ssh"]="$ssh"
-  
-  # Environment & Context
   ["weather"]="$weather"
-  ["music"]="$music"
+  ["netspeed"]="$netspeed"
   ["datetime"]="$datetime"
-  
-  # Session & Meta
-  ["clients"]="$clients"
-  ["sync"]="$sync"
 )
 
 STATUS_RIGHT=""

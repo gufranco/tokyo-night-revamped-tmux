@@ -231,30 +231,34 @@ pacman -S playerctl        # Arch
 - Pause/play state indicator
 - No jq dependency (uses pure shell parsing)
 
-#### Netspeed widget
-![Snap netspeed](snaps/netspeed.png)
+#### Network Widget
+
+Professional network monitoring with clean, minimalist design.
 
 ```bash
 set -g @tokyo-night-tmux_show_netspeed 1
-set -g @tokyo-night-tmux_netspeed_iface "wlan0"     # Detected via default route
-set -g @tokyo-night-tmux_netspeed_showip 1          # Display IPv4 address (default: 0)
-set -g @tokyo-night-tmux_netspeed_showping 1        # Display ping latency (default: 0)
-set -g @tokyo-night-tmux_netspeed_refresh 1         # Update interval in seconds (default: 1)
-set -g @tokyo-night-tmux_netspeed_show_vpn 1        # Show VPN indicator (default: 1)
-set -g @tokyo-night-tmux_netspeed_vpn_verbose 0     # Show VPN interface name (default: 0)
+set -g @tokyo-night-tmux_netspeed_ping 1      # Show ping latency (default: 0)
+set -g @tokyo-night-tmux_netspeed_vpn 1       # Show VPN indicator (default: 1)
+set -g @tokyo-night-tmux_netspeed_refresh 1   # Update interval in seconds (default: 1)
 ```
 
 **Features:**
-- **Network speed:** Upload/download with icons
-- **Interface type:** Auto-detects WiFi vs Ethernet
-- **VPN detection:** Detects active VPN connections (utun, tun, tap, WireGuard, Tailscale, NordLynx)
-- **IP display:** Shows current IPv4 address
-- **Ping monitor:** Shows latency to 8.8.8.8 with color coding
-  - 🟢 Cyan (<50ms): Excellent
-  - 🔵 Blue (50-99ms): Good
-  - 🟡 Yellow (100-199ms): Fair
-  - 🔴 Red (≥200ms): Poor
-- **Smart caching:** Ping cached for 10s to avoid network spam
+- **Download/Upload speeds:** Integer values (150KB/s, 3MB/s)
+- **Simple arrows:** ↓ download, ↑ upload
+- **VPN indicator:** 󰌘 icon when VPN detected
+- **Ping latency:** 󰓅 ms (optional)
+- **Auto-detect interface:** No manual configuration needed
+- **No bc dependency:** Pure bash arithmetic
+- **All cyan colors:** Minimalist, no color spam
+
+**Example outputs:**
+```
+░ ↓ 150KB/s ↑ 50KB/s
+░ 󰌘 ↓ 3MB/s ↑ 512KB/s
+░ ↓ 2MB/s ↑ 100KB/s 󰓅 45ms
+```
+
+**VPN Detection:** Supports utun, tun, tap, WireGuard, Tailscale, NordLynx
 
 #### Path Widget
 
