@@ -117,7 +117,7 @@ sleep "$TIME_DIFF"
   
   ipv4_addr=$(interface_ipv4 "$interface")
   
-  local output="${RESET}░ "
+  local output="#[fg=${THEME[cyan]},bg=default]░${RESET} "
   
   output="${output}$(format_vpn_indicator "$SHOW_VPN" "$VPN_VERBOSE")"
   output="${output}${NET_ICONS[traffic_rx]} $rx_speed ${NET_ICONS[traffic_tx]} $tx_speed $network_icon #[dim]$interface "
