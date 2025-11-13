@@ -32,10 +32,11 @@ DATE_FORMAT="${DATE_FORMAT:-YMD}"
 TIME_FORMAT="${TIME_FORMAT:-24H}"
 SHOW_TIMEZONE="${SHOW_TIMEZONE:-0}"
 
-OUTPUT="${CYAN}░${RESET}"
+OUTPUT=""
 
 if [[ $SHOW_WEATHER -eq 1 ]]; then
   WEATHER_CACHE="/tmp/tmux_tokyo_night_weather_cache"
+  weather_data=""
   
   if [[ -f "$WEATHER_CACHE" ]]; then
     cache_time=""
@@ -51,15 +52,14 @@ if [[ $SHOW_WEATHER -eq 1 ]]; then
       cache_age=$((current_time - cache_time))
       
       if (( cache_age < WEATHER_CACHE_TTL )); then
-        OUTPUT="${OUTPUT} $(cat "$WEATHER_CACHE")"
+        weather_data=$(cat "$WEATHER_CACHE")
       fi
     fi
   fi
   
-  if [[ "$OUTPUT" == "${CYAN}░${RESET}" ]]; then
+  if [[ -z "$weather_data" ]]; then
     if command -v curl >/dev/null 2>&1 || command -v wget >/dev/null 2>&1; then
       weather_url="https://wttr.in/?format=%t&${WEATHER_UNITS}"
-      weather_data=""
       
       if command -v curl >/dev/null 2>&1; then
         weather_data=$(curl -sf "$weather_url" 2>/dev/null)
@@ -67,11 +67,12 @@ if [[ $SHOW_WEATHER -eq 1 ]]; then
         weather_data=$(wget -qO- "$weather_url" 2>/dev/null)
       fi
       
-      if [[ -n "$weather_data" ]]; then
-        echo "$weather_data" > "$WEATHER_CACHE"
-        OUTPUT="${OUTPUT} ${weather_data}"
-      fi
+      [[ -n "$weather_data" ]] && echo "$weather_data" > "$WEATHER_CACHE"
     fi
+  fi
+  
+  if [[ -n "$weather_data" ]]; then
+    OUTPUT="${CYAN}󰖙${RESET} ${weather_data}"
   fi
 fi
 
@@ -108,7 +109,10 @@ elif [[ -n "$TIME_VAL" ]]; then
   DATETIME="${TIME_VAL}"
 fi
 
-[[ -n "$DATETIME" ]] && OUTPUT="${OUTPUT} ${DATETIME}"
+if [[ -n "$DATETIME" ]]; then
+  [[ -n "$OUTPUT" ]] && OUTPUT="${OUTPUT} "
+  OUTPUT="${OUTPUT}${CYAN}󰥔${RESET} ${DATETIME}"
+fi
 
 if [[ "$SHOW_TIMEZONE" == "1" ]] && [[ -n "$TIMEZONES" ]]; then
   IFS=$', ' read -ra TZ_LIST <<< "$TIMEZONES"
@@ -119,9 +123,9 @@ if [[ "$SHOW_TIMEZONE" == "1" ]] && [[ -n "$TIMEZONES" ]]; then
     tz_time=$(TZ="$tz" date +"%-H:%M" 2>/dev/null) || continue
     tz_abbr=$(TZ="$tz" date +"%Z" 2>/dev/null) || continue
     
-    OUTPUT="${OUTPUT} | ${tz_abbr} ${tz_time}"
+    OUTPUT="${OUTPUT} ${CYAN}󰥔${RESET} ${tz_abbr} ${tz_time}"
   done
 fi
 
-echo "${OUTPUT} "
+[[ -n "$OUTPUT" ]] && echo "${CYAN}░${RESET} ${OUTPUT} "
 

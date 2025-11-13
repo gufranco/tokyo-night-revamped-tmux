@@ -15,7 +15,7 @@ get_bytes() {
 format_speed() {
   local bytes=$1
   local secs=${2:-1}
-  
+
   local bps=$(( bytes / secs ))
   
   if (( bps < 1024 )); then

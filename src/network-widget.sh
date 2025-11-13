@@ -22,21 +22,21 @@ SHOW_VPN=$(tmux show-option -gv @tokyo-night-tmux_netspeed_vpn 2>/dev/null)
 SHOW_PING="${SHOW_PING:-0}"
 TIME_DIFF="${TIME_DIFF:-1}"
 SHOW_VPN="${SHOW_VPN:-1}"
-
-interface="${INTERFACE}"
-
-if [[ -z "$interface" ]]; then
-  interface=$(find_interface) || exit 0
-  tmux set-option -g @tokyo-night-tmux_netspeed_iface "$interface"
+  
+  interface="${INTERFACE}"
+  
+  if [[ -z "$interface" ]]; then
+    interface=$(find_interface) || exit 0
+    tmux set-option -g @tokyo-night-tmux_netspeed_iface "$interface"
 fi
 
-read -r rx1 tx1 < <(get_bytes "$interface") || exit 0
+  read -r rx1 tx1 < <(get_bytes "$interface") || exit 0
 sleep "$TIME_DIFF"
-read -r rx2 tx2 < <(get_bytes "$interface") || exit 0
-
-rx_diff=$((rx2 - rx1))
-tx_diff=$((tx2 - tx1))
-
+  read -r rx2 tx2 < <(get_bytes "$interface") || exit 0
+  
+  rx_diff=$((rx2 - rx1))
+  tx_diff=$((tx2 - tx1))
+  
 rx_speed=$(format_speed "$rx_diff" "$TIME_DIFF")
 tx_speed=$(format_speed "$tx_diff" "$TIME_DIFF")
 
