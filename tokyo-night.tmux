@@ -54,9 +54,9 @@ window_id_style="${window_id_style:-$default_window_id_style}"
 pane_id_style="${pane_id_style:-$default_pane_id_style}"
 zoom_id_style="${zoom_id_style:-$default_zoom_id_style}"
 
-window_number="#($SCRIPTS_PATH/custom-number.sh #I $window_id_style)"
-custom_pane="#($SCRIPTS_PATH/custom-number.sh #P $pane_id_style)"
-zoom_number="#($SCRIPTS_PATH/custom-number.sh #P $zoom_id_style)"
+window_number="#($SCRIPTS_PATH/number-widget.sh #I $window_id_style)"
+custom_pane="#($SCRIPTS_PATH/number-widget.sh #P $pane_id_style)"
+zoom_number="#($SCRIPTS_PATH/number-widget.sh #P $zoom_id_style)"
 
 # ==============================================================================
 # Widget Definitions (organized by context)
@@ -66,7 +66,7 @@ zoom_number="#($SCRIPTS_PATH/custom-number.sh #P $zoom_id_style)"
 system="#($SCRIPTS_PATH/system-widget.sh)"
 
 # Network & Connectivity
-netspeed="#($SCRIPTS_PATH/netspeed.sh)"
+netspeed="#($SCRIPTS_PATH/network-widget.sh)"
 ssh="#($SCRIPTS_PATH/ssh-widget.sh)"
 
 # Development & Git
@@ -75,7 +75,7 @@ path="#($SCRIPTS_PATH/path-widget.sh #{pane_current_path})"
 
 # Environment & Context
 weather="#($SCRIPTS_PATH/weather-widget.sh)"
-music="#($SCRIPTS_PATH/music-tmux-statusbar.sh)"
+music="#($SCRIPTS_PATH/music-widget.sh)"
 datetime="#($SCRIPTS_PATH/datetime-widget.sh)"
 
 # Session & Meta
