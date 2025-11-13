@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LIB_DIR="${SCRIPT_DIR}/../lib"
+LIB_DIR="${SCRIPT_DIR}/lib"
 
 source "${LIB_DIR}/coreutils-compat.sh"
 source "${LIB_DIR}/constants.sh"
 source "${LIB_DIR}/widget-base.sh"
-source "${SCRIPT_DIR}/themes.sh"
+source "${LIB_DIR}/themes.sh"
 
 is_widget_enabled "@tokyo-night-tmux_show_weather" || exit 0
 

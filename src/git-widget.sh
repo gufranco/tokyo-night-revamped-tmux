@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LIB_DIR="${SCRIPT_DIR}/../lib"
+LIB_DIR="${SCRIPT_DIR}/lib"
 
 source "${LIB_DIR}/coreutils-compat.sh"
 source "${LIB_DIR}/constants.sh"
-source "${SCRIPT_DIR}/themes.sh"
+source "${LIB_DIR}/themes.sh"
 
 MINIMAL_SESSION=$(tmux show-option -gv @tokyo-night-tmux_minimal_session 2>/dev/null)
 CURRENT_SESSION=$(tmux display-message -p '#S')

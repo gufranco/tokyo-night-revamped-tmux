@@ -8,7 +8,7 @@
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPTS_PATH="$CURRENT_DIR/src"
 
-source "$SCRIPTS_PATH/themes.sh"
+source "$SCRIPTS_PATH/lib/themes.sh"
 
 # ==============================================================================
 # Status Bar Configuration
