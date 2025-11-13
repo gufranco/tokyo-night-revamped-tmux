@@ -76,8 +76,7 @@ netspeed="#($SCRIPTS_PATH/netspeed.sh)"
 ssh="#($SCRIPTS_PATH/ssh-widget.sh)"
 
 # Development & Git
-git="#($SCRIPTS_PATH/git-status.sh #{pane_current_path})"
-wbg="#($SCRIPTS_PATH/wb-git-status.sh #{pane_current_path} &)"
+git="#($SCRIPTS_PATH/git-widget.sh #{pane_current_path})"
 path="#($SCRIPTS_PATH/path-widget.sh #{pane_current_path})"
 
 # Environment & Context
@@ -92,7 +91,6 @@ sync="#($SCRIPTS_PATH/sync-widget.sh)"
 # Legacy variable names for compatibility
 cmus_status="$music"
 git_status="$git"
-wb_git_status="$wbg"
 date_and_time="$datetime"
 current_path="$path"
 battery_status="$battery"
@@ -118,13 +116,8 @@ tmux set -g window-status-separator ""
 # ==============================================================================
 WIDGETS_ORDER="$(tmux show-option -gv @tokyo-night-tmux_widgets_order 2>/dev/null)"
 
-# Default order organized by logical context:
-# 1. System Resources (unified or individual components)
-# 2. Development (git context)
-# 3. Network & Environment
-# 4. Time & Meta information
 if [[ -z "$WIDGETS_ORDER" ]]; then
-  WIDGETS_ORDER="system,git,wbg,path,ssh,clients,sync,weather,music,netspeed,datetime"
+  WIDGETS_ORDER="system,git,path,ssh,clients,sync,weather,music,netspeed,datetime"
 fi
 
 # Build widget mapping
@@ -140,7 +133,6 @@ declare -A WIDGET_MAP=(
   
   # Development & Git
   ["git"]="$git"
-  ["wbg"]="$wbg"
   ["path"]="$path"
   
   # Network & Connection
@@ -157,12 +149,10 @@ declare -A WIDGET_MAP=(
   ["sync"]="$sync"
 )
 
-# Build status-right dynamically based on widget order
 STATUS_RIGHT=""
 IFS=',' read -ra WIDGETS <<< "$WIDGETS_ORDER"
 for widget in "${WIDGETS[@]}"; do
-  # Trim whitespace
-  widget=$(echo "$widget" | xargs)
+  widget="${widget// /}"
   
   if [[ -n "${WIDGET_MAP[$widget]}" ]]; then
     STATUS_RIGHT="${STATUS_RIGHT}${WIDGET_MAP[$widget]}"

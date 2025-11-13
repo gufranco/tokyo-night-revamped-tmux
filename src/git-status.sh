@@ -1,94 +1,103 @@
 #!/usr/bin/env bash
-# Verify if the current session is the minimal session
-MINIMAL_SESSION_NAME=$(tmux show-option -gv @tokyo-night-tmux_minimal_session 2>/dev/null)
-TMUX_SESSION_NAME=$(tmux display-message -p '#S')
 
-if [ "$MINIMAL_SESSION_NAME" = "$TMUX_SESSION_NAME" ]; then
-  exit 0
-fi
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="${SCRIPT_DIR}/../lib"
 
-SHOW_GIT=$(tmux show-option -gv @tokyo-night-tmux_show_git)
-if [ "$SHOW_GIT" == "0" ]; then
-  exit 0
-fi
+source "${LIB_DIR}/coreutils-compat.sh"
+source "${LIB_DIR}/constants.sh"
+source "${SCRIPT_DIR}/themes.sh"
 
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$CURRENT_DIR/../lib/coreutils-compat.sh"
-source "$CURRENT_DIR/../lib/git.sh"
-source "$CURRENT_DIR/themes.sh"
+MINIMAL_SESSION=$(tmux show-option -gv @tokyo-night-tmux_minimal_session 2>/dev/null)
+CURRENT_SESSION=$(tmux display-message -p '#S')
 
-cd "$1" || exit 1
+[[ -n "$MINIMAL_SESSION" ]] && [[ "$MINIMAL_SESSION" == "$CURRENT_SESSION" ]] && exit 0
 
-# Exit if not a git repository
-if ! is_git_repository; then
-  exit 0
-fi
+SHOW_GIT=$(tmux show-option -gv @tokyo-night-tmux_show_git 2>/dev/null)
+[[ "$SHOW_GIT" == "0" ]] && exit 0
+
+cd "$1" || exit 0
+
+git rev-parse --git-dir &>/dev/null || exit 0
 
 RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"
 
-# Get branch name
-BRANCH=$(get_git_branch_truncated 25)
-
-# Get sync status
-SYNC_MODE=$(get_repository_sync_status)
-
-# Initialize counters
-CHANGED_COUNT=0
-INSERTIONS_COUNT=0
-DELETIONS_COUNT=0
-UNTRACKED_COUNT=0
-
-# Get detailed stats if there are local changes
-if [[ "$SYNC_MODE" == "local_changes" ]]; then
-  read -r CHANGED_COUNT INSERTIONS_COUNT DELETIONS_COUNT < <(get_git_diff_stats)
-fi
-
-# Check untracked files if enabled
-CHECK_UNTRACKED=$(tmux show-option -gv @tokyo-night-tmux_git_check_untracked 2>/dev/null)
+CHECK_UNTRACKED=$(tmux show-option -gv @tokyo-night-tmux_git_untracked 2>/dev/null)
 CHECK_UNTRACKED="${CHECK_UNTRACKED:-1}"
 
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+
+if [[ ${#BRANCH} -gt 25 ]]; then
+  BRANCH="${BRANCH:0:25}…"
+fi
+
+STATUS=$(git status --porcelain 2>/dev/null | grep -cE "^(M| M)")
+
+CHANGED=0
+INSERTIONS=0
+DELETIONS=0
+UNTRACKED=0
+
+if [[ $STATUS -gt 0 ]]; then
+  DIFF_OUTPUT=$(git diff --numstat 2>/dev/null)
+  
+  if [[ -n "$DIFF_OUTPUT" ]]; then
+    while IFS=$'\t' read -r added removed file; do
+      (( CHANGED++ ))
+      [[ "$added" =~ ^[0-9]+$ ]] && (( INSERTIONS += added ))
+      [[ "$removed" =~ ^[0-9]+$ ]] && (( DELETIONS += removed ))
+    done <<< "$DIFF_OUTPUT"
+  fi
+  
+  SYNC_MODE="local_changes"
+else
+  NEED_PUSH=$(git log @{push}.. 2>/dev/null | wc -l | tr -d ' ')
+  
+  if [[ "$NEED_PUSH" =~ ^[0-9]+$ ]] && (( NEED_PUSH > 0 )); then
+    SYNC_MODE="need_push"
+  else
+    SYNC_MODE="clean"
+  fi
+fi
+
 if [[ $CHECK_UNTRACKED -eq 1 ]]; then
-  UNTRACKED_COUNT=$(get_git_untracked_count)
+  UNTRACKED=$(git ls-files --other --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
 fi
 
-# Format output strings
-STATUS_CHANGED=""
-STATUS_INSERTIONS=""
-STATUS_DELETIONS=""
-STATUS_UNTRACKED=""
-
-if [[ $CHANGED_COUNT -gt 0 ]]; then
-  STATUS_CHANGED="${RESET}#[fg=${THEME[yellow]},bg=${THEME[background]},bold] ${CHANGED_COUNT} "
-fi
-
-if [[ $INSERTIONS_COUNT -gt 0 ]]; then
-  STATUS_INSERTIONS="${RESET}#[fg=${THEME[green]},bg=${THEME[background]},bold] ${INSERTIONS_COUNT} "
-fi
-
-if [[ $DELETIONS_COUNT -gt 0 ]]; then
-  STATUS_DELETIONS="${RESET}#[fg=${THEME[red]},bg=${THEME[background]},bold] ${DELETIONS_COUNT} "
-fi
-
-if [[ $UNTRACKED_COUNT -gt 0 ]]; then
-  STATUS_UNTRACKED="${RESET}#[fg=${THEME[black]},bg=${THEME[background]},bold] ${UNTRACKED_COUNT} "
-fi
-
-# Set the status indicator based on the sync mode
 case "$SYNC_MODE" in
 local_changes)
-  REMOTE_STATUS="$RESET#[bg=${THEME[background]},fg=${THEME[bred]},bold]▒ 󱓎"
+    REMOTE_ICON="󱓎"
+    REMOTE_COLOR="${THEME[bred]}"
   ;;
 need_push)
-  REMOTE_STATUS="$RESET#[bg=${THEME[background]},fg=${THEME[red]},bold]▒ 󰛃"
+    REMOTE_ICON="󰛃"
+    REMOTE_COLOR="${THEME[red]}"
   ;;
 remote_ahead)
-  REMOTE_STATUS="$RESET#[bg=${THEME[background]},fg=${THEME[magenta]},bold]▒ 󰛀"
+    REMOTE_ICON="󰛀"
+    REMOTE_COLOR="${THEME[magenta]}"
   ;;
 *)
-  REMOTE_STATUS="$RESET#[bg=${THEME[background]},fg=${THEME[green]},bold]▒ "
+    REMOTE_ICON=""
+    REMOTE_COLOR="${THEME[green]}"
   ;;
 esac
 
-if [[ -n $BRANCH ]]; then
-  echo "$REMOTE_STATUS $RESET$BRANCH $STATUS_CHANGED$STATUS_INSERTIONS$STATUS_DELETIONS$STATUS_UNTRACKED"
+OUTPUT="$RESET#[bg=${THEME[background]},fg=${REMOTE_COLOR},bold]▒ ${REMOTE_ICON} ${RESET}${BRANCH}"
+
+if [[ $CHANGED -gt 0 ]]; then
+  OUTPUT="${OUTPUT} ${RESET}#[fg=${THEME[yellow]},bg=${THEME[background]}]󰄴 ${CHANGED}"
 fi
+
+if [[ $INSERTIONS -gt 0 ]]; then
+  OUTPUT="${OUTPUT} ${RESET}#[fg=${THEME[green]},bg=${THEME[background]}]󰐕 ${INSERTIONS}"
+fi
+
+if [[ $DELETIONS -gt 0 ]]; then
+  OUTPUT="${OUTPUT} ${RESET}#[fg=${THEME[red]},bg=${THEME[background]}]󰍵 ${DELETIONS}"
+fi
+
+if [[ $UNTRACKED -gt 0 ]]; then
+  OUTPUT="${OUTPUT} ${RESET}#[fg=${THEME[cyan]},bg=${THEME[background]}]󰋗 ${UNTRACKED}"
+fi
+
+echo "${OUTPUT} "

@@ -30,7 +30,7 @@ get_git_modified_count() {
 }
 
 get_git_diff_stats() {
-  git --no-optional-locks diff --numstat 2>/dev/null | awk 'NF==3 {changed+=1; ins+=$1; del+=$2} END {printf("%d %d %d", changed, ins, del)}'
+  git --no-optional-locks diff --numstat 2>/dev/null | awk 'NF==3 {changed+=1; ins+=$1; del+=$2} END {printf("%d %d %d", changed+0, ins+0, del+0)}'
 }
 
 get_git_untracked_count() {
@@ -75,10 +75,12 @@ get_seconds_since_last_fetch() {
   local last_fetch current_time
   
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    last_fetch=$(stat -f "%m" "${fetch_head}" 2>/dev/null || echo "0")
+    last_fetch=$(stat -f "%m" "${fetch_head}" 2>/dev/null)
   else
-    last_fetch=$(stat -c "%Y" "${fetch_head}" 2>/dev/null || echo "0")
+    last_fetch=$(stat -c "%Y" "${fetch_head}" 2>/dev/null)
   fi
+  
+  [[ ! "$last_fetch" =~ ^[0-9]+$ ]] && last_fetch=0
   
   current_time=$(date +%s)
   

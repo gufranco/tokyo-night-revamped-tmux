@@ -1,49 +1,42 @@
 #!/usr/bin/env bash
 
-# Check if enabled
-ENABLED=$(tmux show-option -gv @tokyo-night-tmux_show_weather 2>/dev/null)
-[[ ${ENABLED} -ne 1 ]] && exit 0
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="${SCRIPT_DIR}/../lib"
 
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$CURRENT_DIR/../lib/coreutils-compat.sh"
-source "$CURRENT_DIR/../lib/system.sh"
-source "$CURRENT_DIR/themes.sh"
+source "${LIB_DIR}/coreutils-compat.sh"
+source "${LIB_DIR}/constants.sh"
+source "${LIB_DIR}/widget-base.sh"
+source "${SCRIPT_DIR}/themes.sh"
 
-if ! check_any_command "curl" "wget"; then
-  echo "#[fg=${THEME[yellow]}]⚠ Weather requires 'curl' or 'wget' "
-  exit 0
-fi
+is_widget_enabled "@tokyo-night-tmux_show_weather" || exit 0
+
+command -v curl >/dev/null 2>&1 || command -v wget >/dev/null 2>&1 || exit 0
 
 UNITS=$(tmux show-option -gv @tokyo-night-tmux_weather_units 2>/dev/null)
-SHOW_ICON=$(tmux show-option -gv @tokyo-night-tmux_weather_show_icon 2>/dev/null)
-
 UNITS="${UNITS:-m}"
-SHOW_ICON="${SHOW_ICON:-1}"
 
-# Cache configuration (15 minutes)
 CACHE_FILE="/tmp/tmux_tokyo_night_weather_cache"
-CACHE_TTL=900
 
-# Check cache
 if [[ -f "$CACHE_FILE" ]]; then
-  if [[ "$OSTYPE" == "darwin"* ]]; then
+  local cache_time current_time cache_age
+  
+  if is_macos; then
     cache_time=$(stat -f "%m" "$CACHE_FILE" 2>/dev/null)
   else
     cache_time=$(stat -c "%Y" "$CACHE_FILE" 2>/dev/null)
   fi
-  current_time=$(date +%s)
   
   if [[ -n "$cache_time" ]] && [[ "$cache_time" =~ ^[0-9]+$ ]]; then
+    current_time=$(date +%s)
     cache_age=$((current_time - cache_time))
     
-    if [[ $cache_age -lt $CACHE_TTL ]]; then
+    if (( cache_age < WEATHER_CACHE_TTL )); then
       cat "$CACHE_FILE"
       exit 0
     fi
   fi
 fi
 
-# Fetch weather data (auto-detect location)
 WEATHER_URL="https://wttr.in/?format=%t&${UNITS}"
 
 if command -v curl >/dev/null 2>&1; then
@@ -52,40 +45,24 @@ elif command -v wget >/dev/null 2>&1; then
   WEATHER_DATA=$(wget -qO- "$WEATHER_URL" 2>/dev/null)
 fi
 
-if [[ -z "$WEATHER_DATA" ]]; then
-  exit 0
-fi
+[[ -z "$WEATHER_DATA" ]] && exit 0
 
-# Extract temperature for color coding
 TEMP=$(echo "$WEATHER_DATA" | grep -oE '[+-]?[0-9]+' | head -1)
 
-if [[ -n "$TEMP" ]]; then
-  # Color based on temperature
-  if (( TEMP >= 30 )); then
-    COLOR="${THEME[red]}"
-    ICON="󰖙"  # Sun hot
-  elif (( TEMP >= 20 )); then
-    COLOR="${THEME[yellow]}"
-    ICON="󰖙"  # Sun
-  elif (( TEMP >= 10 )); then
-    COLOR="${THEME[cyan]}"
-    ICON="󰖐"  # Cloud sun
-  elif (( TEMP >= 0 )); then
-    COLOR="${THEME[blue]}"
-    ICON="󰖐"  # Cloud
-  else
-    COLOR="${THEME[magenta]}"
-    ICON="󰜗"  # Snowflake
-  fi
-  
-  # Build output (consistent format: separator + icon + value)
-  if [[ "$SHOW_ICON" == "1" ]]; then
-    OUTPUT="#[fg=${COLOR},bg=default]░ ${ICON}${RESET} ${WEATHER_DATA} "
-  else
-    OUTPUT="#[fg=${COLOR},bg=default]░${RESET} ${WEATHER_DATA} "
-  fi
-  
-  # Cache the result
-  echo "$OUTPUT" > "$CACHE_FILE"
-  echo "$OUTPUT"
+[[ -z "$TEMP" ]] && exit 0
+
+if (( TEMP >= 30 )); then
+  ICON="󰖙"
+elif (( TEMP >= 20 )); then
+  ICON="󰖙"
+elif (( TEMP >= 10 )); then
+  ICON="󰖐"
+elif (( TEMP >= 0 )); then
+  ICON="󰖐"
+else
+  ICON="󰜗"
 fi
+
+OUTPUT="#[fg=${THEME[cyan]},bg=default]░ ${ICON}${RESET} ${WEATHER_DATA} "
+
+echo "$OUTPUT" | tee "$CACHE_FILE"

@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+
+readonly THRESHOLD_CRITICAL=80
+readonly THRESHOLD_WARNING=50
+readonly THRESHOLD_MEMORY_HIGH=60
+
+readonly THRESHOLD_DISK_CRITICAL=90
+readonly THRESHOLD_DISK_HIGH=75
+readonly THRESHOLD_DISK_MEDIUM=50
+
+readonly DEFAULT_BATTERY_LOW=21
+
+readonly PRESSURE_CRITICAL_SWAPOUTS=5000000
+readonly PRESSURE_WARNING_SWAPOUTS=1000000
+
+readonly PRESSURE_CRITICAL_PSI=50
+readonly PRESSURE_WARNING_PSI=10
+
+readonly WEATHER_CACHE_TTL=900
+readonly PING_CACHE_TTL=10
+
+readonly ICON_CPU_HOT="󰀪"
+readonly ICON_CPU_MEDIUM="󰾅"
+readonly ICON_CPU_COOL="󰾆"
+
+readonly ICON_GPU="󰢮"
+
+readonly ICON_MEMORY_CRITICAL="󰀪"
+readonly ICON_MEMORY_HIGH="󰍜"
+readonly ICON_MEMORY_NORMAL="󰍛"
+
+readonly ICON_SWAP="󰾴"
+
+readonly ICON_DISK_CRITICAL="󰀪"
+readonly ICON_DISK_WARNING="󰪥"
+readonly ICON_DISK_NORMAL="󰋊"
+
+readonly ICON_BATTERY_PLUG="󰚥"
+readonly ICON_BATTERY_NO="󱉝"
+
+readonly -a BATTERY_ICONS=(
+  "󰂎" "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"
+)
+
+readonly ICON_WIFI_UP="󰖩"
+readonly ICON_WIFI_DOWN="󰖪"
+readonly ICON_WIRED_UP="󰈀"
+readonly ICON_WIRED_DOWN="󰈂"
+readonly ICON_TRAFFIC_TX="󰕒"
+readonly ICON_TRAFFIC_RX="󰇚"
+readonly ICON_IP="󰩟"
+readonly ICON_VPN="󰌘"
+readonly ICON_PING="󰓅"
+
+readonly ICON_WEATHER_HOT="󰖙"
+readonly ICON_WEATHER_SUN="󰖙"
+readonly ICON_WEATHER_CLOUD_SUN="󰖐"
+readonly ICON_WEATHER_CLOUD="󰖐"
+readonly ICON_WEATHER_SNOW="󰜗"
+
+readonly ICON_GIT_CHANGES=""
+readonly ICON_GIT_INSERTIONS=""
+readonly ICON_GIT_DELETIONS=""
+readonly ICON_GIT_UNTRACKED=""
+
+readonly ICON_GIT_LOCAL_CHANGES="󱓎"
+readonly ICON_GIT_PUSH="󰛃"
+readonly ICON_GIT_PULL="󰛀"
+readonly ICON_GIT_CLEAN=""
+
+readonly ICON_DATETIME="󰃰"
+readonly ICON_TIMEZONE="󰥔"
+readonly ICON_MUSIC_PLAY=""
+readonly ICON_MUSIC_PAUSE="󰏤"
+readonly ICON_SSH="󰣀"
+readonly ICON_CLIENTS="󰀫"
+readonly ICON_SYNC="󰓦"
+readonly ICON_PATH=""
+readonly ICON_LOAD="󰑮"
+
+readonly SEPARATOR_WIDGET="░"
+
+readonly DEFAULT_WINDOW_ID_STYLE="digital"
+readonly DEFAULT_PANE_ID_STYLE="hsquare"
+readonly DEFAULT_ZOOM_ID_STYLE="dsquare"
+
+readonly DEFAULT_DATE_FORMAT="YMD"
+readonly DEFAULT_TIME_FORMAT="24H"
+
+readonly DEFAULT_WEATHER_UNITS="m"
+readonly DEFAULT_NETSPEED_REFRESH=1
+readonly DEFAULT_PATH_FORMAT="relative"
+
+export THRESHOLD_CRITICAL THRESHOLD_WARNING THRESHOLD_MEMORY_HIGH
+export THRESHOLD_DISK_CRITICAL THRESHOLD_DISK_HIGH THRESHOLD_DISK_MEDIUM
+export DEFAULT_BATTERY_LOW
+export PRESSURE_CRITICAL_SWAPOUTS PRESSURE_WARNING_SWAPOUTS
+export PRESSURE_CRITICAL_PSI PRESSURE_WARNING_PSI
+export WEATHER_CACHE_TTL PING_CACHE_TTL
+export SEPARATOR_WIDGET

@@ -1,157 +1,114 @@
 #!/usr/bin/env bash
 
-# Verify if the current session is the minimal session
-MINIMAL_SESSION_NAME=$(tmux show-option -gv @tokyo-night-tmux_minimal_session)
-TMUX_SESSION_NAME=$(tmux display-message -p '#S')
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="${SCRIPT_DIR}/../lib"
 
-if [ "$MINIMAL_SESSION_NAME" = "$TMUX_SESSION_NAME" ]; then
-  exit 0
-fi
+source "${LIB_DIR}/coreutils-compat.sh"
+source "${LIB_DIR}/constants.sh"
+source "${LIB_DIR}/widget-base.sh"
+source "${LIB_DIR}/music-helpers.sh"
+source "${SCRIPT_DIR}/themes.sh"
 
-# Imports
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
-. "${ROOT_DIR}/lib/coreutils-compat.sh"
+MINIMAL_SESSION=$(tmux show-option -gv @tokyo-night-tmux_minimal_session 2>/dev/null)
+CURRENT_SESSION=$(tmux display-message -p '#S')
 
-# Check the global value
-SHOW_MUSIC=$(tmux show-option -gv @tokyo-night-tmux_show_music)
+[[ -n "$MINIMAL_SESSION" ]] && [[ "$MINIMAL_SESSION" == "$CURRENT_SESSION" ]] && exit 0
 
-if [ "$SHOW_MUSIC" != "1" ]; then
-  exit 0
-fi
-
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$CURRENT_DIR/themes.sh"
+SHOW_MUSIC=$(tmux show-option -gv @tokyo-night-tmux_show_music 2>/dev/null)
+[[ "$SHOW_MUSIC" != "1" ]] && exit 0
 
 ACCENT_COLOR="${THEME[blue]}"
 BG_COLOR="${THEME[background]}"
-BG_BAR="${THEME[background]}"
 TIME_COLOR="${THEME[black]}"
 
+MAX_TITLE_WIDTH=25
 if [[ $1 =~ ^[[:digit:]]+$ ]]; then
   MAX_TITLE_WIDTH=$1
 else
   MAX_TITLE_WIDTH=$(($(tmux display -p '#{window_width}' 2>/dev/null || echo 120) - 90))
 fi
 
-# playerctl
-if command -v playerctl >/dev/null; then
-  PLAYER_STATUS=$(playerctl -a metadata --format "{{status}};{{mpris:length}};{{position}};{{title}}" | grep -m1 "Playing")
-  STATUS="playing"
-
-  # There is no playing media, check for paused media
-  if [ -z "$PLAYER_STATUS" ]; then
-    PLAYER_STATUS=$(playerctl -a metadata --format "{{status}};{{mpris:length}};{{position}};{{title}}" | grep -m1 "Paused")
-    STATUS="paused"
+get_music_metadata() {
+  local metadata
+  
+  if metadata=$(get_playerctl_metadata); then
+    parse_playerctl "$metadata"
+    return 0
   fi
-
-  TITLE=$(echo "$PLAYER_STATUS" | cut -d';' --fields=4)
-  DURATION=$(echo "$PLAYER_STATUS" | cut -d';' --fields=2)
-  POSITION=$(echo "$PLAYER_STATUS" | cut -d';' --fields=3)
-
-  # Convert position and duration to seconds from microseconds
-  DURATION=$((DURATION / 1000000))
-  POSITION=$((POSITION / 1000000))
-
-  if [ "$DURATION" -eq 0 ]; then
-    DURATION=-1
-    POSITION=0
+  
+  if metadata=$(get_mediacontrol_metadata); then
+    parse_mediacontrol "$metadata"
+    return 0
   fi
+  
+  return 1
+}
 
-# media-control (macOS)
-# https://github.com/ungive/media-control
-elif command -v media-control >/dev/null && [[ "$OSTYPE" == "darwin"* ]]; then
-  MEDIA_JSON=$(media-control get --now 2>/dev/null)
-
-  if [ -n "$MEDIA_JSON" ]; then
-    # Parse JSON fields (no jq dependency)
-    PLAYBACK_RATE=$(echo "$MEDIA_JSON" | grep -o '"playbackRate":[0-9]*' | cut -d':' -f2)
-    MEDIA_TITLE=$(echo "$MEDIA_JSON" | grep -o '"title":"[^"]*"' | sed 's|"title":"||' | sed 's|"$||')
-    MEDIA_ARTIST=$(echo "$MEDIA_JSON" | grep -o '"artist":"[^"]*"' | sed 's|"artist":"||' | sed 's|"$||')
-    DURATION=$(echo "$MEDIA_JSON" | grep -o '"duration":[0-9.]*' | cut -d':' -f2 | cut -d'.' -f1)
-    # Use elapsedTime instead of elapsedTimeNow for accurate position
-    POSITION=$(echo "$MEDIA_JSON" | grep -o '"elapsedTime":[0-9.]*' | cut -d':' -f2 | cut -d'.' -f1)
-
-    # Determine playback status
-    if [ "$PLAYBACK_RATE" -gt 0 ] 2>/dev/null; then
-      STATUS="playing"
-    else
-      STATUS="paused"
-    fi
-
-    # Build title
-    if [ -n "$MEDIA_ARTIST" ] && [ -n "$MEDIA_TITLE" ]; then
-      TITLE="$MEDIA_ARTIST - $MEDIA_TITLE"
-    elif [ -n "$MEDIA_TITLE" ]; then
-      TITLE="$MEDIA_TITLE"
-    fi
-
-    # Handle live streams or unknown duration
-    if [ -z "$DURATION" ] || [ "$DURATION" -eq 0 ]; then
-      DURATION=-1
-      POSITION=0
-    fi
-    
-    # Detect invalid data from media-control for streaming content
-    # If duration and position are exactly the same, it's likely incorrect
-    if [ "$DURATION" -eq "$POSITION" ] && [ "$DURATION" -lt 300 ]; then
-      # Likely chunked streaming data (YouTube, etc), hide time display
-      DURATION=-1
-      POSITION=0
-    fi
-  fi
-fi
-
-# Calculate the progress bar for sane durations
-# Exclude if duration < 10 seconds (likely invalid streaming data)
-if [ -n "$DURATION" ] && [ -n "$POSITION" ] && [ "$DURATION" -gt 10 ] && [ "$DURATION" -lt 3600 ]; then
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS: manual conversion (date -d@ is not supported)
-    TIME=$(printf "[%02d:%02d / %02d:%02d]" $((POSITION / 60)) $((POSITION % 60)) $((DURATION / 60)) $((DURATION % 60)))
+format_play_state() {
+  local status="${1}"
+  
+  if [[ "$status" == "playing" ]]; then
+    echo "░ ${ICON_MUSIC_PLAY}"
   else
-    # Linux: use GNU date
-    TIME="[$(date -d@"$POSITION" -u +%M:%S) / $(date -d@"$DURATION" -u +%M:%S)]"
+    echo "░ ${ICON_MUSIC_PAUSE}"
   fi
-else
-  TIME="[--:--]"
-fi
-if [ -n "$TITLE" ]; then
-  if [ "$STATUS" = "playing" ]; then
-    PLAY_STATE="░ $OUTPUT"
+}
+
+truncate_title() {
+  local title="${1}"
+  local max_width="${2}"
+  local play_state="${3}"
+  
+  local output="${play_state} ${title}"
+  
+  if (( ${#output} >= max_width )); then
+    output="${play_state} ${title:0:$((max_width - 1))}…"
+  fi
+  
+  echo "$output"
+}
+
+build_progress_bar() {
+  local title="${1}"
+  local time="${2}"
+  local position="${3}"
+  local duration="${4}"
+  
+  local output="${title} ${time} "
+  local only_out="${title} "
+  local time_index=${#only_out}
+  local output_length=${#output}
+  local percent=$((position * 100 / duration))
+  local progress=$((output_length * percent / 100))
+  
+  if (( progress <= time_index )); then
+    echo "#[nobold,fg=$BG_COLOR,bg=$ACCENT_COLOR]${title:0:progress}#[fg=$ACCENT_COLOR,bg=$BG_COLOR]${title:progress:time_index} #[fg=$TIME_COLOR,bg=$BG_COLOR]$time "
   else
-    PLAY_STATE="░ 󰏤$OUTPUT"
+    local diff=$((progress - time_index))
+    echo "#[nobold,fg=$BG_COLOR,bg=$ACCENT_COLOR]${title:0:time_index} #[fg=$BG_COLOR,bg=$ACCENT_COLOR]${output:time_index:diff}#[fg=$TIME_COLOR,bg=$BG_COLOR]${output:progress}"
   fi
-  OUTPUT="$PLAY_STATE $TITLE"
+}
 
-  # Only show the song title if we are over $MAX_TITLE_WIDTH characters
-  if [ "${#OUTPUT}" -ge "$MAX_TITLE_WIDTH" ]; then
-    OUTPUT="$PLAY_STATE ${TITLE:0:$MAX_TITLE_WIDTH-1}…"
-  fi
-else
-  OUTPUT=''
-fi
-
-MAX_TITLE_WIDTH=25
-if [ "${#OUTPUT}" -ge "$MAX_TITLE_WIDTH" ]; then
-  OUTPUT="$PLAY_STATE ${TITLE:0:$MAX_TITLE_WIDTH-1}"
-  # Remove trailing spaces
-  OUTPUT="${OUTPUT%"${OUTPUT##*[![:space:]]}"}…"
-fi
-
-if [ -z "$OUTPUT" ]; then
-  echo "$OUTPUT #[fg=green,bg=default]"
-else
-  OUT="$OUTPUT $TIME "
-  ONLY_OUT="$OUTPUT "
-  TIME_INDEX=${#ONLY_OUT}
-  OUTPUT_LENGTH=${#OUT}
-  PERCENT=$((POSITION * 100 / DURATION))
-  PROGRESS=$((OUTPUT_LENGTH * PERCENT / 100))
-  O="$OUTPUT"
-
-  if [ "$PROGRESS" -le "$TIME_INDEX" ]; then
-    echo "#[nobold,fg=$BG_COLOR,bg=$ACCENT_COLOR]${O:0:PROGRESS}#[fg=$ACCENT_COLOR,bg=$BG_BAR]${O:PROGRESS:TIME_INDEX} #[fg=$TIME_COLOR,bg=$BG_BAR]$TIME "
+main() {
+  local status title duration position
+  
+  IFS='|' read -r status title duration position <<< "$(get_music_metadata)" || exit 0
+  
+  [[ -z "$title" ]] && exit 0
+  
+  check_pause_timeout "$status" && exit 0
+  
+  local play_state output
+  play_state=$(format_play_state "$status")
+  output=$(truncate_title "$title" "$MAX_TITLE_WIDTH" "$play_state")
+  
+  if should_show_time "$duration"; then
+    local time
+    time="[$(format_time "$position") / $(format_time "$duration")]"
+    build_progress_bar "$output" "$time" "$position" "$duration"
   else
-    DIFF=$((PROGRESS - TIME_INDEX))
-    echo "#[nobold,fg=$BG_COLOR,bg=$ACCENT_COLOR]${O:0:TIME_INDEX} #[fg=$BG_BAR,bg=$ACCENT_COLOR]${OUT:TIME_INDEX:DIFF}#[fg=$TIME_COLOR,bg=$BG_BAR]${OUT:PROGRESS}"
+    echo "${play_state} ${title} "
   fi
-fi
+}
+
+main

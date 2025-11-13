@@ -1,40 +1,63 @@
 #!/usr/bin/env bash
 
-# Imports
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
-. "${ROOT_DIR}/lib/coreutils-compat.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="${SCRIPT_DIR}/../lib"
 
-format_hide=""
-format_none="0123456789"
-format_digital="🯰🯱🯲🯳🯴🯵🯶🯷🯸🯹"
-format_fsquare="󰎡󰎤󰎧󰎪󰎭󰎱󰎳󰎶󰎹󰎼"
-format_hsquare="󰎣󰎦󰎩󰎬󰎮󰎰󰎵󰎸󰎻󰎾"
-format_dsquare="󰎢󰎥󰎨󰎫󰎲󰎯󰎴󰎷󰎺󰎽"
-format_roman=" 󱂈󱂉󱂊󱂋󱂌󱂍󱂎󱂏󱂐"
-format_super="⁰¹²³⁴⁵⁶⁷⁸⁹"
-format_sub="₀₁₂₃₄₅₆₇₈₉"
+source "${LIB_DIR}/coreutils-compat.sh"
 
-ID=$1
-FORMAT=${2:-none}
+readonly FORMAT_HIDE=""
+readonly FORMAT_NONE="0123456789"
+readonly FORMAT_DIGITAL="🯰🯱🯲🯳🯴🯵🯶🯷🯸🯹"
+readonly FORMAT_FSQUARE="󰎡󰎤󰎧󰎪󰎭󰎱󰎳󰎶󰎹󰎼"
+readonly FORMAT_HSQUARE="󰎣󰎦󰎩󰎬󰎮󰎰󰎵󰎸󰎻󰎾"
+readonly FORMAT_DSQUARE="󰎢󰎥󰎨󰎫󰎲󰎯󰎴󰎷󰎺󰎽"
+readonly FORMAT_ROMAN=" 󱂈󱂉󱂊󱂋󱂌󱂍󱂎󱂏󱂐"
+readonly FORMAT_SUPER="⁰¹²³⁴⁵⁶⁷⁸⁹"
+readonly FORMAT_SUB="₀₁₂₃₄₅₆₇₈₉"
 
-# Preserve leading whitespace for bash
-format="$(eval echo \"\$format_${FORMAT}\")"
+get_format_string() {
+  local format_name="${1}"
+  
+  case "${format_name}" in
+    hide) echo "$FORMAT_HIDE" ;;
+    none) echo "$FORMAT_NONE" ;;
+    digital) echo "$FORMAT_DIGITAL" ;;
+    fsquare) echo "$FORMAT_FSQUARE" ;;
+    hsquare) echo "$FORMAT_HSQUARE" ;;
+    dsquare) echo "$FORMAT_DSQUARE" ;;
+    roman) echo "$FORMAT_ROMAN" ;;
+    super) echo "$FORMAT_SUPER" ;;
+    sub) echo "$FORMAT_SUB" ;;
+    *) echo "$FORMAT_NONE" ;;
+  esac
+}
 
-if [ "$FORMAT" = "hide" ]; then
-  exit 0
-fi
-
-if [ -z "$format" ]; then
-  echo "Invalid format: $FORMAT"
-  exit 1
-fi
-
-# If format is roman numerals (-r), only handle IDs of 1 digit
-if [ "$FORMAT" = "roman" ] && [ ${#ID} -gt 1 ]; then
-  echo -n "$ID "
-else
-  for ((i = 0; i < ${#ID}; i++)); do
-    DIGIT=${ID:i:1}
-    echo -n "${format:DIGIT:1} "
+format_number() {
+  local number="${1}"
+  local format_type="${2}"
+  local format_string
+  
+  format_string=$(get_format_string "$format_type")
+  
+  [[ "$format_type" == "hide" ]] && return
+  
+  if [[ "$format_type" == "roman" ]] && (( ${#number} > 1 )); then
+    echo -n "$number "
+    return
+  fi
+  
+  local i digit
+  for ((i = 0; i < ${#number}; i++)); do
+    digit=${number:i:1}
+    echo -n "${format_string:digit:1} "
   done
-fi
+}
+
+main() {
+  local id="${1}"
+  local format="${2:-none}"
+  
+  format_number "$id" "$format"
+}
+
+main "$@"

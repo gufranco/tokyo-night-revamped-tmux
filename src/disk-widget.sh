@@ -1,52 +1,58 @@
 #!/usr/bin/env bash
 
-# Imports
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
-. "${ROOT_DIR}/lib/coreutils-compat.sh"
-. "${ROOT_DIR}/lib/tmux-config.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="${SCRIPT_DIR}/../lib"
 
-# Check if enabled
-SHOW_DISK=$(tmux show-option -gv @tokyo-night-tmux_show_disk 2>/dev/null)
-[[ ${SHOW_DISK} -ne 1 ]] && exit 0
+source "${LIB_DIR}/coreutils-compat.sh"
+source "${LIB_DIR}/constants.sh"
+source "${LIB_DIR}/widget-base.sh"
+source "${SCRIPT_DIR}/themes.sh"
 
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$CURRENT_DIR/themes.sh"
+# ==============================================================================
+# Configuration
+# ==============================================================================
+
+# Exit if not enabled
+is_widget_enabled "@tokyo-night-tmux_show_disk" || exit 0
+
+DISK_PATH=$(tmux show-option -gv @tokyo-night-tmux_disk_path 2>/dev/null)
+DISK_PATH="${DISK_PATH:-/}"
 
 RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"
 
-DISK_PATH=$(get_tmux_option "@tokyo-night-tmux_disk_path" "/")
+# ==============================================================================
+# Disk Usage Calculation
+# ==============================================================================
 
-disk_info=$(df -h "$DISK_PATH" 2>/dev/null | awk 'NR==2 {print $5}')
+get_disk_usage() {
+  local disk_info usage_percent
 
-if [[ -z "$disk_info" ]]; then
-  exit 0
-fi
-
+  disk_info=$(df -h "$1" 2>/dev/null | awk 'NR==2 {print $5}') || return 1
 usage_percent=$(echo "$disk_info" | tr -d '%')
 
-if [[ ! "$usage_percent" =~ ^[0-9]+$ ]]; then
-  usage_percent=0
-fi
+  validate_percentage "$usage_percent"
+}
 
-# Validate percentage
-[[ "$usage_percent" -lt 0 ]] && usage_percent="0"
-[[ "$usage_percent" -gt 100 ]] && usage_percent="100"
+# ==============================================================================
+# Main
+# ==============================================================================
 
-# 4 levels of warning (more granular than CPU/Memory, matches iStats)
-if (( usage_percent >= 90 )); then
-  icon="󰀪"  # Critical - alert icon
-  color="#[fg=${THEME[red]},bg=default,bold]"  # Red bold
-elif (( usage_percent >= 75 )); then
-  icon="󰪥"  # High - warning icon
-  color="#[fg=${THEME[yellow]},bg=default]"  # Yellow
-elif (( usage_percent >= 50 )); then
-  icon="󰋊"  # Medium
-  color="#[fg=${THEME[blue]},bg=default]"  # Blue
-else
-  icon="󰋊"  # Normal
-  color="#[fg=${THEME[cyan]},bg=default]"  # Cyan
-fi
+main() {
+  local disk_usage icon color output
+  
+  # Get disk usage
+  disk_usage=$(get_disk_usage "$DISK_PATH")
+  
+  [[ -z "$disk_usage" ]] && exit 0
+  
+  # Get icon and color (4-tier system)
+  icon=$(get_disk_icon "$disk_usage")
+  color=$(get_color_4tier "$disk_usage" "${THEME[red]}" "${THEME[yellow]}" "${THEME[blue]}" "${THEME[cyan]}")
+  
+  # Build output
+  output=$(format_widget_output "$color" "$icon" "$disk_usage" "%" "$RESET")
+  
+  echo "$output"
+}
 
-# Build output (consistent format: separator + icon + value)
-echo "${color}░ ${icon}${RESET} ${usage_percent}% "
-
+main

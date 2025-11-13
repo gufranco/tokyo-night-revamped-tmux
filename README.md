@@ -265,42 +265,53 @@ set -g @tokyo-night-tmux_path_format relative # 'relative' or 'full'
 
 #### System Widget (Unified)
 
-**Recommended:** Unified system widget that shows CPU, GPU, Memory, Disk, and Battery in one clean widget.
+**Recommended:** Unified system widget that shows CPU, GPU, Memory, Swap, Disk, and Battery in one clean widget.
 
 ```bash
+# Master toggle
 set -g @tokyo-night-tmux_show_system 1
-set -g @tokyo-night-tmux_system_show_cpu 1
-set -g @tokyo-night-tmux_system_show_gpu 1
-set -g @tokyo-night-tmux_system_show_memory 1
-set -g @tokyo-night-tmux_system_show_disk 1
-set -g @tokyo-night-tmux_system_show_battery 1
-set -g @tokyo-night-tmux_system_memory_pressure 1
+
+# Component toggles (all enabled by default)
+set -g @tokyo-night-tmux_system_cpu 1
+set -g @tokyo-night-tmux_system_gpu 1
+set -g @tokyo-night-tmux_system_memory 1
+set -g @tokyo-night-tmux_system_swap 1
+set -g @tokyo-night-tmux_system_disk 1
+set -g @tokyo-night-tmux_system_battery 1
+
+# Specific configurations
 set -g @tokyo-night-tmux_system_disk_path "/"
-set -g @tokyo-night-tmux_system_battery_low_threshold 21
+set -g @tokyo-night-tmux_system_battery_threshold 20
 ```
 
 **Features:**
-- **Clean design:** Fixed colors (no distracting color changes)
-- **CPU (󰾆):** Cyan color, shows percentage
-- **GPU (󰾲):** Blue color, shows percentage (Apple Silicon/NVIDIA/AMD)
-- **Memory (󰍛):** Cyan color, shows percentage
-- **Memory pressure (●):** ONLY this indicator changes color (green/yellow/red)
-- **Disk (󰋊):** Cyan color, shows percentage
-- **Battery:** Yellow (normal), Red (critical <21%), plug icon when charging
-- **All metrics match iStats Menu exactly**
+- **Minimalist design:** All icons in cyan (no color spam)
+- **CPU (󰾆):** Cyan, shows percentage (user + system, matches iStats)
+- **GPU (󰢮):** Cyan, shows percentage (Apple Silicon via WindowServer)
+- **Memory (󰍛):** Cyan, shows percentage (wired + compressed, matches iStats)
+- **Swap (󰾴):** Cyan, shows percentage (only if swap > 0)
+- **Disk (󰋊):** Cyan, shows percentage
+- **Battery:** Cyan with proportional icons (11 levels)
+  - **Discharging:** 󰂎 (0-9%) → 󰁺 (10-19%) → ... → 󰁹 (100%)
+  - **Charging/Plugged:** 󰚥 (plug icon)
+  - **Critical alert:** Blinks RED when < threshold
 
 **Why unified widget?**
-- Cleaner visual appearance
-- Less visual noise (no color spam)
-- Grouped by context (all system resources together)
-- Professional look
+- Professional, minimalist appearance
+- No visual noise or distracting color changes
+- All system metrics grouped logically
+- Matches iStats Menu calculations exactly
 
 **Example output:**
 ```
-░ 󰾆 35% 󰾲 12% 󰍛 25% ● 󰋊 45% 󰚥 85%
+░ 󰾆 32% 󰢮 24% 󰍛 23% 󰾴 88% 󰋊 70% 󰚥 100%
+  (all cyan - clean and consistent)
 ```
 
-Choose individual widgets below if you prefer separate configuration.
+**Critical battery alert:**
+When battery < threshold (default 20%), icon and percentage blink in RED.
+
+Choose individual widgets below if you prefer separate configuration with dynamic colors.
 
 ---
 
@@ -521,20 +532,40 @@ set -g @tokyo-night-tmux_battery_low_threshold 21 # default
 Set variable value `0` to disable the widget. Remember to restart `tmux` after
 changing values.
 
-#### Git Status Widget
+#### Git Widget (Unified Local + Web)
 
-The git status widget shows local git repository information including branch name, changed files, insertions, deletions, and sync status with remote.
+Unified git widget that shows local repository status AND web stats (GitHub/GitLab) in one place.
 
 ```bash
 set -g @tokyo-night-tmux_show_git 1
-set -g @tokyo-night-tmux_git_check_untracked 1  # Check untracked files (default: 1)
+set -g @tokyo-night-tmux_git_untracked 1
+set -g @tokyo-night-tmux_git_web 1
 ```
 
-**Options:**
-- **git_check_untracked:** Enable/disable checking for untracked files
-  - Set to `0` to disable in large repositories for better performance
-  - When disabled, the  icon (untracked files) won't appear
-  - Recommended to disable in monorepos or repos with many build artifacts
+**Local Git Features:**
+- **Branch name:** Current branch (truncated at 25 chars)
+- **Sync status:** 󱓎 Local changes, 󰛃 Need push,  Clean
+- **Changes:** 󰄴 Modified files count
+- **Insertions:** 󰐕 Lines added
+- **Deletions:** 󰍵 Lines removed
+- **Untracked:** 󰋗 New files (optional)
+
+**Web Features (GitHub/GitLab):**
+- **GitHub ():** Auto-detects github.com repositories
+- **GitLab ():** Auto-detects gitlab.com repositories
+- **PRs/MRs:** 󰊤 Open pull requests (green)
+- **Reviews:** 󰭎 Reviews needed (yellow)
+- **Issues:** 󰀨 Assigned issues (magenta)
+- **Bugs:** 󰃤 Bug issues (red)
+
+**Example output:**
+```
+▒ 󱓎 master 󰄴 27 󰐕 1181 󰍵 1450  󰊤 0 󰭎 0 󰀨 0 󰃤 0
+```
+
+**Configuration:**
+- **git_untracked:** Set to `0` to disable untracked files check (better performance in large repos)
+- **git_web:** Set to `0` to disable GitHub/GitLab integration (requires `gh` or `glab` CLI)
 
 ##### Performance Options for Large Repositories
 

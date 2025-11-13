@@ -1,129 +1,153 @@
 #!/usr/bin/env bash
 
-# Imports
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
-. "${ROOT_DIR}/lib/coreutils-compat.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="${SCRIPT_DIR}/../lib"
 
-# Check if enabled
-SHOW_MEMORY=$(tmux show-option -gv @tokyo-night-tmux_show_memory 2>/dev/null)
-[[ ${SHOW_MEMORY} -ne 1 ]] && exit 0
+source "${LIB_DIR}/coreutils-compat.sh"
+source "${LIB_DIR}/constants.sh"
+source "${LIB_DIR}/widget-base.sh"
+source "${SCRIPT_DIR}/themes.sh"
 
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$CURRENT_DIR/themes.sh"
+# ==============================================================================
+# Configuration
+# ==============================================================================
+
+# Exit if not enabled
+is_widget_enabled "@tokyo-night-tmux_show_memory" || exit 0
+
+SHOW_PRESSURE=$(tmux show-option -gv @tokyo-night-tmux_show_memory_pressure 2>/dev/null)
+SHOW_PRESSURE="${SHOW_PRESSURE:-0}"
 
 RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"
 
-SHOW_MEMORY_PRESSURE=$(tmux show-option -gv @tokyo-night-tmux_show_memory_pressure 2>/dev/null)
-SHOW_MEMORY_PRESSURE="${SHOW_MEMORY_PRESSURE:-0}"
+# ==============================================================================
+# Memory Calculation (iStats Menu Method)
+# ==============================================================================
 
-memory_percent=0
-
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  # macOS: use vm_stat and sysctl (matches iStats Menu calculation)
-  total_mem=$(sysctl -n hw.memsize)
-  page_size=$(pagesize 2>/dev/null || sysctl -n hw.pagesize)
-
-  # Parse vm_stat output using $NF (last field) for robustness
-  vm_stats=$(vm_stat)
+get_memory_usage_macos() {
+  local total_mem page_size vm_stats
+  local pages_wired pages_compressed
+  local used_pages used_mem
+  
+  total_mem=$(sysctl -n hw.memsize 2>/dev/null) || return 1
+  page_size=$(pagesize 2>/dev/null || sysctl -n hw.pagesize 2>/dev/null) || return 1
+  
+  vm_stats=$(vm_stat 2>/dev/null) || return 1
   pages_wired=$(echo "$vm_stats" | awk '/Pages wired down/ {print $NF}' | tr -d '.')
   pages_compressed=$(echo "$vm_stats" | awk '/Pages occupied by compressor/ {print $NF}' | tr -d '.')
 
-  # Calculate App Memory (same as iStats Menu calculation)
-  # iStats uses: wired + compressed (NOT including active pages)
-  # This matches "Memory Used" in iStats Menu and represents non-swappable memory
+  # iStats method: wired + compressed only (not active)
   used_pages=$((pages_wired + pages_compressed))
   used_mem=$((used_pages * page_size))
 
-  # Calculate percentage
-  memory_percent=$(( (used_mem * 100) / total_mem ))
+  echo $(( (used_mem * 100) / total_mem ))
+}
+
+get_memory_usage_linux() {
+  local total_mem available_mem used_mem
   
-elif command -v free >/dev/null 2>&1; then
-  # Linux: use /proc/meminfo for accurate calculation
-  total_mem=$(awk '/MemTotal/ {print $2 * 1024}' /proc/meminfo)
-  available_mem=$(awk '/MemAvailable/ {print $2 * 1024}' /proc/meminfo)
+  total_mem=$(awk '/MemTotal/ {print $2 * 1024}' /proc/meminfo 2>/dev/null) || return 1
+  available_mem=$(awk '/MemAvailable/ {print $2 * 1024}' /proc/meminfo 2>/dev/null) || return 1
   
-  # Calculate used memory (total - available)
   used_mem=$(( total_mem - available_mem ))
   
-  # Calculate percentage
-  memory_percent=$(( (used_mem * 100) / total_mem ))
-else
-  echo "#[nobold,fg=${THEME[cyan]}]░ 󰍛 ${RESET}N/A "
-  exit 0
-fi
+  echo $(( (used_mem * 100) / total_mem ))
+}
 
-# Validate memory percentage
-[[ -z "$memory_percent" ]] && memory_percent="0"
-[[ "$memory_percent" -lt 0 ]] && memory_percent="0"
-[[ "$memory_percent" -gt 100 ]] && memory_percent="100"
+get_memory_usage() {
+  local usage
+  
+  if is_macos; then
+    usage=$(get_memory_usage_macos)
+  elif is_linux; then
+    usage=$(get_memory_usage_linux)
+  else
+    echo "0"
+    return
+  fi
+  
+  validate_percentage "${usage:-0}"
+}
 
-# Set icon and color based on memory usage (matches iStats thresholds)
-if [[ $memory_percent -ge 80 ]]; then
-  icon="󰀪"  # High memory (critical)
-  color="#[fg=${THEME[red]},bg=default,bold]"  # Red
-elif [[ $memory_percent -ge 60 ]]; then
-  icon="󰍜"  # Medium-high memory
-  color="#[fg=${THEME[yellow]},bg=default]"  # Yellow
-else
-  icon="󰍛"  # Low memory
-  color="#[fg=${THEME[cyan]},bg=default]"  # Cyan
-fi
+# ==============================================================================
+# Memory Pressure Indicator
+# ==============================================================================
 
-# Build output (consistent format: separator + icon + value)
-output="${color}░ ${icon}${RESET} ${memory_percent}% "
-
-# Add memory pressure indicator if enabled
-if [[ "${SHOW_MEMORY_PRESSURE}" == "1" ]]; then
-  pressure_color=""
-  pressure_icon="●"
-
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS: Check swapouts from vm_stat (reuse existing vm_stats)
+get_memory_pressure_macos() {
+  local vm_stats swapouts
+  
+  vm_stats=$(vm_stat 2>/dev/null) || return 1
     swapouts=$(echo "$vm_stats" | grep "Swapouts:" | awk '{print $NF}' | tr -d '.')
 
-    if (( swapouts > 5000000 )); then
-      pressure_color="${THEME[red]}"      # Critical pressure
-    elif (( swapouts > 1000000 )); then
-      pressure_color="${THEME[yellow]}"   # Medium pressure
-    else
-      pressure_color="${THEME[green]}"    # No pressure
-    fi
+  [[ -z "$swapouts" ]] && return 1
+  
+  if (( swapouts > PRESSURE_CRITICAL_SWAPOUTS )); then
+    echo "${THEME[red]}"
+  elif (( swapouts > PRESSURE_WARNING_SWAPOUTS )); then
+    echo "${THEME[yellow]}"
   else
-    # Linux: Check PSI (Pressure Stall Information) if available
-    if [[ -f /proc/pressure/memory ]]; then
-      pressure_some=$(grep "some" /proc/pressure/memory | awk '{print $2}' | cut -d'=' -f2 | cut -d'.' -f1)
-
-      if (( pressure_some > 50 )); then
-        pressure_color="${THEME[red]}"
-      elif (( pressure_some > 10 )); then
-        pressure_color="${THEME[yellow]}"
-      else
-        pressure_color="${THEME[green]}"
-      fi
-    else
-      # Fallback: check swap usage
-      swap_total=$(free | grep Swap | awk '{print $2}')
-      swap_used=$(free | grep Swap | awk '{print $3}')
-
-      if [[ "$swap_total" -gt 0 ]] && [[ "$swap_used" -gt 0 ]]; then
-        swap_percent=$(( (swap_used * 100) / swap_total ))
-
-        if (( swap_percent > 50 )); then
-          pressure_color="${THEME[red]}"
-        elif (( swap_percent > 10 )); then
-          pressure_color="${THEME[yellow]}"
-        else
-          pressure_color="${THEME[green]}"
-        fi
-      else
-        pressure_color="${THEME[green]}"
-      fi
-    fi
+    echo "${THEME[green]}"
   fi
+}
+
+get_memory_pressure_linux() {
+  local pressure_some
+  
+  [[ ! -f /proc/pressure/memory ]] && return 1
+  
+  pressure_some=$(grep "some" /proc/pressure/memory 2>/dev/null | awk '{print $2}' | cut -d'=' -f2 | cut -d'.' -f1)
+  
+  [[ -z "$pressure_some" ]] && return 1
+
+  if (( pressure_some > PRESSURE_CRITICAL_PSI )); then
+    echo "${THEME[red]}"
+  elif (( pressure_some > PRESSURE_WARNING_PSI )); then
+    echo "${THEME[yellow]}"
+      else
+    echo "${THEME[green]}"
+      fi
+}
+
+get_memory_pressure_color() {
+  local pressure_color
+  
+  if is_macos; then
+    pressure_color=$(get_memory_pressure_macos)
+  elif is_linux; then
+    pressure_color=$(get_memory_pressure_linux)
+  fi
+  
+  echo "${pressure_color}"
+}
+
+# ==============================================================================
+# Main
+# ==============================================================================
+
+main() {
+  local memory_usage icon color output
+  
+  # Get memory usage
+  memory_usage=$(get_memory_usage)
+  
+  # Get icon and color
+  icon=$(get_memory_icon "$memory_usage")
+  color=$(get_color_3tier "$memory_usage" "${THEME[red]}" "${THEME[yellow]}" "${THEME[cyan]}")
+  
+  # Build output
+  output=$(format_widget_output "$color" "$icon" "$memory_usage" "%" "$RESET")
+  
+  # Add memory pressure indicator if enabled
+  if [[ $SHOW_PRESSURE -eq 1 ]]; then
+    local pressure_color
+    pressure_color=$(get_memory_pressure_color)
 
   if [[ -n "$pressure_color" ]]; then
-    output+="#[fg=${pressure_color}]${pressure_icon} "
+      output="${output}#[fg=${pressure_color}]${ICON_MEMORY_PRESSURE}${RESET} "
   fi
 fi
 
 echo "$output"
+}
+
+main

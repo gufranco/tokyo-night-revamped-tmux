@@ -1,48 +1,57 @@
 #!/usr/bin/env bash
 
-# Imports
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
-. "${ROOT_DIR}/lib/coreutils-compat.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="${SCRIPT_DIR}/../lib"
 
-# Check if enabled
-SHOW_CPU=$(tmux show-option -gv @tokyo-night-tmux_show_cpu 2>/dev/null)
-[[ ${SHOW_CPU} -ne 1 ]] && exit 0
+source "${LIB_DIR}/coreutils-compat.sh"
+source "${LIB_DIR}/constants.sh"
+source "${LIB_DIR}/widget-base.sh"
+source "${SCRIPT_DIR}/themes.sh"
 
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$CURRENT_DIR/themes.sh"
+# ==============================================================================
+# Configuration
+# ==============================================================================
+
+# Exit if not enabled
+is_widget_enabled "@tokyo-night-tmux_show_cpu" || exit 0
+
+SHOW_LOAD=$(tmux show-option -gv @tokyo-night-tmux_show_load_average 2>/dev/null)
+SHOW_LOAD="${SHOW_LOAD:-0}"
 
 RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"
 
-# Configuration
-SHOW_LOAD=$(tmux show-option -gv @tokyo-night-tmux_show_load_average 2>/dev/null)
-SHOW_LOAD="${SHOW_LOAD:-0}"  # Default: disabled
+# ==============================================================================
+# CPU Usage Calculation
+# ==============================================================================
 
-cpu_usage="0"
-
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  # macOS: use top (matches Activity Monitor/iStats calculation)
-  # -l 1 for speed, -n 0 for no process list
-  cpu_line=$(top -l 1 -n 0 | grep "CPU usage")
+get_cpu_usage_macos() {
+  local cpu_line cpu_user cpu_sys
+  
+  cpu_line=$(top -l 1 -n 0 2>/dev/null | grep "CPU usage") || return 1
   cpu_user=$(echo "$cpu_line" | awk '{print $3}' | sed 's/%//')
   cpu_sys=$(echo "$cpu_line" | awk '{print $5}' | sed 's/%//')
 
-  # Calculate total (user + system) like iStats Menu
+  # Calculate total (user + system) - matches iStats Menu
   if command -v bc >/dev/null 2>&1; then
-    cpu_usage=$(echo "$cpu_user + $cpu_sys" | bc | cut -d'.' -f1)
+    echo "$cpu_user + $cpu_sys" | bc 2>/dev/null | cut -d'.' -f1
   else
-    # Fallback without bc (less precise but works)
-    cpu_usage=$(awk "BEGIN {printf \"%.0f\", $cpu_user + $cpu_sys}")
+    awk "BEGIN {printf \"%.0f\", $cpu_user + $cpu_sys}" 2>/dev/null
   fi
+}
 
-elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  # Linux: read from /proc/stat
-  read -r _ user nice system idle _ < /proc/stat
+get_cpu_usage_linux() {
+  local user nice system idle
+  local total_initial idle_initial
+  local total_final idle_final
+  local total_diff idle_diff
+  
+  read -r _ user nice system idle _ < /proc/stat || return 1
   total_initial=$((user + nice + system + idle))
   idle_initial=$idle
 
   sleep 0.1
 
-  read -r _ user nice system idle _ < /proc/stat
+  read -r _ user nice system idle _ < /proc/stat || return 1
   total_final=$((user + nice + system + idle))
   idle_final=$idle
 
@@ -50,46 +59,71 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
   idle_diff=$((idle_final - idle_initial))
 
   if [[ $total_diff -gt 0 ]]; then
-    cpu_usage=$(( (total_diff - idle_diff) * 100 / total_diff ))
+    echo $(( (total_diff - idle_diff) * 100 / total_diff ))
+else
+    echo "0"
   fi
-else
-  echo "#[nobold,fg=$ACCENT_COLOR]░  ${RESET}N/A "
-  exit 0
-fi
+}
 
-# Validate CPU usage
-[[ -z "$cpu_usage" ]] && cpu_usage="0"
-[[ "$cpu_usage" -lt 0 ]] && cpu_usage="0"
-[[ "$cpu_usage" -gt 100 ]] && cpu_usage="100"
-
-# Set icon and color based on CPU usage (matches iStats thresholds)
-if [[ $cpu_usage -ge 80 ]]; then
-  icon="󰀪"  # High CPU (hot)
-  color="#[fg=${THEME[red]},bg=default,bold]"  # Red
-elif [[ $cpu_usage -ge 50 ]]; then
-  icon="󰾅"  # Medium CPU
-  color="#[fg=${THEME[yellow]},bg=default]"  # Yellow
-else
-  icon="󰾆"  # Low CPU (cool)
-  color="#[fg=${THEME[cyan]},bg=default]"  # Cyan
-fi
-
-# Build output (consistent format: separator + icon + value)
-output="${color}░ ${icon}${RESET} ${cpu_usage}%"
-
-# Add load average if enabled
-if [[ $SHOW_LOAD -eq 1 ]]; then
-  # Get 1-minute load average
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS: use sysctl
-    load_avg=$(sysctl -n vm.loadavg 2>/dev/null | awk '{print $2}')
+get_cpu_usage() {
+  local usage
+  
+  if is_macos; then
+    usage=$(get_cpu_usage_macos)
+  elif is_linux; then
+    usage=$(get_cpu_usage_linux)
   else
-    # Linux: read from /proc/loadavg
-    load_avg=$(cat /proc/loadavg 2>/dev/null | awk '{print $1}')
+    echo "0"
+    return
   fi
+  
+  validate_percentage "${usage:-0}"
+}
 
-  [[ -n "$load_avg" ]] && output="${output} ${RESET}#[dim]󰑮${RESET} ${load_avg}"
+# ==============================================================================
+# Load Average
+# ==============================================================================
+
+get_load_average() {
+  local load_avg
+  
+  if is_macos; then
+    load_avg=$(sysctl -n vm.loadavg 2>/dev/null | awk '{print $2}')
+  elif is_linux; then
+    load_avg=$(awk '{print $1}' /proc/loadavg 2>/dev/null)
+  fi
+  
+  echo "${load_avg}"
+}
+
+# ==============================================================================
+# Main
+# ==============================================================================
+
+main() {
+  local cpu_usage icon color output
+  
+  # Get CPU usage
+  cpu_usage=$(get_cpu_usage)
+  
+  # Get icon and color
+  icon=$(get_cpu_icon "$cpu_usage")
+  color=$(get_color_3tier "$cpu_usage" "${THEME[red]}" "${THEME[yellow]}" "${THEME[cyan]}")
+  
+  # Build output
+  output=$(format_widget_output "$color" "$icon" "$cpu_usage" "%" "$RESET")
+  
+  # Add load average if enabled
+  if [[ $SHOW_LOAD -eq 1 ]]; then
+    local load_avg
+    load_avg=$(get_load_average)
+    
+    if [[ -n "$load_avg" ]]; then
+      output="${output}${RESET}#[dim]${ICON_LOAD}${RESET} ${load_avg} "
+    fi
 fi
 
-echo "${output} "
+  echo "$output"
+}
 
+main

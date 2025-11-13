@@ -4,12 +4,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LIB_DIR="${SCRIPT_DIR}/../lib"
 
 source "${LIB_DIR}/coreutils-compat.sh"
-source "${LIB_DIR}/tmux-config.sh"
+source "${LIB_DIR}/constants.sh"
+source "${LIB_DIR}/widget-base.sh"
 source "${SCRIPT_DIR}/themes.sh"
 
-if ! is_option_enabled "@tokyo-night-tmux_show_clients"; then
-  exit 0
-fi
+is_widget_enabled "@tokyo-night-tmux_show_clients" || exit 0
 
 RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"
 
@@ -20,20 +19,14 @@ get_client_count() {
   tmux list-clients 2>/dev/null | wc -l | tr -d ' '
 }
 
-render_clients_widget() {
+main() {
   local count
+  
   count=$(get_client_count)
   
-  if (( count < MINIMUM )); then
-    return
-  fi
+  (( count < MINIMUM )) && exit 0
   
-  local icon="󰀫"
-  local color="${THEME[cyan]}"
-  
-  # Build output (consistent format: separator + icon + value)
-  echo "#[fg=${color},bg=default]░ ${icon}${RESET} ${count} "
+  echo "#[fg=${THEME[cyan]},bg=default]░ ${ICON_CLIENTS}${RESET} ${count} "
 }
 
-render_clients_widget
-
+main

@@ -4,12 +4,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LIB_DIR="${SCRIPT_DIR}/../lib"
 
 source "${LIB_DIR}/coreutils-compat.sh"
-source "${LIB_DIR}/tmux-config.sh"
+source "${LIB_DIR}/constants.sh"
+source "${LIB_DIR}/widget-base.sh"
 source "${SCRIPT_DIR}/themes.sh"
 
-if ! is_option_enabled "@tokyo-night-tmux_show_sync"; then
-  exit 0
-fi
+is_widget_enabled "@tokyo-night-tmux_show_sync" || exit 0
 
 RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"
 
@@ -23,17 +22,10 @@ is_panes_synchronized() {
   [[ "$sync_status" == "on" ]]
 }
 
-render_sync_widget() {
-  if ! is_panes_synchronized; then
-    return
-  fi
+main() {
+  is_panes_synchronized || exit 0
   
-  local icon="󰓦"
-  local color="${THEME[yellow]}"  # Yellow - warning/attention
-  
-  # Build output (consistent format: separator + icon + value)
-  echo "#[fg=${color},bg=default]░ ${icon}${RESET} ${SYNC_LABEL} "
+  echo "#[fg=${THEME[yellow]},bg=default]░ ${ICON_SYNC}${RESET} ${SYNC_LABEL} "
 }
 
-render_sync_widget
-
+main
