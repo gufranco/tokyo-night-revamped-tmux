@@ -51,23 +51,13 @@ if [[ $STATUS -gt 0 ]]; then
       [[ "$removed" =~ ^[0-9]+$ ]] && (( DELETIONS += removed ))
     done <<< "$DIFF_OUTPUT"
   fi
-  
-  SYNC_ICON="󱓎"
-else
-  NEED_PUSH=$(git log @{push}.. 2>/dev/null | wc -l | tr -d ' ')
-  
-  if [[ "$NEED_PUSH" =~ ^[0-9]+$ ]] && (( NEED_PUSH > 0 )); then
-    SYNC_ICON="󰛃"
-  else
-    SYNC_ICON=""
-  fi
 fi
 
 if [[ $CHECK_UNTRACKED -eq 1 ]]; then
   UNTRACKED=$(git ls-files --other --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
 fi
 
-OUTPUT="${CYAN}░ ${SYNC_ICON}${RESET} ${BRANCH}"
+OUTPUT="${CYAN}░${RESET} ${BRANCH}"
 
 [[ $CHANGED -gt 0 ]] && OUTPUT="${OUTPUT} ${CYAN}󰄴${RESET} ${CHANGED}"
 [[ $INSERTIONS -gt 0 ]] && OUTPUT="${OUTPUT} ${CYAN}󰐕${RESET} ${INSERTIONS}"
