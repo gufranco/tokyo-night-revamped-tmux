@@ -72,12 +72,11 @@ netspeed="#($SCRIPTS_PATH/network-widget.sh)"
 git="#($SCRIPTS_PATH/git-widget.sh #{pane_current_path})"
 
 # Environment & Context
-weather="#($SCRIPTS_PATH/weather-widget.sh)"
-datetime="#($SCRIPTS_PATH/datetime-widget.sh)"
+context="#($SCRIPTS_PATH/context-widget.sh)"
 
 # Legacy variable names for compatibility
 git_status="$git"
-date_and_time="$datetime"
+date_and_time="$context"
 
 # ==============================================================================
 # Status Left (Session Name)
@@ -101,16 +100,15 @@ tmux set -g window-status-separator ""
 WIDGETS_ORDER="$(tmux show-option -gv @tokyo-night-tmux_widgets_order 2>/dev/null)"
 
 if [[ -z "$WIDGETS_ORDER" ]]; then
-  WIDGETS_ORDER="system,git,weather,netspeed,datetime"
+  WIDGETS_ORDER="system,git,netspeed,context"
 fi
 
 # Build widget mapping
 declare -A WIDGET_MAP=(
   ["system"]="$system"
   ["git"]="$git"
-  ["weather"]="$weather"
   ["netspeed"]="$netspeed"
-  ["datetime"]="$datetime"
+  ["context"]="$context"
 )
 
 STATUS_RIGHT=""
