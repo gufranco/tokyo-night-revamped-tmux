@@ -67,7 +67,7 @@ if [[ $CHECK_UNTRACKED -eq 1 ]]; then
   UNTRACKED=$(git ls-files --other --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
 fi
 
-OUTPUT="${CYAN}▒ ${SYNC_ICON}${RESET} ${BRANCH}"
+OUTPUT="${CYAN}░ ${SYNC_ICON}${RESET} ${BRANCH}"
 
 [[ $CHANGED -gt 0 ]] && OUTPUT="${OUTPUT} ${CYAN}󰄴${RESET} ${CHANGED}"
 [[ $INSERTIONS -gt 0 ]] && OUTPUT="${OUTPUT} ${CYAN}󰐕${RESET} ${INSERTIONS}"

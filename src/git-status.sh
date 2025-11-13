@@ -82,7 +82,7 @@ remote_ahead)
   ;;
 esac
 
-OUTPUT="$RESET#[fg=${THEME[cyan]},bg=default]▒ ${REMOTE_ICON}${RESET} ${BRANCH}"
+OUTPUT="$RESET#[fg=${THEME[cyan]},bg=default]░ ${REMOTE_ICON}${RESET} ${BRANCH}"
 
 if [[ $CHANGED -gt 0 ]]; then
   OUTPUT="${OUTPUT} ${RESET}#[fg=${THEME[yellow]},bg=${THEME[background]}]󰄴 ${CHANGED}"
