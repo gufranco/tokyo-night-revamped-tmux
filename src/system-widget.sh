@@ -189,7 +189,7 @@ if [[ $SHOW_BATTERY -eq 1 ]]; then
   fi
 fi
 
-  [[ -n "$output" ]] && echo "░ ${output} "
+  [[ -n "$output" ]] && echo "${CYAN}░${RESET} ${output} "
 }
 
 main

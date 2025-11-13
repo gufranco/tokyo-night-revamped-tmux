@@ -17,7 +17,9 @@ UNITS="${UNITS:-m}"
 
 CACHE_FILE="/tmp/tmux_tokyo_night_weather_cache"
 
-if [[ -f "$CACHE_FILE" ]]; then
+check_cache_valid() {
+  [[ ! -f "$CACHE_FILE" ]] && return 1
+  
   local cache_time current_time cache_age
   
   if is_macos; then
@@ -26,15 +28,17 @@ if [[ -f "$CACHE_FILE" ]]; then
     cache_time=$(stat -c "%Y" "$CACHE_FILE" 2>/dev/null)
   fi
   
-  if [[ -n "$cache_time" ]] && [[ "$cache_time" =~ ^[0-9]+$ ]]; then
-    current_time=$(date +%s)
-    cache_age=$((current_time - cache_time))
-    
-    if (( cache_age < WEATHER_CACHE_TTL )); then
-      cat "$CACHE_FILE"
-      exit 0
-    fi
-  fi
+  [[ ! "$cache_time" =~ ^[0-9]+$ ]] && return 1
+  
+  current_time=$(date +%s)
+  cache_age=$((current_time - cache_time))
+  
+  (( cache_age < WEATHER_CACHE_TTL ))
+}
+
+if check_cache_valid; then
+  cat "$CACHE_FILE"
+  exit 0
 fi
 
 WEATHER_URL="https://wttr.in/?format=%t&${UNITS}"

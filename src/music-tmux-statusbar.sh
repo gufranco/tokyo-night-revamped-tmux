@@ -46,11 +46,13 @@ get_music_metadata() {
 
 format_play_state() {
   local status="${1}"
+  local cyan="#[fg=${THEME[cyan]},bg=default]"
+  local reset="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"
   
   if [[ "$status" == "playing" ]]; then
-    echo "░ ${ICON_MUSIC_PLAY}"
+    echo "${cyan}░ ${ICON_MUSIC_PLAY}${reset}"
   else
-    echo "░ ${ICON_MUSIC_PAUSE}"
+    echo "${cyan}░ ${ICON_MUSIC_PAUSE}${reset}"
   fi
 }
 
