@@ -43,7 +43,7 @@ UNTRACKED=0
 
 if [[ $STATUS -gt 0 ]]; then
   DIFF_OUTPUT=$(git diff --numstat 2>/dev/null)
-  
+
   if [[ -n "$DIFF_OUTPUT" ]]; then
     while IFS=$'\t' read -r added removed file; do
       (( CHANGED++ ))
@@ -57,7 +57,7 @@ if [[ $CHECK_UNTRACKED -eq 1 ]]; then
   UNTRACKED=$(git ls-files --other --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
 fi
 
-OUTPUT="${CYAN}░ ${RESET} ${BRANCH}"
+OUTPUT="${CYAN}░ ${RESET}${BRANCH}"
 
 [[ $CHANGED -gt 0 ]] && OUTPUT="${OUTPUT} ${CYAN}󰄴${RESET} ${CHANGED}"
 [[ $INSERTIONS -gt 0 ]] && OUTPUT="${OUTPUT} ${CYAN}󰐕${RESET} ${INSERTIONS}"
@@ -66,10 +66,10 @@ OUTPUT="${CYAN}░ ${RESET} ${BRANCH}"
 
 if [[ $SHOW_WEB -eq 1 ]]; then
   REMOTE_URL=$(git config remote.origin.url 2>/dev/null)
-  
+
   if [[ -n "$REMOTE_URL" ]]; then
     PROVIDER=""
-    
+
     if [[ "$REMOTE_URL" =~ github\.com ]]; then
       PROVIDER="github"
       PROVIDER_ICON=""
@@ -77,37 +77,37 @@ if [[ $SHOW_WEB -eq 1 ]]; then
       PROVIDER="gitlab"
       PROVIDER_ICON=""
     fi
-    
+
     if [[ -n "$PROVIDER" ]]; then
       PR_COUNT=0
       REVIEW_COUNT=0
       ISSUE_COUNT=0
       BUG_COUNT=0
-      
+
       if [[ "$PROVIDER" == "github" ]] && command -v gh &>/dev/null; then
         PR_COUNT=$(gh pr list --json number --jq 'length' 2>/dev/null | head -1 | tr -d '\n ' || echo "0")
         REVIEW_COUNT=$(gh pr status --json reviewRequests --jq '.needsReview | length' 2>/dev/null | head -1 | tr -d '\n ' || echo "0")
         ISSUE_JSON=$(gh issue list --json "assignees,labels" --assignee @me 2>/dev/null || echo "[]")
         ISSUE_COUNT=$(echo "$ISSUE_JSON" | jq 'length' 2>/dev/null | head -1 | tr -d '\n ' || echo "0")
         BUG_COUNT=$(echo "$ISSUE_JSON" | jq 'map(select(.labels[]? | .name == "bug")) | length' 2>/dev/null | head -1 | tr -d '\n ' || echo "0")
-        
+
         [[ ! "$PR_COUNT" =~ ^[0-9]+$ ]] && PR_COUNT=0
         [[ ! "$REVIEW_COUNT" =~ ^[0-9]+$ ]] && REVIEW_COUNT=0
         [[ ! "$ISSUE_COUNT" =~ ^[0-9]+$ ]] && ISSUE_COUNT=0
         [[ ! "$BUG_COUNT" =~ ^[0-9]+$ ]] && BUG_COUNT=0
-        
+
         ISSUE_COUNT=$((ISSUE_COUNT - BUG_COUNT))
       elif [[ "$PROVIDER" == "gitlab" ]] && command -v glab &>/dev/null; then
         PR_COUNT=$(glab mr list 2>/dev/null | grep -cE "^!" || echo "0")
         REVIEW_COUNT=$(glab mr list --reviewer=@me 2>/dev/null | grep -cE "^!" || echo "0")
         ISSUE_COUNT=$(glab issue list 2>/dev/null | grep -cE "^#" || echo "0")
         BUG_COUNT=0
-        
+
         [[ ! "$PR_COUNT" =~ ^[0-9]+$ ]] && PR_COUNT=0
         [[ ! "$REVIEW_COUNT" =~ ^[0-9]+$ ]] && REVIEW_COUNT=0
         [[ ! "$ISSUE_COUNT" =~ ^[0-9]+$ ]] && ISSUE_COUNT=0
       fi
-      
+
       OUTPUT="${OUTPUT} ${CYAN}${PROVIDER_ICON}󰊤${RESET} ${PR_COUNT}"
       OUTPUT="${OUTPUT} ${CYAN}󰭎${RESET} ${REVIEW_COUNT}"
       OUTPUT="${OUTPUT} ${CYAN}󰀨${RESET} ${ISSUE_COUNT}"
