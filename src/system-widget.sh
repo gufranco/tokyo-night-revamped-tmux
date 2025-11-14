@@ -9,8 +9,17 @@ source "${LIB_DIR}/widget-base.sh"
 source "${LIB_DIR}/platform-detector.sh"
 source "${LIB_DIR}/themes.sh"
 source "${LIB_DIR}/color-scale.sh"
+source "${LIB_DIR}/cache.sh"
 
 is_widget_enabled "@tokyo-night-tmux_show_system" || exit 0
+
+REFRESH_RATE=$(get_refresh_rate)
+CACHED=$(get_cached_value "system" "$REFRESH_RATE")
+
+if [[ -n "$CACHED" ]]; then
+  echo "$CACHED"
+  exit 0
+fi
 
 SHOW_CPU=$(tmux show-option -gv @tokyo-night-tmux_system_cpu 2>/dev/null)
 SHOW_LOAD=$(tmux show-option -gv @tokyo-night-tmux_system_load 2>/dev/null)
@@ -291,7 +300,11 @@ main() {
     fi
   fi
 
-  [[ -n "$output" ]] && echo "${COLOR_CYAN}░${COLOR_RESET} ${output} "
+  if [[ -n "$output" ]]; then
+    local result="${COLOR_CYAN}░${COLOR_RESET} ${output} "
+    set_cached_value "system" "$result"
+    echo "$result"
+  fi
 }
 
 main

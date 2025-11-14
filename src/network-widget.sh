@@ -9,8 +9,17 @@ source "${LIB_DIR}/widget-base.sh"
 source "${LIB_DIR}/network-utils.sh"
 source "${LIB_DIR}/themes.sh"
 source "${LIB_DIR}/color-scale.sh"
+source "${LIB_DIR}/cache.sh"
 
 is_widget_enabled "@tokyo-night-tmux_show_netspeed" || exit 0
+
+REFRESH_RATE=$(get_refresh_rate)
+CACHED=$(get_cached_value "network" "$REFRESH_RATE")
+
+if [[ -n "$CACHED" ]]; then
+  echo "$CACHED"
+  exit 0
+fi
 
 INTERFACE=$(tmux show-option -gv @tokyo-night-tmux_netspeed_iface 2>/dev/null)
 SHOW_PING=$(tmux show-option -gv @tokyo-night-tmux_netspeed_ping 2>/dev/null)
@@ -67,4 +76,6 @@ if [[ $SHOW_PING -eq 1 ]]; then
   fi
 fi
 
-echo "${OUTPUT} "
+RESULT="${OUTPUT} "
+set_cached_value "network" "$RESULT"
+echo "$RESULT"

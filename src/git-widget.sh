@@ -7,6 +7,7 @@ source "${LIB_DIR}/coreutils-compat.sh"
 source "${LIB_DIR}/constants.sh"
 source "${LIB_DIR}/themes.sh"
 source "${LIB_DIR}/color-scale.sh"
+source "${LIB_DIR}/cache.sh"
 
 MINIMAL_SESSION=$(tmux show-option -gv @tokyo-night-tmux_minimal_session 2>/dev/null)
 CURRENT_SESSION=$(tmux display-message -p '#S')
@@ -19,6 +20,15 @@ SHOW_GIT=$(tmux show-option -gv @tokyo-night-tmux_show_git 2>/dev/null)
 cd "$1" || exit 0
 
 git rev-parse --git-dir &>/dev/null || exit 0
+
+REFRESH_RATE=$(get_refresh_rate)
+GIT_CACHE_KEY="git_$(pwd | sed 's/\//_/g')"
+CACHED=$(get_cached_value "$GIT_CACHE_KEY" "$REFRESH_RATE")
+
+if [[ -n "$CACHED" ]]; then
+  echo "$CACHED"
+  exit 0
+fi
 
 CHECK_UNTRACKED=$(tmux show-option -gv @tokyo-night-tmux_git_untracked 2>/dev/null)
 CHECK_UNTRACKED="${CHECK_UNTRACKED:-1}"
@@ -137,4 +147,6 @@ if [[ $SHOW_WEB -eq 1 ]]; then
   fi
 fi
 
-echo "${OUTPUT} "
+RESULT="${OUTPUT} "
+set_cached_value "$GIT_CACHE_KEY" "$RESULT"
+echo "$RESULT"
