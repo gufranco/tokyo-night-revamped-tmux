@@ -114,7 +114,7 @@ main() {
     cpu_count=$(get_cpu_count)
     
     if [[ -n "$load_avg" ]] && [[ -n "$cpu_count" ]] && [[ "$cpu_count" -gt 0 ]]; then
-      load_avg=$(echo "$load_avg" | tr ',' '.')
+      load_avg="${load_avg//,/.}"
       
       load_percent=$(awk "BEGIN {printf \"%.0f\", ($load_avg / $cpu_count) * 100}")
       
@@ -127,12 +127,11 @@ main() {
   fi
 
   if [[ $SHOW_GPU -eq 1 ]] && is_apple_silicon; then
-    local gpu_usage windowserver_cpu cpu_int gpu_display
-    windowserver_cpu=$(ps aux 2>/dev/null | grep "WindowServer" | grep -v grep | awk '{print $3}' | sort -rn | head -1)
-    cpu_int=$(echo "$windowserver_cpu" | tr ',' '.' | cut -d'.' -f1)
+    local gpu_usage gpu_display windowserver_cpu
+    windowserver_cpu=$(ps axo %cpu,command 2>/dev/null | awk '/WindowServer$/ {print int($1); exit}')
     
-    if [[ "$cpu_int" =~ ^[0-9]+$ ]]; then
-      gpu_usage=$(( cpu_int / 2 ))
+    if [[ -n "$windowserver_cpu" ]] && [[ "$windowserver_cpu" =~ ^[0-9]+$ ]]; then
+      gpu_usage=$(( windowserver_cpu / 2 ))
       (( gpu_usage > 100 )) && gpu_usage=100
       (( gpu_usage < 1 )) && gpu_usage=1
     else
@@ -149,17 +148,24 @@ main() {
   
     if is_macos; then
       mem_total=$(sysctl -n hw.memsize 2>/dev/null)
-      local page_size vm_stats pages_wired pages_compressed
+      local page_size pages_wired pages_compressed
       page_size=$(pagesize 2>/dev/null || sysctl -n hw.pagesize 2>/dev/null)
-      vm_stats=$(vm_stat 2>/dev/null)
-      pages_wired=$(echo "$vm_stats" | awk '/Pages wired down/ {print $NF}' | tr -d '.')
-      pages_compressed=$(echo "$vm_stats" | awk '/Pages occupied by compressor/ {print $NF}' | tr -d '.')
+      
+      read -r pages_wired pages_compressed < <(vm_stat 2>/dev/null | awk '
+        /Pages wired down/ {gsub(/\./, "", $NF); wired=$NF}
+        /Pages occupied by compressor/ {gsub(/\./, "", $NF); compressed=$NF}
+        END {print wired, compressed}
+      ')
+      
       mem_used=$(( (pages_wired + pages_compressed) * page_size ))
       mem_percent=$(( (mem_used * 100) / mem_total ))
     else
-      mem_total=$(awk '/MemTotal/ {print $2 * 1024}' /proc/meminfo 2>/dev/null)
-      local mem_available
-      mem_available=$(awk '/MemAvailable/ {print $2 * 1024}' /proc/meminfo 2>/dev/null)
+      read -r mem_total mem_available < <(awk '
+        /MemTotal/ {total=$2 * 1024}
+        /MemAvailable/ {available=$2 * 1024}
+        END {print total, available}
+      ' /proc/meminfo 2>/dev/null)
+      
       mem_used=$(( mem_total - mem_available ))
       mem_percent=$(( (mem_used * 100) / mem_total ))
     fi
@@ -175,28 +181,25 @@ main() {
     local swap_total swap_used swap_percent swap_color
     
     if is_macos; then
-      local sysctl_output
-      sysctl_output=$(sysctl -n vm.swapusage 2>/dev/null)
+      read -r swap_total swap_used < <(sysctl -n vm.swapusage 2>/dev/null | awk '{
+        gsub(/[,M]/, "", $3); total=$3
+        gsub(/[,M]/, "", $6); used=$6
+        print total, used
+      }')
       
-      if [[ -n "$sysctl_output" ]]; then
-        swap_total=$(echo "$sysctl_output" | grep -oE 'total = [0-9,]+' | grep -oE '[0-9,]+' | tr -d ',')
-        swap_used=$(echo "$sysctl_output" | grep -oE 'used = [0-9,]+' | grep -oE '[0-9,]+' | tr -d ',')
+      if [[ -n "$swap_total" ]] && [[ "$swap_total" =~ ^[0-9]+$ ]] && (( swap_total > 0 )); then
+        swap_percent=$(( (swap_used * 100) / swap_total ))
+        swap_percent=$(validate_percentage "$swap_percent")
+        swap_color=$(get_swap_color "$swap_percent")
         
-        if [[ "$swap_total" =~ ^[0-9]+$ ]] && (( swap_total > 0 )); then
-          swap_percent=$(( (swap_used * 100) / swap_total ))
-          swap_percent=$(validate_percentage "$swap_percent")
-          swap_color=$(get_swap_color "$swap_percent")
-          
-          [[ -n "$output" ]] && output="${output} "
-          output="${output}${swap_color}${ICON_SWAP} ${swap_percent}%${COLOR_RESET}"
-        fi
+        [[ -n "$output" ]] && output="${output} "
+        output="${output}${swap_color}${ICON_SWAP} ${swap_percent}%${COLOR_RESET}"
       fi
     else
       if command -v free >/dev/null 2>&1; then
-        swap_total=$(free | awk '/Swap:/ {print $2}')
-        swap_used=$(free | awk '/Swap:/ {print $3}')
+        read -r swap_total swap_used < <(free | awk '/Swap:/ {print $2, $3}')
     
-        if [[ "$swap_total" =~ ^[0-9]+$ ]] && (( swap_total > 0 )); then
+        if [[ -n "$swap_total" ]] && [[ "$swap_total" =~ ^[0-9]+$ ]] && (( swap_total > 0 )); then
           swap_percent=$(( (swap_used * 100) / swap_total ))
           swap_percent=$(validate_percentage "$swap_percent")
           swap_color=$(get_swap_color "$swap_percent")
@@ -209,13 +212,12 @@ main() {
   fi
 
   if [[ $SHOW_DISK -eq 1 ]]; then
-    local disk_path disk_info disk_percent disk_display
+    local disk_path disk_percent disk_display
     disk_path=$(tmux show-option -gv @tokyo-night-tmux_system_disk_path 2>/dev/null)
     disk_path="${disk_path:-/}"
-    disk_info=$(df -h "$disk_path" 2>/dev/null | awk 'NR==2 {print $5}')
+    disk_percent=$(df -h "$disk_path" 2>/dev/null | awk 'NR==2 {gsub(/%/, "", $5); print $5}')
   
-    if [[ -n "$disk_info" ]]; then
-      disk_percent=$(echo "$disk_info" | tr -d '%')
+    if [[ -n "$disk_percent" ]]; then
       disk_percent=$(validate_percentage "$disk_percent")
       disk_display=$(get_disk_color_and_icon "$disk_percent")
       
@@ -242,12 +244,15 @@ main() {
       local battery_status battery_percent icon color
     
       if is_macos; then
-        local ac_power pmstat
-        ac_power=$(pmset -g batt 2>/dev/null | head -1 | grep -i "AC Power")
-        pmstat=$(pmset -g batt 2>/dev/null | grep "$battery_name")
-        battery_status=$(echo "$pmstat" | awk '{print $4}' | sed 's/[^a-zA-Z]*//g')
-        battery_percent=$(echo "$pmstat" | awk '{print $3}' | sed 's/[^0-9]*//g')
-        [[ -n "$ac_power" ]] && battery_status="charging"
+        read -r battery_status battery_percent < <(pmset -g batt 2>/dev/null | awk -v name="$battery_name" '
+          NR==1 {ac=(/AC Power/ ? 1 : 0)}
+          $0 ~ name {
+            gsub(/[^0-9]/, "", $3)
+            gsub(/[^a-zA-Z]/, "", $4)
+            if (ac) print "charging", $3
+            else print $4, $3
+          }
+        ')
       else
         battery_status=$(<"/sys/class/power_supply/${battery_name}/status")
         battery_percent=$(<"/sys/class/power_supply/${battery_name}/capacity")
@@ -255,8 +260,7 @@ main() {
       
       battery_percent=$(validate_percentage "$battery_percent")
       
-      local status_lower
-      status_lower=$(echo "$battery_status" | tr '[:upper:]' '[:lower:]')
+      local status_lower="${battery_status,,}"
       
       case "${status_lower}" in
         charging|charged|full|ac)

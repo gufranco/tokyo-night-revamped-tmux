@@ -52,7 +52,8 @@ if [[ $STATUS -gt 0 ]]; then
 fi
 
 if [[ $CHECK_UNTRACKED -eq 1 ]]; then
-  UNTRACKED=$(git ls-files --other --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
+  UNTRACKED=$(git ls-files --other --exclude-standard 2>/dev/null | wc -l)
+  UNTRACKED="${UNTRACKED// /}"
 fi
 
 OUTPUT="${COLOR_CYAN}░ ⎇${COLOR_RESET} ${BRANCH}"
