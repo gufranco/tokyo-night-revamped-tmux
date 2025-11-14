@@ -36,47 +36,21 @@ window_number="#($SCRIPTS_PATH/number-widget.sh #I $window_id_style)"
 custom_pane="#($SCRIPTS_PATH/number-widget.sh #P $pane_id_style)"
 zoom_number="#($SCRIPTS_PATH/number-widget.sh #P $zoom_id_style)"
 
-# ==============================================================================
-# Widget Definitions (organized by context)
-# ==============================================================================
-
-# System Resources
 system="#($SCRIPTS_PATH/system-widget.sh)"
-
-# Network & Connectivity
 netspeed="#($SCRIPTS_PATH/network-widget.sh)"
-
-# Development & Git
 git="#($SCRIPTS_PATH/git-widget.sh #{pane_current_path})"
-
-# Environment & Context
 context="#($SCRIPTS_PATH/context-widget.sh)"
 
-# Legacy variable names for compatibility
 git_status="$git"
 date_and_time="$context"
 
-# ==============================================================================
-# Status Left (Session Name)
-# ==============================================================================
-# Consistent with status-right style: separator + icon (no solid blocks)
-# Prefix changes icon and color to green for visibility
 tmux set -g status-left "#{?client_prefix,#[fg=${THEME[green]}]󰠠,#[fg=${THEME[cyan]}]󰣀} #[fg=${THEME[cyan]}]░ $RESET"
 
-# ==============================================================================
-# Window Status Format
-# ==============================================================================
-# Active window - with right separator for consistency
-tmux set -g window-status-current-format "$RESET#[fg=${THEME[cyan]}]#{?#{==:#{pane_current_command},ssh},󰣀 ,  }#[fg=${THEME[cyan]},bold,nodim]$window_number#W#[nobold]#{?window_zoomed_flag, $zoom_number, $custom_pane}#{?window_last_flag,#[fg=${THEME[cyan]}] 󰁯 , }#[fg=${THEME[cyan]}]░ "
+tmux set -g window-status-current-format "$RESET#[fg=${THEME[cyan]}]#{?#{==:#{pane_current_command},ssh},󰣀 ,  }#[fg=${THEME[cyan]},bold,nodim]$window_number#W#[nobold]#{?window_zoomed_flag, $zoom_number, $custom_pane}#{?window_last_flag,#[fg=${THEME[cyan]}] 󰁯 , }"
 
-# Inactive windows - dimmed with right separator
-tmux set -g window-status-format "$RESET#[fg=${THEME[foreground]},dim]#{?#{==:#{pane_current_command},ssh},󰣀 ,  }${RESET}#[fg=${THEME[foreground]},dim]$window_number#W#{?window_zoomed_flag, $zoom_number, $custom_pane}#{?window_last_flag,#[fg=${THEME[cyan]}] 󰁯 , }#[fg=${THEME[cyan]},dim]░ "
+tmux set -g window-status-format "$RESET#[fg=${THEME[foreground]},dim]#{?#{==:#{pane_current_command},ssh},󰣀 ,  }${RESET}#[fg=${THEME[foreground]},dim]$window_number#W#{?window_zoomed_flag, $zoom_number, $custom_pane}#{?window_last_flag,#[fg=${THEME[cyan]}] 󰁯 , }"
 
 tmux set -g window-status-separator ""
-
-# ==============================================================================
-# Status Right (Widget Order Configuration)
-# ==============================================================================
 WIDGETS_ORDER="$(tmux show-option -gv @tokyo-night-tmux_widgets_order 2>/dev/null)"
 
 if [[ -z "$WIDGETS_ORDER" ]]; then
@@ -100,8 +74,5 @@ for widget in "${WIDGETS[@]}"; do
     STATUS_RIGHT="${STATUS_RIGHT}${WIDGET_MAP[$widget]}"
   fi
 done
-
-# Add right separator at the end
-STATUS_RIGHT="${STATUS_RIGHT}#[fg=${THEME[cyan]},bg=${THEME[background]}]░ "
 
 tmux set -g status-right "$STATUS_RIGHT"
