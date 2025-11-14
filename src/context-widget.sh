@@ -116,7 +116,7 @@ fi
 
 if [[ -n "$DATETIME" ]]; then
   [[ -n "$OUTPUT" ]] && OUTPUT="${OUTPUT} "
-  OUTPUT="${OUTPUT}${COLOR_CYAN}󰥔${COLOR_RESET} ${DATETIME}"
+  OUTPUT="${OUTPUT}${COLOR_CYAN}󰥔 ${DATETIME}${COLOR_RESET}"
 fi
 
 if [[ "$SHOW_TIMEZONE" == "1" ]] && [[ -n "$TIMEZONES" ]]; then
