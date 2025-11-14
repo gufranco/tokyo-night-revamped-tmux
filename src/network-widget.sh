@@ -10,6 +10,7 @@ source "${LIB_DIR}/network-utils.sh"
 source "${LIB_DIR}/themes.sh"
 source "${LIB_DIR}/color-scale.sh"
 source "${LIB_DIR}/cache.sh"
+source "${LIB_DIR}/format.sh"
 
 is_widget_enabled "@tokyo-night-tmux_show_netspeed" || exit 0
 
@@ -63,15 +64,15 @@ if [[ $SHOW_VPN -eq 1 ]]; then
   fi
 fi
 
-OUTPUT="${OUTPUT} ${rx_color}↓ ${rx_speed}${COLOR_RESET}"
-OUTPUT="${OUTPUT} ${tx_color}↑ ${tx_speed}${COLOR_RESET}"
+OUTPUT="${OUTPUT} ${rx_color}↓ $(pad_speed "$rx_speed")${COLOR_RESET}"
+OUTPUT="${OUTPUT} ${tx_color}↑ $(pad_speed "$tx_speed")${COLOR_RESET}"
 
 if [[ $SHOW_PING -eq 1 ]]; then
   ping_ms=$(get_ping_latency)
   
   if [[ -n "$ping_ms" ]] && [[ "$ping_ms" =~ ^[0-9]+$ ]]; then
     ping_color=$(get_net_ping_color "$ping_ms")
-    OUTPUT="${OUTPUT} ${ping_color}󰓅 ${ping_ms}ms${COLOR_RESET}"
+    OUTPUT="${OUTPUT} ${ping_color}󰓅 $(pad_number "$ping_ms" "ms" 5)${COLOR_RESET}"
   fi
 fi
 

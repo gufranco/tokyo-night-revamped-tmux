@@ -10,6 +10,7 @@ source "${LIB_DIR}/platform-detector.sh"
 source "${LIB_DIR}/themes.sh"
 source "${LIB_DIR}/color-scale.sh"
 source "${LIB_DIR}/cache.sh"
+source "${LIB_DIR}/format.sh"
 
 is_widget_enabled "@tokyo-night-tmux_show_system" || exit 0
 
@@ -114,7 +115,7 @@ main() {
     cpu_usage=$(get_cpu_usage_percentage)
     cpu_usage=$(validate_percentage "$cpu_usage")
     cpu_display=$(get_cpu_color_and_icon "$cpu_usage")
-    output="${cpu_display} ${cpu_usage}%${COLOR_RESET}"
+    output="${cpu_display} $(pad_percentage "$cpu_usage")${COLOR_RESET}"
   fi
 
   if [[ $SHOW_LOAD -eq 1 ]]; then
@@ -131,7 +132,7 @@ main() {
       load_color=$(get_system_color "$load_percent")
       
       [[ -n "$output" ]] && output="${output} "
-      output="${output}${load_color}${ICON_LOAD} ${load_percent}%${COLOR_RESET}"
+      output="${output}${load_color}${ICON_LOAD} $(pad_percentage "$load_percent")${COLOR_RESET}"
     fi
   fi
 
@@ -149,7 +150,7 @@ main() {
     
     gpu_display=$(get_gpu_color_and_icon "$gpu_usage")
     [[ -n "$output" ]] && output="${output} "
-    output="${output}${gpu_display} ${gpu_usage}%${COLOR_RESET}"
+    output="${output}${gpu_display} $(pad_percentage "$gpu_usage")${COLOR_RESET}"
   fi
   
   if [[ $SHOW_MEMORY -eq 1 ]]; then
@@ -183,7 +184,7 @@ main() {
     mem_display=$(get_memory_color_and_icon "$mem_percent")
   
     [[ -n "$output" ]] && output="${output} "
-    output="${output}${mem_display} ${mem_percent}%${COLOR_RESET}"
+    output="${output}${mem_display} $(pad_percentage "$mem_percent")${COLOR_RESET}"
   fi
   
   if [[ $SHOW_SWAP -eq 1 ]]; then
@@ -202,7 +203,7 @@ main() {
         swap_color=$(get_swap_color "$swap_percent")
         
         [[ -n "$output" ]] && output="${output} "
-        output="${output}${swap_color}${ICON_SWAP} ${swap_percent}%${COLOR_RESET}"
+        output="${output}${swap_color}${ICON_SWAP} $(pad_percentage "$swap_percent")${COLOR_RESET}"
       fi
     else
       if command -v free >/dev/null 2>&1; then
@@ -214,7 +215,7 @@ main() {
           swap_color=$(get_swap_color "$swap_percent")
           
           [[ -n "$output" ]] && output="${output} "
-          output="${output}${swap_color}${ICON_SWAP} ${swap_percent}%${COLOR_RESET}"
+          output="${output}${swap_color}${ICON_SWAP} $(pad_percentage "$swap_percent")${COLOR_RESET}"
         fi
       fi
     fi
@@ -231,7 +232,7 @@ main() {
       disk_display=$(get_disk_color_and_icon "$disk_percent")
       
       [[ -n "$output" ]] && output="${output} "
-      output="${output}${disk_display} ${disk_percent}%${COLOR_RESET}"
+      output="${output}${disk_display} $(pad_percentage "$disk_percent")${COLOR_RESET}"
     fi
   fi
   
@@ -296,7 +297,7 @@ main() {
       esac
       
       [[ -n "$output" ]] && output="${output} "
-      output="${output}${color}${icon} ${battery_percent}%${COLOR_RESET}"
+      output="${output}${color}${icon} $(pad_percentage "$battery_percent")${COLOR_RESET}"
     fi
   fi
 
