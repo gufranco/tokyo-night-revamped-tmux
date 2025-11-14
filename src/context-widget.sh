@@ -7,6 +7,7 @@ source "${LIB_DIR}/coreutils-compat.sh"
 source "${LIB_DIR}/constants.sh"
 source "${LIB_DIR}/widget-base.sh"
 source "${LIB_DIR}/themes.sh"
+source "${LIB_DIR}/color-scale.sh"
 
 MINIMAL_SESSION=$(tmux show-option -gv @tokyo-night-tmux_minimal_session 2>/dev/null)
 CURRENT_SESSION=$(tmux display-message -p '#S')
@@ -15,9 +16,6 @@ CURRENT_SESSION=$(tmux display-message -p '#S')
 
 SHOW_CONTEXT=$(tmux show-option -gv @tokyo-night-tmux_show_context 2>/dev/null)
 [[ "$SHOW_CONTEXT" == "0" ]] && exit 0
-
-RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"
-CYAN="#[fg=${THEME[cyan]},bg=default]"
 
 SHOW_WEATHER=$(tmux show-option -gv @tokyo-night-tmux_context_weather 2>/dev/null)
 WEATHER_UNITS=$(tmux show-option -gv @tokyo-night-tmux_context_weather_units 2>/dev/null)
@@ -72,7 +70,7 @@ if [[ $SHOW_WEATHER -eq 1 ]]; then
   fi
   
   if [[ -n "$weather_data" ]]; then
-    OUTPUT="${CYAN}󰖙${RESET} ${weather_data}"
+    OUTPUT="${COLOR_CYAN}󰖙${COLOR_RESET} ${weather_data}"
   fi
 fi
 
@@ -111,7 +109,7 @@ fi
 
 if [[ -n "$DATETIME" ]]; then
   [[ -n "$OUTPUT" ]] && OUTPUT="${OUTPUT} "
-  OUTPUT="${OUTPUT}${CYAN}󰥔${RESET} ${DATETIME}"
+  OUTPUT="${OUTPUT}${COLOR_CYAN}󰥔${COLOR_RESET} ${DATETIME}"
 fi
 
 if [[ "$SHOW_TIMEZONE" == "1" ]] && [[ -n "$TIMEZONES" ]]; then
@@ -120,12 +118,25 @@ if [[ "$SHOW_TIMEZONE" == "1" ]] && [[ -n "$TIMEZONES" ]]; then
   for tz in "${TZ_LIST[@]}"; do
     [[ -z "$tz" ]] && continue
     
+    # Obter horário e informações
     tz_time=$(TZ="$tz" date +"%-H:%M" 2>/dev/null) || continue
     tz_abbr=$(TZ="$tz" date +"%Z" 2>/dev/null) || continue
+    tz_hour=$(TZ="$tz" date +"%-H" 2>/dev/null) || continue
+    tz_dow=$(TZ="$tz" date +"%u" 2>/dev/null) || continue  # 1=Mon...7=Sun
     
-    OUTPUT="${OUTPUT} ${CYAN}󰥔${RESET} ${tz_abbr} ${tz_time}"
+    # Verificar se é fim de semana
+    is_weekend=0
+    if [[ $tz_dow -eq 6 ]] || [[ $tz_dow -eq 7 ]]; then
+      is_weekend=1
+    fi
+    
+    # Obter ícone e cor baseado no período do dia
+    period_icon=$(get_timezone_period_icon "$tz_hour" "$is_weekend")
+    period_color=$(get_timezone_period_color "$tz_hour" "$is_weekend")
+    
+    OUTPUT="${OUTPUT} ${COLOR_CYAN}󰥔${COLOR_RESET} ${period_color}${tz_abbr} ${period_icon} ${tz_time}${COLOR_RESET}"
   done
 fi
 
-[[ -n "$OUTPUT" ]] && echo "${CYAN}░${RESET} ${OUTPUT} "
+[[ -n "$OUTPUT" ]] && echo "${COLOR_CYAN}░${COLOR_RESET} ${OUTPUT} "
 

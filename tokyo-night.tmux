@@ -1,45 +1,23 @@
 #!/usr/bin/env bash
-# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# title      Tokyo Night Revamped                                     +
-# version    2.0.0                                                    +
-# repository https://github.com/gufranco/tokyo-night-revamped-tmux    +
-# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPTS_PATH="$CURRENT_DIR/src"
 
 source "$SCRIPTS_PATH/lib/themes.sh"
 
-# ==============================================================================
-# Status Bar Configuration
-# ==============================================================================
 tmux set -g status-left-length 80
 tmux set -g status-right-length 200
 
-# ==============================================================================
-# Color Scheme
-# ==============================================================================
 RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"
 
-# Highlight colors
 tmux set -g mode-style "fg=${THEME[bgreen]},bg=${THEME[bblack]}"
-
-# Message styles with improved contrast for better readability
 tmux set -g message-style "bg=${THEME[bblack]},fg=${THEME[blue]},bold"
 tmux set -g message-command-style "bg=${THEME[bblack]},fg=${THEME[white]},bold"
-
-# Pane borders
 tmux set -g pane-border-style "fg=${THEME[bblack]}"
 tmux set -g pane-active-border-style "fg=${THEME[blue]}"
 tmux set -g pane-border-status off
-
-# Status bar background
 tmux set -g status-style bg="${THEME[background]}"
 tmux set -g popup-border-style "fg=${THEME[blue]}"
-
-# ==============================================================================
-# Number Styles Configuration
-# ==============================================================================
 TMUX_VARS="$(tmux show -g)"
 
 default_window_id_style="digital"
@@ -81,16 +59,18 @@ date_and_time="$context"
 # ==============================================================================
 # Status Left (Session Name)
 # ==============================================================================
-tmux set -g status-left "#[fg=${THEME[bblack]},bg=${THEME[blue]},bold] #{?client_prefix,󰠠 ,#[dim]󰤂 }#[bold,nodim]#S "
+# Consistent with status-right style: separator + icon (no solid blocks)
+# Prefix changes icon and color to green for visibility
+tmux set -g status-left "#{?client_prefix,#[fg=${THEME[green]}]󰠠,#[fg=${THEME[cyan]}]󰣀} #[fg=${THEME[cyan]}]░ $RESET"
 
 # ==============================================================================
 # Window Status Format
 # ==============================================================================
-# Active window
-tmux set -g window-status-current-format "$RESET#[fg=${THEME[cyan]},bg=${THEME[bblack]}] #{?#{==:#{pane_current_command},ssh},󰣀 ,  }#[fg=${THEME[foreground]},bold,nodim]$window_number#W#[nobold]#{?window_zoomed_flag, $zoom_number, $custom_pane}#{?window_last_flag, , }"
+# Active window - with right separator for consistency
+tmux set -g window-status-current-format "$RESET#[fg=${THEME[cyan]}]#{?#{==:#{pane_current_command},ssh},󰣀 ,  }#[fg=${THEME[cyan]},bold,nodim]$window_number#W#[nobold]#{?window_zoomed_flag, $zoom_number, $custom_pane}#{?window_last_flag,#[fg=${THEME[cyan]}] 󰁯 , }#[fg=${THEME[cyan]}]░ "
 
-# Inactive windows
-tmux set -g window-status-format "$RESET#[fg=${THEME[foreground]}] #{?#{==:#{pane_current_command},ssh},󰣀 ,  }${RESET}$window_number#W#[nobold,dim]#{?window_zoomed_flag, $zoom_number, $custom_pane}#[fg=${THEME[cyan]}]#{?window_last_flag,󰁯  , }"
+# Inactive windows - dimmed with right separator
+tmux set -g window-status-format "$RESET#[fg=${THEME[foreground]},dim]#{?#{==:#{pane_current_command},ssh},󰣀 ,  }${RESET}#[fg=${THEME[foreground]},dim]$window_number#W#{?window_zoomed_flag, $zoom_number, $custom_pane}#{?window_last_flag,#[fg=${THEME[cyan]}] 󰁯 , }#[fg=${THEME[cyan]},dim]░ "
 
 tmux set -g window-status-separator ""
 
@@ -120,5 +100,8 @@ for widget in "${WIDGETS[@]}"; do
     STATUS_RIGHT="${STATUS_RIGHT}${WIDGET_MAP[$widget]}"
   fi
 done
+
+# Add right separator at the end
+STATUS_RIGHT="${STATUS_RIGHT}#[fg=${THEME[cyan]},bg=${THEME[background]}]░ "
 
 tmux set -g status-right "$STATUS_RIGHT"

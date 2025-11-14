@@ -6,6 +6,7 @@ LIB_DIR="${SCRIPT_DIR}/lib"
 source "${LIB_DIR}/coreutils-compat.sh"
 source "${LIB_DIR}/constants.sh"
 source "${LIB_DIR}/themes.sh"
+source "${LIB_DIR}/color-scale.sh"
 
 MINIMAL_SESSION=$(tmux show-option -gv @tokyo-night-tmux_minimal_session 2>/dev/null)
 CURRENT_SESSION=$(tmux display-message -p '#S')
@@ -18,9 +19,6 @@ SHOW_GIT=$(tmux show-option -gv @tokyo-night-tmux_show_git 2>/dev/null)
 cd "$1" || exit 0
 
 git rev-parse --git-dir &>/dev/null || exit 0
-
-RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"
-CYAN="#[fg=${THEME[cyan]},bg=default]"
 
 CHECK_UNTRACKED=$(tmux show-option -gv @tokyo-night-tmux_git_untracked 2>/dev/null)
 CHECK_UNTRACKED="${CHECK_UNTRACKED:-1}"
@@ -57,12 +55,27 @@ if [[ $CHECK_UNTRACKED -eq 1 ]]; then
   UNTRACKED=$(git ls-files --other --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
 fi
 
-OUTPUT="${CYAN}░ ${RESET} ${BRANCH}"
+OUTPUT="${COLOR_CYAN}░ ⎇${COLOR_RESET} ${BRANCH}"
 
-[[ $CHANGED -gt 0 ]] && OUTPUT="${OUTPUT} ${CYAN}󰄴${RESET} ${CHANGED}"
-[[ $INSERTIONS -gt 0 ]] && OUTPUT="${OUTPUT} ${CYAN}󰐕${RESET} ${INSERTIONS}"
-[[ $DELETIONS -gt 0 ]] && OUTPUT="${OUTPUT} ${CYAN}󰍵${RESET} ${DELETIONS}"
-[[ $UNTRACKED -gt 0 ]] && OUTPUT="${OUTPUT} ${CYAN}󰋗${RESET} ${UNTRACKED}"
+if [[ $CHANGED -gt 0 ]]; then
+  changed_color=$(get_git_changes_color "$CHANGED")
+  OUTPUT="${OUTPUT} ${changed_color}󰄴 ${CHANGED}${COLOR_RESET}"
+fi
+
+if [[ $INSERTIONS -gt 0 ]]; then
+  insertions_color=$(get_git_lines_color "$INSERTIONS")
+  OUTPUT="${OUTPUT} ${insertions_color}󰐕 ${INSERTIONS}${COLOR_RESET}"
+fi
+
+if [[ $DELETIONS -gt 0 ]]; then
+  deletions_color=$(get_git_lines_color "$DELETIONS")
+  OUTPUT="${OUTPUT} ${deletions_color}󰍵 ${DELETIONS}${COLOR_RESET}"
+fi
+
+if [[ $UNTRACKED -gt 0 ]]; then
+  untracked_color=$(get_git_untracked_color "$UNTRACKED")
+  OUTPUT="${OUTPUT} ${untracked_color}󰋗 ${UNTRACKED}${COLOR_RESET}"
+fi
 
 if [[ $SHOW_WEB -eq 1 ]]; then
   REMOTE_URL=$(git config remote.origin.url 2>/dev/null)
@@ -108,10 +121,17 @@ if [[ $SHOW_WEB -eq 1 ]]; then
         [[ ! "$ISSUE_COUNT" =~ ^[0-9]+$ ]] && ISSUE_COUNT=0
       fi
 
-      OUTPUT="${OUTPUT} ${CYAN}${PROVIDER_ICON}󰊤${RESET} ${PR_COUNT}"
-      OUTPUT="${OUTPUT} ${CYAN}󰭎${RESET} ${REVIEW_COUNT}"
-      OUTPUT="${OUTPUT} ${CYAN}󰀨${RESET} ${ISSUE_COUNT}"
-      OUTPUT="${OUTPUT} ${CYAN}󰃤${RESET} ${BUG_COUNT}"
+      pr_color=$(get_git_pr_color "$PR_COUNT")
+      OUTPUT="${OUTPUT} ${pr_color}${PROVIDER_ICON}󰊤 ${PR_COUNT}${COLOR_RESET}"
+      
+      review_color=$(get_git_review_color "$REVIEW_COUNT")
+      OUTPUT="${OUTPUT} ${review_color}󰭎 ${REVIEW_COUNT}${COLOR_RESET}"
+      
+      issue_color=$(get_git_issue_color "$ISSUE_COUNT")
+      OUTPUT="${OUTPUT} ${issue_color}󰀨 ${ISSUE_COUNT}${COLOR_RESET}"
+      
+      bug_color=$(get_git_bug_color "$BUG_COUNT")
+      OUTPUT="${OUTPUT} ${bug_color}󰃤 ${BUG_COUNT}${COLOR_RESET}"
     fi
   fi
 fi
