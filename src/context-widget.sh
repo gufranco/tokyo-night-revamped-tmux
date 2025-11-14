@@ -8,6 +8,7 @@ source "${LIB_DIR}/constants.sh"
 source "${LIB_DIR}/widget-base.sh"
 source "${LIB_DIR}/themes.sh"
 source "${LIB_DIR}/color-scale.sh"
+source "${LIB_DIR}/format.sh"
 
 MINIMAL_SESSION=$(tmux show-option -gv @tokyo-night-tmux_minimal_session 2>/dev/null)
 CURRENT_SESSION=$(tmux display-message -p '#S')
@@ -70,7 +71,8 @@ if [[ $SHOW_WEATHER -eq 1 ]]; then
   fi
   
   if [[ -n "$weather_data" ]]; then
-    OUTPUT="${COLOR_CYAN}󰖙${COLOR_RESET} ${weather_data}"
+    weather_padded=$(printf "%-6s" "$weather_data")
+    OUTPUT="${COLOR_CYAN}󰖙${COLOR_RESET} ${weather_padded}"
   fi
 fi
 
@@ -118,23 +120,18 @@ if [[ "$SHOW_TIMEZONE" == "1" ]] && [[ -n "$TIMEZONES" ]]; then
   for tz in "${TZ_LIST[@]}"; do
     [[ -z "$tz" ]] && continue
     
-    # Obter horário e informações
-    tz_time=$(TZ="$tz" date +"%-H:%M" 2>/dev/null) || continue
-    tz_abbr=$(TZ="$tz" date +"%Z" 2>/dev/null) || continue
-    tz_hour=$(TZ="$tz" date +"%-H" 2>/dev/null) || continue
-    tz_dow=$(TZ="$tz" date +"%u" 2>/dev/null) || continue  # 1=Mon...7=Sun
+    read -r tz_hour tz_time tz_abbr tz_dow < <(TZ="$tz" date +"%-H %-H:%M %Z %u" 2>/dev/null) || continue
     
-    # Verificar se é fim de semana
     is_weekend=0
-    if [[ $tz_dow -eq 6 ]] || [[ $tz_dow -eq 7 ]]; then
-      is_weekend=1
-    fi
+    [[ $tz_dow -eq 6 ]] || [[ $tz_dow -eq 7 ]] && is_weekend=1
     
-    # Obter ícone e cor baseado no período do dia
     period_icon=$(get_timezone_period_icon "$tz_hour" "$is_weekend")
     period_color=$(get_timezone_period_color "$tz_hour" "$is_weekend")
     
-    OUTPUT="${OUTPUT} ${COLOR_CYAN}󰥔${COLOR_RESET} ${period_color}${tz_abbr} ${period_icon} ${tz_time}${COLOR_RESET}"
+    tz_abbr_padded=$(printf "%-4s" "$tz_abbr")
+    tz_time_padded=$(printf "%5s" "$tz_time")
+    
+    OUTPUT="${OUTPUT} ${COLOR_CYAN}󰥔${COLOR_RESET} ${period_color}${tz_abbr_padded} ${period_icon} ${tz_time_padded}${COLOR_RESET}"
   done
 fi
 
