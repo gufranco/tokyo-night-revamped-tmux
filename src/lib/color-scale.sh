@@ -41,6 +41,12 @@ readonly NET_SPEED_HIGH_MAX=52428800
 readonly NET_PING_EXCELLENT_MAX=20
 readonly NET_PING_GOOD_MAX=50
 readonly NET_PING_HIGH_MAX=100
+
+readonly TEMP_FREEZING_MAX=0
+readonly TEMP_COLD_MAX=10
+readonly TEMP_COOL_MAX=20
+readonly TEMP_COMFORTABLE_MAX=25
+readonly TEMP_HOT_MAX=30
 get_percentage_color() {
   local value=$1
   local max_normal=${2:-49}
@@ -224,6 +230,37 @@ get_net_ping_color() {
   fi
 }
 
+get_temperature_color_and_icon() {
+  local temp_str=$1
+  local temp_num icon color
+  
+  temp_num=$(echo "$temp_str" | grep -oE '[-+]?[0-9]+' | head -1)
+  
+  [[ -z "$temp_num" ]] && echo "${COLOR_CYAN}󰖙" && return
+  
+  if (( temp_num < TEMP_FREEZING_MAX )); then
+    icon="󰜗"
+    color="#[fg=${THEME[magenta]},bg=default]"
+  elif (( temp_num < TEMP_COLD_MAX )); then
+    icon="󰖐"
+    color="${COLOR_CYAN}"
+  elif (( temp_num < TEMP_COOL_MAX )); then
+    icon="󰖐"
+    color="${COLOR_BLUE}"
+  elif (( temp_num < TEMP_COMFORTABLE_MAX )); then
+    icon="󰖙"
+    color="${COLOR_GREEN}"
+  elif (( temp_num < TEMP_HOT_MAX )); then
+    icon="󰖙"
+    color="${COLOR_YELLOW}"
+  else
+    icon="󰖙"
+    color="${COLOR_RED}"
+  fi
+  
+  echo "${color}${icon}"
+}
+
 get_timezone_period_icon() {
   local hour=$1
   local is_weekend=$2
@@ -311,6 +348,7 @@ export -f get_git_issue_color
 export -f get_git_bug_color
 export -f get_net_speed_color
 export -f get_net_ping_color
+export -f get_temperature_color_and_icon
 export -f get_timezone_period_icon
 export -f get_timezone_period_color
 export -f format_colored_value

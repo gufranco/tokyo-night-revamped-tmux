@@ -71,8 +71,8 @@ if [[ $SHOW_WEATHER -eq 1 ]]; then
   fi
   
   if [[ -n "$weather_data" ]]; then
-    weather_padded=$(printf "%-6s" "$weather_data")
-    OUTPUT="${COLOR_CYAN}󰖙${COLOR_RESET} ${weather_padded}"
+    weather_display=$(get_temperature_color_and_icon "$weather_data")
+    OUTPUT="${weather_display} ${weather_data}${COLOR_RESET}"
   fi
 fi
 
@@ -97,8 +97,13 @@ get_time_format() {
 DATE_STR=$(get_date_format "$DATE_FORMAT")
 TIME_STR=$(get_time_format "$TIME_FORMAT")
 
-DATE_VAL=$(date +"$DATE_STR" 2>/dev/null)
-TIME_VAL=$(date +"$TIME_STR" 2>/dev/null)
+if [[ -n "$DATE_STR" ]]; then
+  DATE_VAL=$(date +"$DATE_STR" 2>/dev/null)
+fi
+
+if [[ -n "$TIME_STR" ]]; then
+  TIME_VAL=$(date +"$TIME_STR" 2>/dev/null)
+fi
 
 DATETIME=""
 if [[ -n "$DATE_VAL" ]] && [[ -n "$TIME_VAL" ]]; then
@@ -120,7 +125,7 @@ if [[ "$SHOW_TIMEZONE" == "1" ]] && [[ -n "$TIMEZONES" ]]; then
   for tz in "${TZ_LIST[@]}"; do
     [[ -z "$tz" ]] && continue
     
-    read -r tz_hour tz_time tz_abbr tz_dow < <(TZ="$tz" date +"%-H %-H:%M %Z %u" 2>/dev/null) || continue
+    read -r tz_hour tz_time tz_abbr tz_dow < <(TZ="$tz" date +"%-H %H:%M %Z %u" 2>/dev/null) || continue
     
     is_weekend=0
     [[ $tz_dow -eq 6 ]] || [[ $tz_dow -eq 7 ]] && is_weekend=1
@@ -128,10 +133,7 @@ if [[ "$SHOW_TIMEZONE" == "1" ]] && [[ -n "$TIMEZONES" ]]; then
     period_icon=$(get_timezone_period_icon "$tz_hour" "$is_weekend")
     period_color=$(get_timezone_period_color "$tz_hour" "$is_weekend")
     
-    tz_abbr_padded=$(printf "%-4s" "$tz_abbr")
-    tz_time_padded=$(printf "%5s" "$tz_time")
-    
-    OUTPUT="${OUTPUT} ${COLOR_CYAN}󰥔${COLOR_RESET} ${period_color}${tz_abbr_padded} ${period_icon} ${tz_time_padded}${COLOR_RESET}"
+    OUTPUT="${OUTPUT} ${COLOR_CYAN}󰥔${COLOR_RESET} ${period_color}${tz_abbr} ${period_icon} ${tz_time}${COLOR_RESET}"
   done
 fi
 
