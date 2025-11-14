@@ -1,146 +1,160 @@
-# Tokyo Night Tmux
+# Tokyo Night Revamped Tmux
 
-![example workflow](https://github.com/janoamaral/tokyo-night-tmux/actions/workflows/pre-commit.yml/badge.svg?branch=master)
+![Tmux](https://img.shields.io/badge/tmux-3.0+-blue.svg)
+![Bash](https://img.shields.io/badge/bash-4.2+-green.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)
 
-A clean, dark Tmux theme that celebrates the lights of Downtown [Tokyo at night.](https://www.google.com/search?q=tokyo+night&newwindow=1&sxsrf=ACYBGNRiOGCstG_Xohb8CgG5UGwBRpMIQg:1571032079139&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiayIfIhpvlAhUGmuAKHbfRDaIQ_AUIEigB&biw=1280&bih=666&dpr=2)
-The perfect companion for [tokyonight-vim](https://github.com/ghifarit53/tokyonight-vim)
-Adapted from the original, [Visual Studio Code theme](https://github.com/enkia/tokyo-night-vscode-theme).
-The old version (deprecated) is still available in the `legacy` branch.
+A beautiful, feature-rich tmux theme inspired by the vibrant lights of Downtown Tokyo at night.  
+Perfect companion for [tokyonight-vim](https://github.com/ghifarit53/tokyonight-vim) and adapted from the original [Tokyo Night VSCode theme](https://github.com/enkia/tokyo-night-vscode-theme).
 
-<a href="https://www.buymeacoffee.com/jano" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
+**Quick Links:** [Features](#-features) • [Installation](#-installation) • [Configuration](#-configuration) • [Widgets](#-widgets) • [Contributing](#-contributing)
 
-## About this theme
+---
 
-This is a very opinionated project, as I am a Tech Lead, this theme is very developer-focused.
+## ✨ Features
 
-## Requirements
+### 🎨 **Beautiful Design**
+- Clean, minimalist interface with Tokyo Night color scheme
+- Dynamic icons that change based on resource usage
+- Color-coded metrics for quick visual feedback
+- Professional appearance suitable for development environments
 
-This theme has the following hard requirements:
+### 🚀 **High Performance**
+- Pure bash implementation - no compiled binaries required
+- Smart caching system reduces system calls
+- Efficient resource monitoring
+- Background processing for long-running operations
 
-- Any patched [Nerd Fonts] (v3 or higher)
-- Bash 4.2 or newer
+### 📊 **Rich Widgets**
+- **System Monitoring**: CPU, GPU, Memory, Swap, Disk, Battery
+- **Git Integration**: Local repository status + GitHub/GitLab web stats
+- **Network Stats**: Real-time upload/download speeds, VPN detection, ping latency
+- **Context Information**: Date/time, timezone support, path, SSH sessions
+- **Weather**: Current temperature with dynamic icons
 
-The following are recommended for full support of all widgets and features:
+### 🔧 **Highly Customizable**
+- Flexible widget ordering system
+- Individual component toggles
+- Multiple number style options
+- Minimal mode for lightweight sessions
+- Extensive configuration options
 
-- [Noto Sans] Symbols 2 (for segmented digit numbers)
-- [bc] (for netspeed and git widgets)
-- [jq], [gh], [glab] (for git widgets)
-- [playerctl] (Linux) or [nowplaying-cli] (macOS) for music statusbar
+### 🌍 **Cross-Platform**
+- Works seamlessly on macOS (Apple Silicon & Intel) and Linux
+- Platform-specific optimizations
+- Automatic fallbacks for missing tools
+- No external dependencies required for core functionality
 
-### macOS
+### 🎯 **Developer-Focused**
+- Built by developers, for developers
+- Accurate metrics matching Activity Monitor / iStats
+- Git workflow integration
+- Professional tooling support
 
-macOS still ships with bash 3.2 so you must provide a newer version.
-You can easily install all dependencies via [Homebrew]:
+---
+
+## 📋 Requirements
+
+### Hard Requirements
+
+- **tmux** 3.0 or higher
+- **Bash** 4.2 or higher
+- **Nerd Fonts** v3 or higher ([Installation Guide](https://www.nerdfonts.com/))
+
+> **Note for macOS users**: macOS ships with Bash 3.2. You must install a newer version via Homebrew.
+
+### Optional Dependencies
+
+These are only required for specific features:
+
+| Tool | Purpose | Installation |
+|------|---------|-------------|
+| `git` | Git widget (local repository status) | Usually pre-installed |
+| `gh` | GitHub integration (PRs, issues, reviews) | `brew install gh` / `apt install gh` |
+| `glab` | GitLab integration (MRs, issues) | `brew install glab` / `apt install glab` |
+| `jq` | JSON parsing for GitHub/GitLab features | `brew install jq` / `apt install jq` |
+| `curl` / `wget` | Weather widget | Usually pre-installed |
+| `ip` / `ifconfig` | Network widget (Linux) | Usually pre-installed |
+| `free` | Swap monitoring (Linux) | Usually pre-installed |
+
+---
+
+## 🚀 Installation
+
+### Using TPM (Tmux Plugin Manager) - Recommended
+
+Add to your `~/.tmux.conf`:
 
 ```bash
-brew tap homebrew/cask-fonts
-brew install --cask font-monaspace-nerd-font font-noto-sans-symbols-2
-brew install bash bc coreutils gawk gh glab gsed jq nowplaying-cli
+set -g @plugin "gufranco/tokyo-night-revamped-tmux"
 ```
 
-### Linux
+Then press `Prefix + I` to install the plugin.
 
-#### Alpine Linux
+### Manual Installation
 
 ```bash
-apk add bash bc coreutils gawk git jq playerctl sed
+git clone https://github.com/gufranco/tokyo-night-revamped-tmux.git ~/.tmux/plugins/tokyo-night-revamped-tmux
 ```
 
-#### Arch Linux
+Add to `~/.tmux.conf`:
 
 ```bash
-pacman -Sy bash bc coreutils git jq playerctl
+run-shell ~/.tmux/plugins/tokyo-night-revamped-tmux/tokyo-night.tmux
 ```
 
-#### Ubuntu
+### Reload Configuration
+
+After installation, reload your tmux configuration:
 
 ```bash
-apt-get install bash bc coreutils gawk git jq playerctl
+tmux source-file ~/.tmux.conf
 ```
 
-Check documentation for installing on other operating systems.
+Or press `Prefix + :` and type `source-file ~/.tmux.conf`
 
-## Installation using TPM
+---
 
-In your `tmux.conf`:
-
-```bash
-set -g @plugin "janoamaral/tokyo-night-tmux"
-```
-
-## Configuration
+## ⚙️ Configuration
 
 ### Widget Ordering
 
-Customize the order of widgets in the status bar. You can also omit widgets to hide them.
+Customize which widgets appear and in what order:
 
 ```bash
-# Default order (organized by logical context)
-# System → Development → Network → Environment → Time
-set -g @tokyo-night-tmux_widgets_order "cpu,gpu,memory,disk,battery,git,wbg,path,ssh,clients,sync,weather,music,netspeed,datetime"
+# Default order
+set -g @tokyo-night-tmux_widgets_order "system,git,netspeed,context"
 
 # Developer-focused setup
-set -g @tokyo-night-tmux_widgets_order "cpu,memory,git,wbg,path,datetime"
+set -g @tokyo-night-tmux_widgets_order "system,git,context"
 
 # System monitoring setup
-set -g @tokyo-night-tmux_widgets_order "cpu,gpu,memory,disk,battery,netspeed,datetime"
+set -g @tokyo-night-tmux_widgets_order "system,netspeed,context"
 
 # Minimal setup
-set -g @tokyo-night-tmux_widgets_order "git,datetime"
+set -g @tokyo-night-tmux_widgets_order "git,context"
 ```
 
-**Available widgets (organized by context):**
-
-**System Resources:**
-- `system` - **Unified system widget** (CPU, GPU, Memory, Disk, Battery in one)
-- `cpu` - CPU usage percentage (individual)
-- `gpu` - GPU usage (individual)
-- `memory` - Memory usage percentage (individual)
-- `ram` - RAM usage in GB/TB format
-- `disk` - Disk usage percentage (individual)
-- `battery` - Battery status (individual)
-
-**Development & Git:**
-- `git` - Local git status (changes, branch, sync)
-- `wbg` - Web-based git (GitHub/GitLab PRs, issues)
-- `path` - Current working directory path
-
-**Network & Connectivity:**
-- `netspeed` - Network speed (up/down) with IP and VPN
-- `ssh` - SSH session indicator with user@host
-
-**Environment & Context:**
-- `weather` - Weather information with temperature coloring
-- `music` - Now playing with progress bar
-- `datetime` - Date and time with timezone
-
-**Session & Meta:**
-- `clients` - Number of attached tmux clients
-- `sync` - Pane synchronization indicator
-
-**Note:** Only widgets included in the order will be displayed. This allows you to completely customize your status bar layout.
+**Available widgets:**
+- `system` - Unified system metrics (CPU, GPU, Memory, Disk, Battery)
+- `git` - Git repository status with web integration
+- `netspeed` - Network speed and connectivity
+- `context` - Date, time, path, SSH, and more
 
 ### Minimal Mode
 
-Create a lightweight tmux session without widgets. Perfect for SSH sessions or resource-constrained environments.
+Create lightweight tmux sessions without widgets:
 
 ```bash
 set -g @tokyo-night-tmux_minimal_session "minimal"
 ```
 
-When you create a session with this name (e.g., `tmux new-session -s minimal`), all widgets will be disabled automatically.
+When you create a session with this name (e.g., `tmux new-session -s minimal`), all widgets will be automatically disabled.
 
-### Number styles
+### Number Styles
 
-Run these commands in your terminal:
-
-```bash
-tmux set @tokyo-night-tmux_window_id_style digital
-tmux set @tokyo-night-tmux_pane_id_style hsquare
-tmux set @tokyo-night-tmux_zoom_id_style dsquare
-```
-
-Alternatively, add these lines to your  `.tmux.conf`:
+Customize window and pane number display:
 
 ```bash
 set -g @tokyo-night-tmux_window_id_style digital
@@ -148,128 +162,23 @@ set -g @tokyo-night-tmux_pane_id_style hsquare
 set -g @tokyo-night-tmux_zoom_id_style dsquare
 ```
 
+**Available styles:**
+- `none` - Default numbers (0-9)
+- `digital` - 7-segment display (🯰...🯹)
+- `roman` - Roman numerals (󱂈...󱂐)
+- `fsquare` - Filled squares (󰎡...󰎼)
+- `hsquare` - Hollow squares (󰎣...󰎾)
+- `dsquare` - Double squares (󰎢...󰎽)
+- `super` - Superscript (⁰...⁹)
+- `sub` - Subscript (₀...₉)
 
-### Widgets
+---
 
-For widgets add following lines in you `.tmux.conf`
+## 📊 Widgets
 
-#### Date and Time widget
+### System Widget (Unified)
 
-This widget is enabled by default. To disable it:
-
-```bash
-set -g @tokyo-night-tmux_show_datetime 0
-set -g @tokyo-night-tmux_date_format YMD
-set -g @tokyo-night-tmux_time_format 24H
-```
-
-##### Available Options
-
-**Date formats:**
-- `YMD`: (Year Month Day), 2024-01-31
-- `MDY`: (Month Day Year), 01-31-2024
-- `DMY`: (Day Month Year), 31-01-2024
-- `hide`: Hide date completely
-
-**Time formats:**
-- `24H`: 18:30 (default)
-- `12H`: 6:30 PM
-- `hide`: Hide time completely
-
-##### Timezone Support
-
-Display additional timezones alongside your local time:
-
-```bash
-set -g @tokyo-night-tmux_show_timezone 1
-set -g @tokyo-night-tmux_timezone "America/Los_Angeles,America/New_York,Europe/London"
-```
-
-**Features:**
-- **Multiple timezones:** Comma-separated list
-- **Auto abbreviation:** Shows PST, EST, GMT, etc.
-- **Visual indicator:** 󰥔 icon for each timezone
-- **Color coded:** Blue for timezone display
-
-**Example output:**
-```
-2024-11-12 ❬ 18:30 󰥔 PST 15:30 󰥔 EST 18:30 󰥔 GMT 23:30
-```
-
-**Common timezones:**
-- Americas: `America/New_York`, `America/Chicago`, `America/Los_Angeles`, `America/Sao_Paulo`
-- Europe: `Europe/London`, `Europe/Paris`, `Europe/Berlin`, `Europe/Moscow`
-- Asia: `Asia/Tokyo`, `Asia/Shanghai`, `Asia/Dubai`, `Asia/Kolkata`
-- Pacific: `Australia/Sydney`, `Pacific/Auckland`
-
-See [TZ database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for complete list.
-
-#### Now Playing widget
-
-```bash
-set -g @tokyo-night-tmux_show_music 1
-```
-
-**Supported music players:**
-- **Linux:** [playerctl](https://github.com/altdesktop/playerctl) - Universal media player controller
-- **macOS:** [media-control](https://github.com/ungive/media-control) - Modern alternative to nowplaying-cli
-
-**Installation:**
-```bash
-# macOS
-brew tap ungive/media-control
-brew install media-control
-
-# Linux
-apt-get install playerctl  # Ubuntu/Debian
-pacman -S playerctl        # Arch
-```
-
-**Features:**
-- Shows artist and song title
-- Progress bar with time display
-- Pause/play state indicator
-- No jq dependency (uses pure shell parsing)
-
-#### Network Widget
-
-Professional network monitoring with clean, minimalist design.
-
-```bash
-set -g @tokyo-night-tmux_show_netspeed 1
-set -g @tokyo-night-tmux_netspeed_ping 1      # Show ping latency (default: 0)
-set -g @tokyo-night-tmux_netspeed_vpn 1       # Show VPN indicator (default: 1)
-set -g @tokyo-night-tmux_netspeed_refresh 1   # Update interval in seconds (default: 1)
-```
-
-**Features:**
-- **Download/Upload speeds:** Integer values (150KB/s, 3MB/s)
-- **Simple arrows:** ↓ download, ↑ upload
-- **VPN indicator:** 󰌘 icon when VPN detected
-- **Ping latency:** 󰓅 ms (optional)
-- **Auto-detect interface:** No manual configuration needed
-- **No bc dependency:** Pure bash arithmetic
-- **All cyan colors:** Minimalist, no color spam
-
-**Example outputs:**
-```
-░ ↓ 150KB/s ↑ 50KB/s
-░ 󰌘 ↓ 3MB/s ↑ 512KB/s
-░ ↓ 2MB/s ↑ 100KB/s 󰓅 45ms
-```
-
-**VPN Detection:** Supports utun, tun, tap, WireGuard, Tailscale, NordLynx
-
-#### Path Widget
-
-```bash
-set -g @tokyo-night-tmux_show_path 1
-set -g @tokyo-night-tmux_path_format relative # 'relative' or 'full'
-```
-
-#### System Widget (Unified)
-
-**Recommended:** Unified system widget that shows CPU, GPU, Memory, Swap, Disk, and Battery in one clean widget.
+**Recommended**: All system metrics in one clean, unified widget.
 
 ```bash
 # Master toggle
@@ -283,262 +192,43 @@ set -g @tokyo-night-tmux_system_swap 1
 set -g @tokyo-night-tmux_system_disk 1
 set -g @tokyo-night-tmux_system_battery 1
 
-# Specific configurations
+# Optional: Load average
+set -g @tokyo-night-tmux_system_load 1
+
+# Configuration
 set -g @tokyo-night-tmux_system_disk_path "/"
 set -g @tokyo-night-tmux_system_battery_threshold 20
 ```
 
 **Features:**
-- **Minimalist design:** All icons in cyan (no color spam)
-- **CPU (󰾆):** Cyan, shows percentage (user + system, matches iStats)
-- **GPU (󰢮):** Cyan, shows percentage (Apple Silicon via WindowServer)
-- **Memory (󰍛):** Cyan, shows percentage (wired + compressed, matches iStats)
-- **Swap (󰾴):** Cyan, shows percentage (only if swap > 0)
-- **Disk (󰋊):** Cyan, shows percentage
-- **Battery:** Cyan with proportional icons (11 levels)
-  - **Discharging:** 󰂎 (0-9%) → 󰁺 (10-19%) → ... → 󰁹 (100%)
-  - **Charging/Plugged:** 󰚥 (plug icon)
-  - **Critical alert:** Blinks RED when < threshold
-
-**Why unified widget?**
-- Professional, minimalist appearance
-- No visual noise or distracting color changes
-- All system metrics grouped logically
-- Matches iStats Menu calculations exactly
-
-**Example output:**
-```
-░ 󰾆 32% 󰢮 24% 󰍛 23% 󰾴 88% 󰋊 70% 󰚥 100%
-  (all cyan - clean and consistent)
-```
-
-**Critical battery alert:**
-When battery < threshold (default 20%), icon and percentage blink in RED.
-
-Choose individual widgets below if you prefer separate configuration with dynamic colors.
-
----
-
-#### CPU Widget (Individual)
-
-The CPU widget shows real-time CPU usage percentage with dynamic icons and colors based on load.
-
-```bash
-set -g @tokyo-night-tmux_show_cpu 1
-```
-
-**Features:**
-- **Cross-platform:** Works on macOS and Linux without compiled binaries
-- **macOS:** Uses `top` command (matches Activity Monitor)
-- **Linux:** Reads from `/proc/stat` for accurate CPU usage
-- **Smart coloring:**
-  - 🔥 Red (≥80%): High CPU usage
-  - ⚠️  Yellow (≥50%): Medium CPU usage
-  - ❄️  Cyan (<50%): Low CPU usage
-
-**Optional: Load Average**
-
-You can also display the system load average alongside CPU usage:
-
-```bash
-set -g @tokyo-night-tmux_show_load_average 1
-```
-
-This shows the 1-minute load average next to the CPU percentage.
-
-Set variable value `0` to disable the widget. Remember to restart `tmux` after changing values.
-
-#### Memory Widget
-
-The memory widget shows real-time memory usage percentage with dynamic icons and colors based on load.
-
-```bash
-set -g @tokyo-night-tmux_show_memory 1
-```
-
-**Features:**
-- **Cross-platform:** Works on macOS and Linux without compiled binaries
-- **macOS:** Uses `vm_stat` and `sysctl` (matches Activity Monitor)
-- **Linux:** Uses `free` command for accurate memory usage
-- **Smart coloring:**
-  - 🔥 Red (≥80%): Critical memory usage
-  - ⚠️  Yellow (≥60%): High memory usage
-  - ❄️  Cyan (<60%): Normal memory usage
-
-**Note:** On macOS, the calculation matches iStats Menu's memory calculation (wired + compressed pages only), which represents non-swappable memory actively in use. This excludes active pages that can be freed, providing a more accurate representation of actual memory pressure.
-
-**Optional: Memory Pressure Indicator**
-
-You can also display a memory pressure indicator to show system memory stress:
-
-```bash
-set -g @tokyo-night-tmux_show_memory_pressure 1
-```
-
-This shows a colored dot (●) after the percentage:
-- **macOS:** Based on swapouts from `vm_stat`
-  - 🟢 Green: No pressure (< 1M swapouts)
-  - 🟡 Yellow: Medium pressure (1M - 5M swapouts)
-  - 🔴 Red: Critical pressure (> 5M swapouts)
-- **Linux:** Based on PSI (Pressure Stall Information) or swap usage
-  - 🟢 Green: No pressure (< 10%)
-  - 🟡 Yellow: Medium pressure (10% - 50%)
-  - 🔴 Red: Critical pressure (> 50%)
-
-Set variable value `0` to disable the widget. Remember to restart `tmux` after changing values.
-
-#### Disk Widget
-
-The disk widget shows disk usage percentage with 4 levels of warning indicators.
-
-```bash
-set -g @tokyo-night-tmux_show_disk 1
-set -g @tokyo-night-tmux_disk_path "/"  # Path to monitor (default: /)
-```
-
-**Features:**
-- **4-level warnings** (more granular than other widgets):
-  - 🟢 Cyan (<50%): Normal
-  - 🔵 Blue (50-74%): Moderate
-  - 🟡 Yellow (75-89%): High
-  - 🔴 Red (≥90%): Critical
-- **Configurable path:** Monitor /, /home, or any mount point
-- **Cross-platform:** Works on macOS and Linux
-
-Set variable value `0` to disable the widget.
-
-#### GPU Widget
-
-The GPU widget shows GPU usage percentage with support for multiple GPU types.
-
-```bash
-set -g @tokyo-night-tmux_show_gpu 1
-```
-
-**Supported GPUs:**
-- **Apple Silicon** (M1/M2/M3): Estimates from WindowServer activity
-- **NVIDIA:** Via `nvidia-smi` command
-- **AMD:** Via `rocm-smi` command
-- **Intel:** Detection support (limited data availability)
-
-**Auto-detection:** The widget automatically detects your GPU type and shows usage accordingly.
-
-**Note:** For NVIDIA/AMD, ensure drivers and monitoring tools are installed. Apple Silicon works out of the box.
-
-Set variable value `0` to disable the widget.
-
-#### RAM Widget
-
-Alternative to memory widget that shows RAM in GB/TB format instead of percentage.
-
-```bash
-set -g @tokyo-night-tmux_show_ram 1
-```
-
-**Difference from Memory Widget:**
-- **Memory Widget:** Shows percentage (e.g., `25%`)
-- **RAM Widget:** Shows absolute values (e.g., `8G/32G`)
-
-Choose one based on preference. Both use the same underlying calculation.
-
-**Features:**
-- Cross-platform (macOS + Linux)
-- Dynamic coloring based on usage
-- Automatic unit conversion (GB/TB)
-
-Set variable value `0` to disable the widget.
-
-#### Weather Widget
-
-The weather widget shows current temperature with dynamic icon and color coding.
-
-```bash
-set -g @tokyo-night-tmux_show_weather 1
-set -g @tokyo-night-tmux_weather_units "m"          # m=metric, u=US, M=SI
-set -g @tokyo-night-tmux_weather_show_icon 1
-```
-
-**Features:**
-- **Auto-location:** Detects your location by IP
-- **Dynamic icons:** Changes based on temperature
-  - 🔥 ≥30°C: 󰖙 Sun hot (red)
-  - ☀️ 20-29°C: 󰖙 Sun (yellow)
-  - ⛅ 10-19°C: 󰖐 Cloud sun (cyan)
-  - ☁️ 0-9°C: 󰖐 Cloud (blue)
-  - ❄️ <0°C: 󰜗 Snowflake (magenta)
-- **Smart caching:** Updates every 15 minutes to reduce API calls
-- **Powered by wttr.in:** No API key required
-- **Requires:** curl or wget
-
-**Example output:**
-```
-░ 󰖙 22°C
-```
-
-Set variable value `0` to disable the widget.
-
-#### SSH Session Widget
-
-Shows SSH session information with user@hostname and optional port.
-
-```bash
-set -g @tokyo-night-tmux_show_ssh 1
-set -g @tokyo-night-tmux_ssh_only_when_connected 1  # Only show when SSH active
-set -g @tokyo-night-tmux_ssh_show_port 0            # Show port if non-standard
-```
-
-**Features:**
-- Auto-detects SSH sessions
-- Shows user@hostname format
-- Optional port display (for non-22 ports)
-- Color changes when SSH active (cyan → green)
-- Can show always or only during SSH
-
-Set variable value `0` to disable the widget.
-
-#### Attached Clients Widget
-
-Shows number of clients attached to the tmux session.
-
-```bash
-set -g @tokyo-night-tmux_show_clients 1
-set -g @tokyo-night-tmux_clients_minimum 2  # Only show if >= this many clients
-```
-
-**Use case:** Useful when pair programming or when multiple terminals connect to the same session.
-
-Set variable value `0` to disable the widget.
-
-#### Pane Synchronization Widget
-
-Shows indicator when pane synchronization is active (Prefix + S).
-
-```bash
-set -g @tokyo-night-tmux_show_sync 1
-set -g @tokyo-night-tmux_sync_label "SYNC"  # Customize label
-```
-
-**Features:**
-- Only appears when panes are synchronized
-- Visual warning to prevent accidental commands to all panes
-- Customizable label text
-
-Set variable value `0` to disable the widget.
-
-#### Battery Widget
-
-```bash
-set -g @tokyo-night-tmux_show_battery_widget 1
-set -g @tokyo-night-tmux_battery_name "BAT1"  # some linux distro have 'BAT0'
-set -g @tokyo-night-tmux_battery_low_threshold 21 # default
-```
-
-Set variable value `0` to disable the widget. Remember to restart `tmux` after
-changing values.
-
-#### Git Widget (Unified Local + Web)
-
-Unified git widget that shows local repository status AND web stats (GitHub/GitLab) in one place.
+- **Dynamic Icons**: Icons change gradually based on usage percentage (11 levels)
+- **Dynamic Colors**: Colors scale from cyan → yellow → red based on usage
+- **Accurate Metrics**: 
+  - macOS: Matches Activity Monitor / iStats calculations
+  - GPU: Uses `ioreg` Device Utilization % (same as iStats) with WindowServer fallback
+  - Memory: Wired + compressed (macOS) or active memory (Linux)
+- **Minimalist Design**: All cyan by default, colors only when needed
+- **Cross-Platform**: Works on macOS and Linux
+
+**Components:**
+- **CPU** (󰾆): User + system CPU usage
+- **GPU** (󰢮): GPU usage (Apple Silicon via `ioreg` or WindowServer fallback)
+- **Memory** (󰍛): Active memory usage
+- **Swap** (󰾴): Swap usage (only shown if > 0)
+- **Disk** (󰋊): Disk usage percentage
+- **Battery** (󰚥): 11-level battery indicator with charging state
+- **Load** (󰧑): System load average (optional)
+
+**Color Scale:**
+- 🟢 **Cyan** (< 50%): Normal usage
+- 🟡 **Yellow** (50-79%): Moderate usage
+- 🔴 **Red** (≥ 80%): High usage
+
+**Battery Alert**: Icon and percentage blink in RED when below threshold (default: 20%)
+
+### Git Widget
+
+Unified Git widget with local repository status and web integration (GitHub/GitLab).
 
 ```bash
 set -g @tokyo-night-tmux_show_git 1
@@ -546,130 +236,307 @@ set -g @tokyo-night-tmux_git_untracked 1
 set -g @tokyo-night-tmux_git_web 1
 ```
 
-**Local Git Features:**
-- **Branch name:** Current branch (truncated at 25 chars)
-- **Sync status:** 󱓎 Local changes, 󰛃 Need push,  Clean
-- **Changes:** 󰄴 Modified files count
-- **Insertions:** 󰐕 Lines added
-- **Deletions:** 󰍵 Lines removed
-- **Untracked:** 󰋗 New files (optional)
+**Local Features:**
+- **Branch**: Current branch name (truncated at 25 characters)
+- **Sync Status**: 
+  - 󱓎 Local changes
+  - 󰛃 Need push
+  - Clean (synced)
+- **Changes**: 󰄴 Modified files count (dynamic icons)
+- **Insertions**: 󰐕 Lines added (dynamic icons)
+- **Deletions**: 󰍵 Lines removed (dynamic icons)
+- **Untracked**: 󰋗 New files (optional, dynamic icons)
 
-**Web Features (GitHub/GitLab):**
-- **GitHub ():** Auto-detects github.com repositories
-- **GitLab ():** Auto-detects gitlab.com repositories
-- **PRs/MRs:** 󰊤 Open pull requests (green)
-- **Reviews:** 󰭎 Reviews needed (yellow)
-- **Issues:** 󰀨 Assigned issues (magenta)
-- **Bugs:** 󰃤 Bug issues (red)
+**Web Features** (requires `gh` or `glab` + `jq`):
+- **Auto-detection**: Automatically detects GitHub or GitLab repositories
+- **PRs/MRs**: 󰊤 Open pull requests (green, dynamic icons)
+- **Reviews**: 󰭎 Reviews needed (yellow, dynamic icons)
+- **Issues**: 󰀨 Assigned issues (magenta, dynamic icons)
+- **Bugs**: 󰃤 Bug issues (red)
 
-**Example output:**
-```
-▒ 󱓎 master 󰄴 27 󰐕 1181 󰍵 1450  󰊤 0 󰭎 0 󰀨 0 󰃤 0
-```
+**Dynamic Icons**: Icons change based on count thresholds for better visual feedback.
 
-**Configuration:**
-- **git_untracked:** Set to `0` to disable untracked files check (better performance in large repos)
-- **git_web:** Set to `0` to disable GitHub/GitLab integration (requires `gh` or `glab` CLI)
-
-##### Performance Options for Large Repositories
-
-To prevent performance issues in large repositories, you can configure auto-fetch behavior:
+**Performance Options:**
 
 ```bash
-# Disable automatic git fetch (recommended for very large repos)
+# Disable auto-fetch for large repositories
 set -g @tokyo-night-tmux_git_disable_auto_fetch 1
 
-# Set fetch timeout in seconds (default: 5)
+# Set fetch timeout (default: 5 seconds)
 set -g @tokyo-night-tmux_git_fetch_timeout 10
 ```
 
-**Note:** The auto-fetch runs in background with timeout to prevent blocking. If you work with very large repositories and experience slowdowns, disable auto-fetch and manually fetch when needed.
+### Network Widget
 
-Set variable value `0` to disable the widget. Remember to restart `tmux` after changing values.
-
-#### Web-based Git Widget
-
-This widget shows GitHub/GitLab statistics including PR counts and issues assigned to you. It requires `gh` (GitHub CLI) or `glab` (GitLab CLI) to be installed and authenticated.
+Professional network monitoring with clean, minimalist design.
 
 ```bash
-set -g @tokyo-night-tmux_show_wbg 1
+set -g @tokyo-night-tmux_show_netspeed 1
+set -g @tokyo-night-tmux_netspeed_ping 1      # Show ping latency
+set -g @tokyo-night-tmux_netspeed_vpn 1       # Show VPN indicator
+set -g @tokyo-night-tmux_netspeed_refresh 1   # Update interval (seconds)
 ```
 
-The widget works with both SSH and HTTPS git remote URLs:
-- SSH: `git@github.com:user/repo.git`
-- HTTPS: `https://github.com/user/repo.git`
+**Features:**
+- **Download/Upload**: Real-time speeds (KB/s, MB/s)
+- **VPN Detection**: 󰌘 Icon when VPN active
+  - Supports: utun, tun, tap, WireGuard, Tailscale, NordLynx
+- **Ping Latency**: 󰓅 ms (optional, color-coded)
+- **Auto-detect**: No manual interface configuration needed
+- **Pure Bash**: No external dependencies for calculations
 
-Set variable value `0` to disable the widget. Remember to restart `tmux` after changing values.
+**Color Coding:**
+- Ping < 50ms: Green
+- Ping 50-100ms: Yellow
+- Ping > 100ms: Red
 
-## Styles
+### Context Widget
 
-- `none`: no style, default font
-- `digital`: 7 segment number (🯰...🯹) (needs [Unicode support](https://github.com/janoamaral/tokyo-night-tmux/issues/36#issuecomment-1907072080))
-- `roman`: roman numbers (󱂈...󱂐) (needs nerdfont)
-- `fsquare`: filled square (󰎡...󰎼) (needs nerdfont)
-- `hsquare`: hollow square (󰎣...󰎾) (needs nerdfont)
-- `dsquare`: hollow double square (󰎡...󰎼) (needs nerdfont)
-- `super`: superscript symbol (⁰...⁹)
-- `sub`: subscript symbols (₀...₉)
+Date, time, path, SSH, and session information.
 
-### New tokyonight Highlights ⚡
+```bash
+set -g @tokyo-night-tmux_show_context 1
+```
 
-Everything works out the box now. No need to modify anything and colors are hardcoded,
-so it's independent of terminal theme.
+**Components:**
 
-- Local git stats.
-- Web based git server (GitHub/GitLab) stats.
-  - Open PR count
-  - Open PR reviews count
-  - Issue count
-- Remote branch sync indicator (you will never forget to push or pull again 🤪).
-- Great terminal icons.
-- Prefix highlight incorporated.
-- Now Playing status bar, supporting [playerctl]/[nowplaying-cli]
-- Windows has custom pane number indicator.
-- Pane zoom mode indicator.
-- Date and time.
+#### Date and Time
 
-#### TODO
+```bash
+set -g @tokyo-night-tmux_show_datetime 1
+set -g @tokyo-night-tmux_date_format YMD      # YMD, MDY, DMY, hide
+set -g @tokyo-night-tmux_time_format 24H       # 24H, 12H, hide
+```
 
-- Add configurations
-  - remote fetch time
-  - ~number styles~
-  - indicators order
-  - disable indicators
+**Date formats:**
+- `YMD`: Year-Month-Day (2024-01-31)
+- `MDY`: Month-Day-Year (01-31-2024)
+- `DMY`: Day-Month-Year (31-01-2024)
+- `hide`: Hide date completely
 
-### Demo
+**Time formats:**
+- `24H`: 24-hour format (18:30)
+- `12H`: 12-hour format (6:30 PM)
+- `hide`: Hide time completely
 
-https://github.com/janoamaral/tokyo-night-tmux/assets/10008708/59ecd814-bc2b-47f2-82b1-ffdbfbc54fbf
+**Timezone Support:**
 
-### Snapshots
+```bash
+set -g @tokyo-night-tmux_show_timezone 1
+set -g @tokyo-night-tmux_timezone "America/Los_Angeles,America/New_York,Europe/London"
+```
 
-- Terminal: Kitty with [Tokyo Night Kitty Theme](https://github.com/davidmathers/tokyo-night-kitty-theme)
-- Font: [SFMono Nerd Font Ligaturized](https://github.com/shaunsingh/SFMono-Nerd-Font-Ligaturized)
+Shows abbreviated timezones (PST, EST, GMT) with 󰥔 icon. Supports multiple timezones.
 
-![Snap 5](snaps/logico.png)
+#### Path
 
-Legacy tokyo-night
+```bash
+set -g @tokyo-night-tmux_show_path 1
+set -g @tokyo-night-tmux_path_format relative  # relative or full
+```
 
-![Snap 4](snaps/l01.png)
+#### SSH Session
 
-## Contributing
+```bash
+set -g @tokyo-night-tmux_show_ssh 1
+set -g @tokyo-night-tmux_ssh_only_when_connected 1
+set -g @tokyo-night-tmux_ssh_show_port 0
+```
 
-> [!IMPORTANT]  
-> Please read the [contribution guide first](CONTRIBUTING.md).
+Shows `user@hostname` format, changes color when SSH active.
 
-Feel free to open an issue or pull request with any suggestions or improvements.
+#### Other Context Widgets
 
-Ensure your editor follows the style guide provided by `.editorconfig`.
-[pre-commit] hooks are also provided to ensure code consistency, and will be
-run against any raised PRs.
+```bash
+# Attached clients count
+set -g @tokyo-night-tmux_show_clients 1
+set -g @tokyo-night-tmux_clients_minimum 2
 
-[pre-commit]: https://pre-commit.com/
-[Noto Sans]: https://fonts.google.com/noto/specimen/Noto+Sans
-[Nerd Fonts]: https://www.nerdfonts.com/
-[coreutils]: https://www.gnu.org/software/coreutils/
-[bc]: https://www.gnu.org/software/bc/
-[jq]: https://jqlang.github.io/jq/
-[playerctl]: https://github.com/altdesktop/playerctl
-[nowplaying-cli]: https://github.com/kirtan-shah/nowplaying-cli
-[Homebrew]: https://brew.sh/
+# Pane synchronization indicator
+set -g @tokyo-night-tmux_show_sync 1
+set -g @tokyo-night-tmux_sync_label "SYNC"
+
+# Weather (requires curl/wget)
+set -g @tokyo-night-tmux_show_weather 1
+set -g @tokyo-night-tmux_weather_units "m"  # m=metric, u=US, M=SI
+set -g @tokyo-night-tmux_weather_show_icon 1
+```
+
+---
+
+## 🎨 Theme Highlights
+
+- **Independent Colors**: Hardcoded colors, independent of terminal theme
+- **Prefix Highlight**: Visual indicator when prefix key is pressed
+- **Window Indicators**: Custom pane numbers and zoom indicators
+- **SSH Detection**: Visual feedback for SSH sessions
+- **Clean Design**: Minimalist, professional appearance
+- **Dynamic Elements**: Icons and colors adapt to system state
+
+---
+
+## 🔧 Advanced Configuration
+
+### Refresh Rates
+
+Control how often widgets update:
+
+```bash
+set -g @tokyo-night-tmux_refresh_rate 5  # Update every 5 seconds (default)
+```
+
+### Individual System Widgets
+
+If you prefer separate widgets with dynamic colors instead of the unified widget:
+
+```bash
+# CPU
+set -g @tokyo-night-tmux_show_cpu 1
+set -g @tokyo-night-tmux_show_load_average 1
+
+# Memory
+set -g @tokyo-night-tmux_show_memory 1
+set -g @tokyo-night-tmux_show_memory_pressure 1
+
+# Disk
+set -g @tokyo-night-tmux_show_disk 1
+set -g @tokyo-night-tmux_disk_path "/"
+
+# GPU
+set -g @tokyo-night-tmux_show_gpu 1
+
+# RAM (alternative to memory, shows GB/TB)
+set -g @tokyo-night-tmux_show_ram 1
+
+# Battery (standalone)
+set -g @tokyo-night-tmux_show_battery_widget 1
+set -g @tokyo-night-tmux_battery_name "BAT1"
+set -g @tokyo-night-tmux_battery_low_threshold 21
+```
+
+---
+
+## 🛠️ Technical Details
+
+### Architecture
+
+- **Pure Bash**: No compiled binaries required
+- **Modular Design**: Each widget is independent
+- **Efficient Caching**: Reduces system calls and API requests
+- **Cross-Platform**: Unified codebase for macOS and Linux
+- **Smart Fallbacks**: Graceful degradation when tools are missing
+
+### Performance
+
+- **No External Dependencies**: Uses only standard Unix tools for core functionality
+- **Smart Caching**: Widgets cache results to reduce overhead
+- **Background Processing**: Long-running operations don't block tmux
+- **Optimized Parsing**: Efficient shell-based parsing
+
+### GPU Monitoring (Apple Silicon)
+
+The GPU widget uses the most accurate method available:
+
+1. **Primary Method**: `ioreg` Device Utilization % (same as iStats Menu)
+2. **Fallback**: WindowServer CPU estimation with progressive multipliers
+
+This ensures accurate GPU usage reporting that matches professional monitoring tools.
+
+### Compatibility
+
+- **macOS**: 10.14+ (tested on Apple Silicon and Intel)
+- **Linux**: All major distributions
+- **Bash**: 4.2+ required (macOS needs Homebrew bash)
+
+---
+
+## 🐛 Troubleshooting
+
+### Widgets not showing
+
+1. Check that widgets are enabled in your configuration
+2. Verify widgets are included in `@tokyo-night-tmux_widgets_order`
+3. Ensure you're not in minimal mode
+4. Check tmux logs: `tmux show-messages`
+
+### GPU always shows 1%
+
+- **macOS**: Ensure you're on Apple Silicon (M1/M2/M3)
+- Check if `ioreg` is accessible: `ioreg -r -d 1 -w 0 -c "IOAccelerator"`
+- Verify WindowServer is running: `ps aux | grep WindowServer`
+
+### Git web features not working
+
+1. Ensure `gh` (GitHub) or `glab` (GitLab) is installed and authenticated
+2. Verify `jq` is installed for JSON parsing
+3. Check repository remote: `git remote -v`
+4. Test manually: `gh pr list` or `glab mr list`
+
+### Performance issues
+
+1. Increase refresh rate: `set -g @tokyo-night-tmux_refresh_rate 10`
+2. Disable auto-fetch for large repos: `set -g @tokyo-night-tmux_git_disable_auto_fetch 1`
+3. Use minimal mode for SSH sessions
+4. Disable unused widgets
+
+### Colors not displaying correctly
+
+1. Ensure you're using a Nerd Font (v3+)
+2. Verify terminal supports true color
+3. Check tmux version: `tmux -V` (needs 3.0+)
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these guidelines:
+
+1. **Read** the [Contributing Guide](CONTRIBUTING.md) first
+2. **Follow** the [Code of Conduct](CODE_OF_CONDUCT.md)
+3. **Check** existing issues and pull requests
+4. **Create** a feature branch from `master`
+5. **Test** your changes on both macOS and Linux
+6. **Ensure** code follows `.editorconfig` style guide
+7. **Submit** a pull request with a clear description
+
+### Development Setup
+
+1. Clone the repository: `git clone https://github.com/gufranco/tokyo-night-revamped-tmux.git`
+2. Create a branch: `git checkout -b feature/your-feature`
+3. Make your changes
+4. Test thoroughly
+5. Commit: `git commit -m "Add: your feature"`
+6. Push: `git push origin feature/your-feature`
+7. Open a Pull Request
+
+[pre-commit](https://pre-commit.com/) hooks are provided for code consistency and will run automatically.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- **Original Theme**: [Tokyo Night VSCode Theme](https://github.com/enkia/tokyo-night-vscode-theme) by enkia
+- **Vim Companion**: [tokyonight-vim](https://github.com/ghifarit53/tokyonight-vim) by ghifarit53
+- **Icons**: [Nerd Fonts](https://www.nerdfonts.com/) community
+- **Inspiration**: Downtown Tokyo at night
+
+---
+
+## 🔗 Links
+
+- [Nerd Fonts](https://www.nerdfonts.com/) - Icon fonts
+- [Noto Sans Symbols 2](https://fonts.google.com/noto/specimen/Noto+Sans) - Segmented digits
+- [Homebrew](https://brew.sh/) - macOS package manager
+- [GitHub CLI](https://cli.github.com/) - GitHub integration
+- [GitLab CLI](https://gitlab.com/gitlab-org/cli) - GitLab integration
+
+---
+
+**Made with ❤️ for developers who love beautiful, functional tools.**
+

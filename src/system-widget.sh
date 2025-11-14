@@ -43,13 +43,9 @@ get_cpu_color_and_icon() {
   local icon
   local color=$(get_system_color "$usage")
   
-  if (( usage >= 75 )); then
-    icon="${ICON_CPU_HOT}"
-  elif (( usage >= 50 )); then
-    icon="${ICON_CPU_MEDIUM}"
-  else
-    icon="${ICON_CPU_COOL}"
-  fi
+  local idx=$(( usage / 10 ))
+  (( idx > 10 )) && idx=10
+  icon="${CPU_ICONS[$idx]}"
   
   echo "${color}${icon}"
 }
@@ -59,13 +55,9 @@ get_gpu_color_and_icon() {
   local icon
   local color=$(get_system_color "$usage")
   
-  if (( usage >= 90 )); then
-    icon="󰀪"
-  elif (( usage >= 50 )); then
-    icon="󰘚"
-  else
-    icon="${ICON_GPU}"
-  fi
+  local idx=$(( usage / 10 ))
+  (( idx > 10 )) && idx=10
+  icon="${GPU_ICONS[$idx]}"
   
   echo "${color}${icon}"
 }
@@ -75,20 +67,35 @@ get_memory_color_and_icon() {
   local icon
   local color=$(get_system_color "$usage")
   
-  if (( usage >= 90 )); then
-    icon="${ICON_MEMORY_CRITICAL}"
-  elif (( usage >= 50 )); then
-    icon="${ICON_MEMORY_HIGH}"
-  else
-    icon="${ICON_MEMORY_NORMAL}"
-  fi
+  local idx=$(( usage / 10 ))
+  (( idx > 10 )) && idx=10
+  icon="${MEMORY_ICONS[$idx]}"
   
   echo "${color}${icon}"
 }
 
-get_swap_color() {
+get_load_color_and_icon() {
   local usage=$1
-  get_system_color "$usage"
+  local icon
+  local color=$(get_system_color "$usage")
+  
+  local idx=$(( usage / 10 ))
+  (( idx > 10 )) && idx=10
+  icon="${LOAD_ICONS[$idx]}"
+  
+  echo "${color}${icon}"
+}
+
+get_swap_color_and_icon() {
+  local usage=$1
+  local icon
+  local color=$(get_system_color "$usage")
+  
+  local idx=$(( usage / 10 ))
+  (( idx > 10 )) && idx=10
+  icon="${SWAP_ICONS[$idx]}"
+  
+  echo "${color}${icon}"
 }
 
 get_disk_color_and_icon() {
@@ -96,13 +103,9 @@ get_disk_color_and_icon() {
   local icon
   local color=$(get_system_color "$usage")
   
-  if (( usage >= 90 )); then
-    icon="${ICON_DISK_CRITICAL}"
-  elif (( usage >= 75 )); then
-    icon="${ICON_DISK_WARNING}"
-  else
-    icon="${ICON_DISK_NORMAL}"
-  fi
+  local idx=$(( usage / 10 ))
+  (( idx > 10 )) && idx=10
+  icon="${DISK_ICONS[$idx]}"
   
   echo "${color}${icon}"
 }
@@ -119,7 +122,7 @@ main() {
   fi
 
   if [[ $SHOW_LOAD -eq 1 ]]; then
-    local load_avg cpu_count load_color load_percent
+    local load_avg cpu_count load_display load_percent
     load_avg=$(get_load_average)
     cpu_count=$(get_cpu_count)
     
@@ -129,23 +132,42 @@ main() {
       load_percent=$(awk "BEGIN {printf \"%.0f\", ($load_avg / $cpu_count) * 100}")
       
       load_percent=$(validate_percentage "$load_percent")
-      load_color=$(get_system_color "$load_percent")
+      load_display=$(get_load_color_and_icon "$load_percent")
       
       [[ -n "$output" ]] && output="${output} "
-      output="${output}${load_color}${ICON_LOAD} $(pad_percentage "$load_percent")${COLOR_RESET}"
+      output="${output}${load_display} $(pad_percentage "$load_percent")${COLOR_RESET}"
     fi
   fi
 
   if [[ $SHOW_GPU -eq 1 ]] && is_apple_silicon; then
-    local gpu_usage gpu_display windowserver_cpu
-    windowserver_cpu=$(ps axo %cpu,command 2>/dev/null | awk '/WindowServer$/ {print int($1); exit}')
+    local gpu_usage gpu_display
     
-    if [[ -n "$windowserver_cpu" ]] && [[ "$windowserver_cpu" =~ ^[0-9]+$ ]]; then
-      gpu_usage=$(( windowserver_cpu / 2 ))
+    gpu_usage=$(ioreg -r -d 1 -w 0 -c "IOAccelerator" 2>/dev/null | grep -o '"Device Utilization %"=[0-9]*' | sed 's/.*=//' | head -1)
+    
+    if [[ -z "$gpu_usage" ]] || [[ ! "$gpu_usage" =~ ^[0-9]+$ ]]; then
+      local windowserver_cpu
+      windowserver_cpu=$(ps axo %cpu,command 2>/dev/null | awk '/WindowServer/ && /-daemon/ {cpu=$1; gsub(/,/, ".", cpu); cpu_num=cpu+0; if (cpu_num > 0) print int(cpu_num); exit}')
+      
+      if [[ -n "$windowserver_cpu" ]] && [[ "$windowserver_cpu" =~ ^[0-9]+$ ]] && [[ $windowserver_cpu -gt 0 ]]; then
+        if [[ $windowserver_cpu -le 3 ]]; then
+          gpu_usage=$(( windowserver_cpu * 2 ))
+        elif [[ $windowserver_cpu -le 10 ]]; then
+          gpu_usage=$(( windowserver_cpu * 3 ))
+        elif [[ $windowserver_cpu -le 25 ]]; then
+          gpu_usage=$(( windowserver_cpu * 4 ))
+        elif [[ $windowserver_cpu -le 40 ]]; then
+          gpu_usage=$(( windowserver_cpu * 5 ))
+        else
+          gpu_usage=$(( windowserver_cpu * 6 ))
+        fi
+        (( gpu_usage > 100 )) && gpu_usage=100
+        (( gpu_usage < 1 )) && gpu_usage=1
+      else
+        gpu_usage=1
+      fi
+    else
       (( gpu_usage > 100 )) && gpu_usage=100
       (( gpu_usage < 1 )) && gpu_usage=1
-    else
-      gpu_usage=1
     fi
     
     gpu_display=$(get_gpu_color_and_icon "$gpu_usage")
@@ -188,7 +210,7 @@ main() {
   fi
   
   if [[ $SHOW_SWAP -eq 1 ]]; then
-    local swap_total swap_used swap_percent swap_color
+    local swap_total swap_used swap_percent swap_display
     
     if is_macos; then
       read -r swap_total swap_used < <(sysctl -n vm.swapusage 2>/dev/null | awk '{
@@ -200,10 +222,10 @@ main() {
       if [[ -n "$swap_total" ]] && [[ "$swap_total" =~ ^[0-9]+$ ]] && (( swap_total > 0 )); then
         swap_percent=$(( (swap_used * 100) / swap_total ))
         swap_percent=$(validate_percentage "$swap_percent")
-        swap_color=$(get_swap_color "$swap_percent")
+        swap_display=$(get_swap_color_and_icon "$swap_percent")
         
         [[ -n "$output" ]] && output="${output} "
-        output="${output}${swap_color}${ICON_SWAP} $(pad_percentage "$swap_percent")${COLOR_RESET}"
+        output="${output}${swap_display} $(pad_percentage "$swap_percent")${COLOR_RESET}"
       fi
     else
       if command -v free >/dev/null 2>&1; then
@@ -212,10 +234,10 @@ main() {
         if [[ -n "$swap_total" ]] && [[ "$swap_total" =~ ^[0-9]+$ ]] && (( swap_total > 0 )); then
           swap_percent=$(( (swap_used * 100) / swap_total ))
           swap_percent=$(validate_percentage "$swap_percent")
-          swap_color=$(get_swap_color "$swap_percent")
+          swap_display=$(get_swap_color_and_icon "$swap_percent")
           
           [[ -n "$output" ]] && output="${output} "
-          output="${output}${swap_color}${ICON_SWAP} $(pad_percentage "$swap_percent")${COLOR_RESET}"
+          output="${output}${swap_display} $(pad_percentage "$swap_percent")${COLOR_RESET}"
         fi
       fi
     fi

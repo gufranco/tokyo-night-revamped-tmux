@@ -1,22 +1,13 @@
 #!/usr/bin/env bash
-# ==============================================================================
-# Tokyo Night Tmux - UI Formatting Library
-# ==============================================================================
-# Centralized UI formatting functions for consistent widget rendering.
-# ==============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Load theme if available
 if [[ -f "${SCRIPT_DIR}/../src/themes.sh" ]]; then
   source "${SCRIPT_DIR}/../src/themes.sh"
 fi
 
 RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"
 
-# ==============================================================================
-# Formatting Functions
-# ==============================================================================
 
 format_segment() {
   local content="${1}"
@@ -111,9 +102,6 @@ format_progress_bar() {
   echo "[${bar}]"
 }
 
-# ==============================================================================
-# Exports
-# ==============================================================================
 
 export -f format_segment
 export -f format_icon

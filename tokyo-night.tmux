@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPTS_PATH="$CURRENT_DIR/src"
@@ -57,7 +56,6 @@ if [[ -z "$WIDGETS_ORDER" ]]; then
   WIDGETS_ORDER="system,git,netspeed,context"
 fi
 
-# Build widget mapping
 declare -A WIDGET_MAP=(
   ["system"]="$system"
   ["git"]="$git"

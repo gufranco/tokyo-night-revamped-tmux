@@ -116,16 +116,40 @@ get_cpu_usage_percentage() {
   
   case "${os}" in
     Darwin*)
-      local cpu_line cpu_user cpu_sys
+      local cpu_line cpu_user cpu_sys cpu_total
       cpu_line=$(top -l 1 -n 0 2>/dev/null | grep "CPU usage")
       cpu_user=$(echo "$cpu_line" | awk '{print $3}' | sed 's/%//')
       cpu_sys=$(echo "$cpu_line" | awk '{print $5}' | sed 's/%//')
 
-      if command -v bc >/dev/null 2>&1; then
-        echo "$cpu_user + $cpu_sys" | bc | cut -d'.' -f1
-      else
-        awk "BEGIN {printf \"%.0f\", $cpu_user + $cpu_sys}"
+      cpu_user_int=${cpu_user%%.*}
+      cpu_sys_int=${cpu_sys%%.*}
+      cpu_user_frac=${cpu_user#*.}
+      cpu_sys_frac=${cpu_sys#*.}
+
+      cpu_user_int=${cpu_user_int:-0}
+      cpu_sys_int=${cpu_sys_int:-0}
+      cpu_user_frac=${cpu_user_frac:-0}
+      cpu_sys_frac=${cpu_sys_frac:-0}
+
+      cpu_user_frac=${cpu_user_frac:0:2}
+      cpu_sys_frac=${cpu_sys_frac:0:2}
+      cpu_user_frac=${cpu_user_frac:-0}
+      cpu_sys_frac=${cpu_sys_frac:-0}
+
+      while [[ ${#cpu_user_frac} -lt 2 ]]; do cpu_user_frac="${cpu_user_frac}0"; done
+      while [[ ${#cpu_sys_frac} -lt 2 ]]; do cpu_sys_frac="${cpu_sys_frac}0"; done
+
+      cpu_total=$((cpu_user_int + cpu_sys_int))
+      frac_sum=$((cpu_user_frac + cpu_sys_frac))
+      if [[ $frac_sum -ge 100 ]]; then
+        cpu_total=$((cpu_total + frac_sum / 100))
+        frac_sum=$((frac_sum % 100))
       fi
+      if [[ $frac_sum -ge 50 ]]; then
+        cpu_total=$((cpu_total + 1))
+      fi
+
+      echo "$cpu_total"
       ;;
     Linux*)
       if [[ -f /proc/stat ]]; then

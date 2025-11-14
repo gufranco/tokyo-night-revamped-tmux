@@ -19,21 +19,35 @@ readonly PRESSURE_WARNING_PSI=10
 readonly WEATHER_CACHE_TTL=900
 readonly PING_CACHE_TTL=10
 
-readonly ICON_CPU_HOT="󰀪"
-readonly ICON_CPU_MEDIUM="󰾅"
-readonly ICON_CPU_COOL="󰾆"
+readonly -a CPU_ICONS=(
+  "󰾆" "󰾆" "󰾆" "󰾅" "󰾅"
+  "󰾅" "󰾅" "󰾅" "󰀪" "󰀪" "󰀪"
+)
 
-readonly ICON_GPU="󰢮"
+readonly -a GPU_ICONS=(
+  "󰢮" "󰢮" "󰢮" "󰢮" "󰢮"
+  "󰘚" "󰘚" "󰘚" "󰘚" "󰀪" "󰀪"
+)
 
-readonly ICON_MEMORY_CRITICAL="󰀪"
-readonly ICON_MEMORY_HIGH="󰍜"
-readonly ICON_MEMORY_NORMAL="󰍛"
+readonly -a MEMORY_ICONS=(
+  "󰍛" "󰍛" "󰍛" "󰍛" "󰍛"
+  "󰍜" "󰍜" "󰍜" "󰍜" "󰀪" "󰀪"
+)
 
-readonly ICON_SWAP="󰾴"
+readonly -a LOAD_ICONS=(
+  "󰑮" "󰑮" "󰑮" "󰑮" "󰑮"
+  "󰑮" "󰑮" "󰑮" "󰑮" "󰀪" "󰀪"
+)
 
-readonly ICON_DISK_CRITICAL="󰀪"
-readonly ICON_DISK_WARNING="󰪥"
-readonly ICON_DISK_NORMAL="󰋊"
+readonly -a SWAP_ICONS=(
+  "󰾴" "󰾴" "󰾴" "󰾴" "󰾴"
+  "󰾴" "󰾴" "󰾴" "󰾴" "󰀪" "󰀪"
+)
+
+readonly -a DISK_ICONS=(
+  "󰋊" "󰋊" "󰋊" "󰋊" "󰋊"
+  "󰪥" "󰪥" "󰪥" "󰪥" "󰀪" "󰀪"
+)
 
 readonly ICON_BATTERY_PLUG="󰚥"
 readonly ICON_BATTERY_NO="󱉝"
@@ -58,10 +72,52 @@ readonly ICON_WEATHER_CLOUD_SUN="󰖐"
 readonly ICON_WEATHER_CLOUD="󰖐"
 readonly ICON_WEATHER_SNOW="󰜗"
 
-readonly ICON_GIT_CHANGES=""
-readonly ICON_GIT_INSERTIONS=""
-readonly ICON_GIT_DELETIONS=""
-readonly ICON_GIT_UNTRACKED=""
+readonly -a GIT_CHANGES_ICONS=(
+  "󰄴"
+  "󰄴"
+  "󰄴"
+  "󰀪"
+)
+
+readonly -a GIT_INSERTIONS_ICONS=(
+  "󰐕"
+  "󰐕"
+  "󰐕"
+  "󰀪"
+)
+
+readonly -a GIT_DELETIONS_ICONS=(
+  "󰍵"
+  "󰍵"
+  "󰍵"
+  "󰀪"
+)
+
+readonly -a GIT_UNTRACKED_ICONS=(
+  "󰋗"
+  "󰋗"
+  "󰀪"
+)
+
+readonly -a GIT_PR_ICONS=(
+  "󰊤"
+  "󰊤"
+  "󰊤"
+  "󰀪"
+)
+
+readonly -a GIT_REVIEW_ICONS=(
+  "󰭎"
+  "󰭎"
+  "󰀪"
+)
+
+readonly -a GIT_ISSUE_ICONS=(
+  "󰀨"
+  "󰀨"
+  "󰀨"
+  "󰀪"
+)
 
 readonly ICON_GIT_LOCAL_CHANGES="󱓎"
 readonly ICON_GIT_PUSH="󰛃"
@@ -76,7 +132,6 @@ readonly ICON_SSH="󰣀"
 readonly ICON_CLIENTS="󰀫"
 readonly ICON_SYNC="󰓦"
 readonly ICON_PATH=""
-readonly ICON_LOAD="󰑮"
 
 readonly SEPARATOR_WIDGET="░"
 

@@ -70,22 +70,26 @@ OUTPUT="${COLOR_CYAN}░ ⎇${COLOR_RESET} ${BRANCH}"
 
 if [[ $CHANGED -gt 0 ]]; then
   changed_color=$(get_git_changes_color "$CHANGED")
-  OUTPUT="${OUTPUT} ${changed_color}󰄴 ${CHANGED}${COLOR_RESET}"
+  changed_icon=$(get_git_changes_icon "$CHANGED")
+  OUTPUT="${OUTPUT} ${changed_color}${changed_icon} ${CHANGED}${COLOR_RESET}"
 fi
 
 if [[ $INSERTIONS -gt 0 ]]; then
   insertions_color=$(get_git_lines_color "$INSERTIONS")
-  OUTPUT="${OUTPUT} ${insertions_color}󰐕 ${INSERTIONS}${COLOR_RESET}"
+  insertions_icon=$(get_git_insertions_icon "$INSERTIONS")
+  OUTPUT="${OUTPUT} ${insertions_color}${insertions_icon} ${INSERTIONS}${COLOR_RESET}"
 fi
 
 if [[ $DELETIONS -gt 0 ]]; then
   deletions_color=$(get_git_lines_color "$DELETIONS")
-  OUTPUT="${OUTPUT} ${deletions_color}󰍵 ${DELETIONS}${COLOR_RESET}"
+  deletions_icon=$(get_git_deletions_icon "$DELETIONS")
+  OUTPUT="${OUTPUT} ${deletions_color}${deletions_icon} ${DELETIONS}${COLOR_RESET}"
 fi
 
 if [[ $UNTRACKED -gt 0 ]]; then
   untracked_color=$(get_git_untracked_color "$UNTRACKED")
-  OUTPUT="${OUTPUT} ${untracked_color}󰋗 ${UNTRACKED}${COLOR_RESET}"
+  untracked_icon=$(get_git_untracked_icon "$UNTRACKED")
+  OUTPUT="${OUTPUT} ${untracked_color}${untracked_icon} ${UNTRACKED}${COLOR_RESET}"
 fi
 
 if [[ $SHOW_WEB -eq 1 ]]; then
@@ -108,7 +112,7 @@ if [[ $SHOW_WEB -eq 1 ]]; then
       ISSUE_COUNT=0
       BUG_COUNT=0
 
-      if [[ "$PROVIDER" == "github" ]] && command -v gh &>/dev/null; then
+      if [[ "$PROVIDER" == "github" ]] && command -v gh &>/dev/null && command -v jq &>/dev/null; then
         PR_COUNT=$(gh pr list --json number --jq 'length' 2>/dev/null | head -1 | tr -d '\n ' || echo "0")
         REVIEW_COUNT=$(gh pr status --json reviewRequests --jq '.needsReview | length' 2>/dev/null | head -1 | tr -d '\n ' || echo "0")
         ISSUE_JSON=$(gh issue list --json "assignees,labels" --assignee @me 2>/dev/null || echo "[]")
@@ -133,13 +137,16 @@ if [[ $SHOW_WEB -eq 1 ]]; then
       fi
 
       pr_color=$(get_git_pr_color "$PR_COUNT")
-      OUTPUT="${OUTPUT} ${pr_color}${PROVIDER_ICON}󰊤 ${PR_COUNT}${COLOR_RESET}"
+      pr_icon=$(get_git_pr_icon "$PR_COUNT")
+      OUTPUT="${OUTPUT} ${pr_color}${PROVIDER_ICON}${pr_icon} ${PR_COUNT}${COLOR_RESET}"
       
       review_color=$(get_git_review_color "$REVIEW_COUNT")
-      OUTPUT="${OUTPUT} ${review_color}󰭎 ${REVIEW_COUNT}${COLOR_RESET}"
+      review_icon=$(get_git_review_icon "$REVIEW_COUNT")
+      OUTPUT="${OUTPUT} ${review_color}${review_icon} ${REVIEW_COUNT}${COLOR_RESET}"
       
       issue_color=$(get_git_issue_color "$ISSUE_COUNT")
-      OUTPUT="${OUTPUT} ${issue_color}󰀨 ${ISSUE_COUNT}${COLOR_RESET}"
+      issue_icon=$(get_git_issue_icon "$ISSUE_COUNT")
+      OUTPUT="${OUTPUT} ${issue_color}${issue_icon} ${ISSUE_COUNT}${COLOR_RESET}"
       
       bug_color=$(get_git_bug_color "$BUG_COUNT")
       OUTPUT="${OUTPUT} ${bug_color}󰃤 ${BUG_COUNT}${COLOR_RESET}"

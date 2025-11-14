@@ -52,7 +52,7 @@ get_percentage_color() {
   local max_normal=${2:-49}
   local max_moderate=${3:-74}
   local max_high=${4:-89}
-  
+
   if (( value >= 90 )); then
     echo "${COLOR_RED}"
   elif (( value > max_high )); then
@@ -64,18 +64,12 @@ get_percentage_color() {
   fi
 }
 
-# ==============================================================================
-# Função Genérica: Escala de 4 Níveis (Contagem)
-# ==============================================================================
-# Uso: get_count_color <valor> <max_normal> <max_moderate> <max_high>
-# Retorna: cor apropriada baseada nos thresholds
-# ==============================================================================
 get_count_color() {
   local value=$1
   local max_normal=$2
   local max_moderate=$3
   local max_high=$4
-  
+
   if (( value > max_high )); then
     echo "${COLOR_RED}"
   elif (( value > max_moderate )); then
@@ -87,9 +81,6 @@ get_count_color() {
   fi
 }
 
-# ==============================================================================
-# Funções Específicas: Sistema (CPU, GPU, Memória, Swap, Disco)
-# ==============================================================================
 
 get_system_color() {
   local percentage=$1
@@ -102,17 +93,17 @@ get_system_color() {
 get_load_average_color() {
   local load=$1
   local cpu_count=$2
-  
+
   if [[ -z "$load" ]] || [[ -z "$cpu_count" ]] || [[ "$cpu_count" -eq 0 ]]; then
     echo "${COLOR_CYAN}"
     return
   fi
-  
+
   local load_int=$(echo "$load" | cut -d'.' -f1)
   local threshold_high=$((cpu_count * LOAD_HIGH_MULTIPLIER / 100))
   local threshold_moderate=$((cpu_count * LOAD_MODERATE_MULTIPLIER / 100))
   local threshold_low=$((cpu_count * LOAD_LOW_MULTIPLIER / 100))
-  
+
   if (( load_int >= cpu_count )); then
     echo "${COLOR_RED}"
   elif (( load_int >= threshold_high )); then
@@ -124,9 +115,6 @@ get_load_average_color() {
   fi
 }
 
-# ==============================================================================
-# Funções Específicas: Git Local
-# ==============================================================================
 
 get_git_changes_color() {
   local count=$1
@@ -146,7 +134,7 @@ get_git_lines_color() {
 
 get_git_untracked_color() {
   local count=$1
-  
+
   if (( count > GIT_UNTRACKED_HIGH_MAX )); then
     echo "${COLOR_RED}"
   elif (( count > GIT_UNTRACKED_NORMAL_MAX )); then
@@ -158,9 +146,9 @@ get_git_untracked_color() {
 
 get_git_pr_color() {
   local count=$1
-  
+
   [[ $count -eq 0 ]] && echo "${COLOR_CYAN}" && return
-  
+
   if (( count >= 5 )); then
     echo "${COLOR_YELLOW}"
   elif (( count >= 3 )); then
@@ -172,9 +160,9 @@ get_git_pr_color() {
 
 get_git_review_color() {
   local count=$1
-  
+
   [[ $count -eq 0 ]] && echo "${COLOR_CYAN}" && return
-  
+
   if (( count >= 3 )); then
     echo "${COLOR_RED}"
   else
@@ -184,9 +172,9 @@ get_git_review_color() {
 
 get_git_issue_color() {
   local count=$1
-  
+
   [[ $count -eq 0 ]] && echo "${COLOR_CYAN}" && return
-  
+
   if (( count >= 10 )); then
     echo "${COLOR_YELLOW}"
   elif (( count >= 5 )); then
@@ -198,13 +186,114 @@ get_git_issue_color() {
 
 get_git_bug_color() {
   local count=$1
-  
+
   [[ $count -eq 0 ]] && echo "${COLOR_CYAN}" || echo "${COLOR_RED}"
+}
+
+get_git_changes_icon() {
+  local count=$1
+  local idx=0
+
+  if (( count > GIT_CHANGES_HIGH_MAX )); then
+    idx=3
+  elif (( count > GIT_CHANGES_MODERATE_MAX )); then
+    idx=2
+  elif (( count > GIT_CHANGES_NORMAL_MAX )); then
+    idx=1
+  fi
+
+  echo "${GIT_CHANGES_ICONS[$idx]}"
+}
+
+get_git_insertions_icon() {
+  local count=$1
+  local idx=0
+
+  if (( count > GIT_LINES_HIGH_MAX )); then
+    idx=3
+  elif (( count > GIT_LINES_MODERATE_MAX )); then
+    idx=2
+  elif (( count > GIT_LINES_NORMAL_MAX )); then
+    idx=1
+  fi
+
+  echo "${GIT_INSERTIONS_ICONS[$idx]}"
+}
+
+get_git_deletions_icon() {
+  local count=$1
+  local idx=0
+
+  if (( count > GIT_LINES_HIGH_MAX )); then
+    idx=3
+  elif (( count > GIT_LINES_MODERATE_MAX )); then
+    idx=2
+  elif (( count > GIT_LINES_NORMAL_MAX )); then
+    idx=1
+  fi
+
+  echo "${GIT_DELETIONS_ICONS[$idx]}"
+}
+
+get_git_untracked_icon() {
+  local count=$1
+  local idx=0
+
+  if (( count > GIT_UNTRACKED_HIGH_MAX )); then
+    idx=2
+  elif (( count > GIT_UNTRACKED_NORMAL_MAX )); then
+    idx=1
+  fi
+
+  echo "${GIT_UNTRACKED_ICONS[$idx]}"
+}
+
+get_git_pr_icon() {
+  local count=$1
+  local idx=0
+
+  if (( count >= 5 )); then
+    idx=3
+  elif (( count >= 3 )); then
+    idx=2
+  elif (( count >= 1 )); then
+    idx=1
+  fi
+
+  echo "${GIT_PR_ICONS[$idx]}"
+}
+
+get_git_review_icon() {
+  local count=$1
+  local idx=0
+
+  if (( count >= 3 )); then
+    idx=2
+  elif (( count >= 1 )); then
+    idx=1
+  fi
+
+  echo "${GIT_REVIEW_ICONS[$idx]}"
+}
+
+get_git_issue_icon() {
+  local count=$1
+  local idx=0
+
+  if (( count >= 10 )); then
+    idx=3
+  elif (( count >= 5 )); then
+    idx=2
+  elif (( count >= 1 )); then
+    idx=1
+  fi
+
+  echo "${GIT_ISSUE_ICONS[$idx]}"
 }
 
 get_net_speed_color() {
   local bytes_per_sec=$1
-  
+
   if (( bytes_per_sec >= NET_SPEED_HIGH_MAX )); then
     echo "${COLOR_YELLOW}"
   elif (( bytes_per_sec >= NET_SPEED_MODERATE_MAX )); then
@@ -218,7 +307,7 @@ get_net_speed_color() {
 
 get_net_ping_color() {
   local ping_ms=$1
-  
+
   if (( ping_ms >= 100 )); then
     echo "${COLOR_RED}"
   elif (( ping_ms >= 50 )); then
@@ -233,11 +322,11 @@ get_net_ping_color() {
 get_temperature_color_and_icon() {
   local temp_str=$1
   local temp_num icon color
-  
+
   temp_num=$(echo "$temp_str" | grep -oE '[-+]?[0-9]+' | head -1)
-  
+
   [[ -z "$temp_num" ]] && echo "${COLOR_CYAN}󰖙" && return
-  
+
   if (( temp_num < TEMP_FREEZING_MAX )); then
     icon="󰜗"
     color="#[fg=${THEME[magenta]},bg=default]"
@@ -257,19 +346,19 @@ get_temperature_color_and_icon() {
     icon="󰖙"
     color="${COLOR_RED}"
   fi
-  
+
   echo "${color}${icon}"
 }
 
 get_timezone_period_icon() {
   local hour=$1
   local is_weekend=$2
-  
+
   if [[ $is_weekend -eq 1 ]]; then
     echo "󰙵"
     return
   fi
-  
+
   if (( hour >= 0 && hour < 7 )); then
     echo "󰖔"
   elif (( hour >= 7 && hour < 9 )); then
@@ -292,12 +381,12 @@ get_timezone_period_icon() {
 get_timezone_period_color() {
   local hour=$1
   local is_weekend=$2
-  
+
   if [[ $is_weekend -eq 1 ]]; then
     echo "#[fg=${THEME[cyan]},bg=default,dim]"
     return
   fi
-  
+
   if (( hour >= 0 && hour < 7 )); then
     echo "#[fg=${THEME[magenta]},bg=default,dim]"
   elif (( hour >= 7 && hour < 9 )); then
@@ -322,7 +411,7 @@ format_colored_value() {
   local icon=$2
   local value=$3
   local unit=${4:-}
-  
+
   echo "${color}${icon} ${value}${unit}${COLOR_RESET}"
 }
 
@@ -331,7 +420,7 @@ format_if_nonzero() {
   local icon=$2
   local value=$3
   local unit=${4:-}
-  
+
   [[ $value -gt 0 ]] && echo " $(format_colored_value "$color" "$icon" "$value" "$unit")"
 }
 
@@ -353,6 +442,13 @@ export -f get_timezone_period_icon
 export -f get_timezone_period_color
 export -f format_colored_value
 export -f format_if_nonzero
+export -f get_git_changes_icon
+export -f get_git_insertions_icon
+export -f get_git_deletions_icon
+export -f get_git_untracked_icon
+export -f get_git_pr_icon
+export -f get_git_review_icon
+export -f get_git_issue_icon
 
 export COLOR_CYAN COLOR_BLUE COLOR_YELLOW COLOR_RED COLOR_GREEN COLOR_RESET
 

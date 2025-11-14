@@ -1,9 +1,4 @@
 #!/usr/bin/env bash
-# ==============================================================================
-# Tokyo Night Tmux - Git Operations Library
-# ==============================================================================
-# Centralized git operations with --no-optional-locks for better performance.
-# ==============================================================================
 
 is_git_repository() {
   git --no-optional-locks rev-parse --git-dir &>/dev/null
@@ -18,7 +13,7 @@ get_git_branch_truncated() {
   local branch
   branch="$(get_git_branch)"
   
-  if [[ ${#branch} -gt ${max_length} ]]; then
+  if [[ ${
     echo "${branch:0:${max_length}}…"
   else
     echo "${branch}"
@@ -134,13 +129,11 @@ get_git_provider() {
     return
   fi
   
-  # HTTPS format
   if [[ "${remote_url}" =~ ^https://([^/]+)/ ]]; then
     echo "${BASH_REMATCH[1]}"
     return
   fi
   
-  # SSH format
   if [[ "${remote_url}" =~ @([^:]+): ]]; then
     echo "${BASH_REMATCH[1]}"
     return

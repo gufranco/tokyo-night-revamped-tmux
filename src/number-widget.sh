@@ -41,13 +41,13 @@ format_number() {
   
   [[ "$format_type" == "hide" ]] && return
   
-  if [[ "$format_type" == "roman" ]] && (( ${#number} > 1 )); then
+  if [[ "$format_type" == "roman" ]] && (( ${
     echo -n "$number "
     return
   fi
   
   local i digit
-  for ((i = 0; i < ${#number}; i++)); do
+  for ((i = 0; i < ${
     digit=${number:i:1}
     echo -n "${format_string:digit:1} "
   done

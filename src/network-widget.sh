@@ -44,15 +44,12 @@ read -r rx2 tx2 < <(get_bytes "$interface") || exit 0
 rx_diff=$((rx2 - rx1))
 tx_diff=$((tx2 - tx1))
 
-# Calcular bytes por segundo
 rx_bps=$((rx_diff / TIME_DIFF))
 tx_bps=$((tx_diff / TIME_DIFF))
 
-# Formatar velocidades
 rx_speed=$(format_speed "$rx_diff" "$TIME_DIFF")
 tx_speed=$(format_speed "$tx_diff" "$TIME_DIFF")
 
-# Obter cores baseadas na velocidade
 rx_color=$(get_net_speed_color "$rx_bps")
 tx_color=$(get_net_speed_color "$tx_bps")
 
