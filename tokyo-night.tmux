@@ -46,9 +46,9 @@ date_and_time="$context"
 
 tmux set -g status-left "#{?client_prefix,#[fg=${THEME[green]}]󰠠,#[fg=${THEME[cyan]}]󰣀} #[fg=${THEME[cyan]}]░ $RESET"
 
-tmux set -g window-status-current-format "$RESET#[fg=${THEME[cyan]}]#{?#{==:#{pane_current_command},ssh},󰣀 ,  }#[fg=${THEME[cyan]},bold,nodim]$window_number#W#[nobold]#{?window_zoomed_flag, $zoom_number, $custom_pane}#{?window_last_flag,#[fg=${THEME[cyan]}] 󰁯 , }"
+tmux set -g window-status-current-format "$RESET#[fg=${THEME[cyan]}]#{?#{==:#{pane_current_command},ssh},󰣀 ,  }#[fg=${THEME[cyan]},bold,nodim]$window_number#W#[nobold]#{?window_zoomed_flag, $zoom_number, $custom_pane}#{?window_last_flag,#[fg=${THEME[cyan]}] 󰁯 , }#[fg=${THEME[cyan]}]░ "
 
-tmux set -g window-status-format "$RESET#[fg=${THEME[foreground]},dim]#{?#{==:#{pane_current_command},ssh},󰣀 ,  }${RESET}#[fg=${THEME[foreground]},dim]$window_number#W#{?window_zoomed_flag, $zoom_number, $custom_pane}#{?window_last_flag,#[fg=${THEME[cyan]}] 󰁯 , }"
+tmux set -g window-status-format "$RESET#[fg=${THEME[foreground]},dim]#{?#{==:#{pane_current_command},ssh},󰣀 ,  }${RESET}#[fg=${THEME[foreground]},dim]$window_number#W#{?window_zoomed_flag, $zoom_number, $custom_pane}#{?window_last_flag,#[fg=${THEME[cyan]}] 󰁯 , }#[fg=${THEME[cyan]},dim]░ "
 
 tmux set -g window-status-separator ""
 WIDGETS_ORDER="$(tmux show-option -gv @tokyo-night-tmux_widgets_order 2>/dev/null)"
