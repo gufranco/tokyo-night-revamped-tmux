@@ -13,6 +13,7 @@ source "${LIB_DIR}/color-scale.sh"
 is_widget_enabled "@tokyo-night-tmux_show_system" || exit 0
 
 SHOW_CPU=$(tmux show-option -gv @tokyo-night-tmux_system_cpu 2>/dev/null)
+SHOW_LOAD=$(tmux show-option -gv @tokyo-night-tmux_system_load 2>/dev/null)
 SHOW_GPU=$(tmux show-option -gv @tokyo-night-tmux_system_gpu 2>/dev/null)
 SHOW_MEMORY=$(tmux show-option -gv @tokyo-night-tmux_system_memory 2>/dev/null)
 SHOW_SWAP=$(tmux show-option -gv @tokyo-night-tmux_system_swap 2>/dev/null)
@@ -20,6 +21,7 @@ SHOW_DISK=$(tmux show-option -gv @tokyo-night-tmux_system_disk 2>/dev/null)
 SHOW_BATTERY=$(tmux show-option -gv @tokyo-night-tmux_system_battery 2>/dev/null)
 
 SHOW_CPU="${SHOW_CPU:-1}"
+SHOW_LOAD="${SHOW_LOAD:-1}"
 SHOW_GPU="${SHOW_GPU:-1}"
 SHOW_MEMORY="${SHOW_MEMORY:-1}"
 SHOW_SWAP="${SHOW_SWAP:-1}"
@@ -104,6 +106,24 @@ main() {
     cpu_usage=$(validate_percentage "$cpu_usage")
     cpu_display=$(get_cpu_color_and_icon "$cpu_usage")
     output="${cpu_display} ${cpu_usage}%${COLOR_RESET}"
+  fi
+
+  if [[ $SHOW_LOAD -eq 1 ]]; then
+    local load_avg cpu_count load_color load_percent
+    load_avg=$(get_load_average)
+    cpu_count=$(get_cpu_count)
+    
+    if [[ -n "$load_avg" ]] && [[ -n "$cpu_count" ]] && [[ "$cpu_count" -gt 0 ]]; then
+      load_avg=$(echo "$load_avg" | tr ',' '.')
+      
+      load_percent=$(awk "BEGIN {printf \"%.0f\", ($load_avg / $cpu_count) * 100}")
+      
+      load_percent=$(validate_percentage "$load_percent")
+      load_color=$(get_system_color "$load_percent")
+      
+      [[ -n "$output" ]] && output="${output} "
+      output="${output}${load_color}${ICON_LOAD} ${load_percent}%${COLOR_RESET}"
+    fi
   fi
 
   if [[ $SHOW_GPU -eq 1 ]] && is_apple_silicon; then

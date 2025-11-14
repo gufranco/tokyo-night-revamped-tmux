@@ -11,6 +11,10 @@ readonly SYSTEM_NORMAL_MAX=49
 readonly SYSTEM_MODERATE_MAX=74
 readonly SYSTEM_HIGH_MAX=89
 
+readonly LOAD_LOW_MULTIPLIER=50
+readonly LOAD_MODERATE_MULTIPLIER=75
+readonly LOAD_HIGH_MULTIPLIER=100
+
 readonly GIT_CHANGES_NORMAL_MAX=5
 readonly GIT_CHANGES_MODERATE_MAX=15
 readonly GIT_CHANGES_HIGH_MAX=30
@@ -87,6 +91,31 @@ get_system_color() {
     "$SYSTEM_NORMAL_MAX" \
     "$SYSTEM_MODERATE_MAX" \
     "$SYSTEM_HIGH_MAX"
+}
+
+get_load_average_color() {
+  local load=$1
+  local cpu_count=$2
+  
+  if [[ -z "$load" ]] || [[ -z "$cpu_count" ]] || [[ "$cpu_count" -eq 0 ]]; then
+    echo "${COLOR_CYAN}"
+    return
+  fi
+  
+  local load_int=$(echo "$load" | cut -d'.' -f1)
+  local threshold_high=$((cpu_count * LOAD_HIGH_MULTIPLIER / 100))
+  local threshold_moderate=$((cpu_count * LOAD_MODERATE_MULTIPLIER / 100))
+  local threshold_low=$((cpu_count * LOAD_LOW_MULTIPLIER / 100))
+  
+  if (( load_int >= cpu_count )); then
+    echo "${COLOR_RED}"
+  elif (( load_int >= threshold_high )); then
+    echo "${COLOR_YELLOW}"
+  elif (( load_int >= threshold_moderate )); then
+    echo "${COLOR_BLUE}"
+  else
+    echo "${COLOR_CYAN}"
+  fi
 }
 
 # ==============================================================================
@@ -272,6 +301,7 @@ format_if_nonzero() {
 export -f get_percentage_color
 export -f get_count_color
 export -f get_system_color
+export -f get_load_average_color
 export -f get_git_changes_color
 export -f get_git_lines_color
 export -f get_git_untracked_color
