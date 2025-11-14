@@ -23,12 +23,11 @@ fi
 
 INTERFACE=$(tmux show-option -gv @tokyo-night-tmux_netspeed_iface 2>/dev/null)
 SHOW_PING=$(tmux show-option -gv @tokyo-night-tmux_netspeed_ping 2>/dev/null)
-TIME_DIFF=$(tmux show-option -gv @tokyo-night-tmux_netspeed_refresh 2>/dev/null)
 SHOW_VPN=$(tmux show-option -gv @tokyo-night-tmux_netspeed_vpn 2>/dev/null)
 
 SHOW_PING="${SHOW_PING:-0}"
-TIME_DIFF="${TIME_DIFF:-1}"
 SHOW_VPN="${SHOW_VPN:-1}"
+TIME_DIFF="$REFRESH_RATE"
   
   interface="${INTERFACE}"
   
