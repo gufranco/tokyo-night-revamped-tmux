@@ -5,6 +5,7 @@ COLOR_BLUE="#[fg=${THEME[blue]},bg=default]"
 COLOR_YELLOW="#[fg=${THEME[yellow]},bg=default]"
 COLOR_RED="#[fg=${THEME[red]},bg=default,bold]"
 COLOR_GREEN="#[fg=${THEME[green]},bg=default]"
+COLOR_MAGENTA="#[fg=${THEME[magenta]},bg=default]"
 COLOR_RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"
 
 readonly SYSTEM_NORMAL_MAX=49
@@ -383,26 +384,26 @@ get_timezone_period_color() {
   local is_weekend=$2
 
   if [[ $is_weekend -eq 1 ]]; then
-    echo "#[fg=${THEME[cyan]},bg=default,dim]"
+    echo "${COLOR_CYAN//bg=default/bg=default,dim}"
     return
   fi
 
   if (( hour >= 0 && hour < 7 )); then
-    echo "#[fg=${THEME[magenta]},bg=default,dim]"
+    echo "${COLOR_MAGENTA//bg=default/bg=default,dim}"
   elif (( hour >= 7 && hour < 9 )); then
-    echo "#[fg=${THEME[cyan]},bg=default]"
+    echo "${COLOR_CYAN}"
   elif (( hour >= 9 && hour < 12 )); then
-    echo "#[fg=${THEME[green]},bg=default]"
+    echo "${COLOR_GREEN}"
   elif (( hour >= 12 && hour < 14 )); then
-    echo "#[fg=${THEME[yellow]},bg=default]"
+    echo "${COLOR_YELLOW}"
   elif (( hour >= 14 && hour < 18 )); then
-    echo "#[fg=${THEME[green]},bg=default]"
+    echo "${COLOR_GREEN}"
   elif (( hour >= 18 && hour < 20 )); then
-    echo "#[fg=${THEME[blue]},bg=default]"
+    echo "${COLOR_BLUE}"
   elif (( hour >= 20 && hour < 23 )); then
-    echo "#[fg=${THEME[magenta]},bg=default]"
+    echo "${COLOR_MAGENTA}"
   else
-    echo "#[fg=${THEME[magenta]},bg=default,dim]"
+    echo "${COLOR_MAGENTA//bg=default/bg=default,dim}"
   fi
 }
 
@@ -450,5 +451,5 @@ export -f get_git_pr_icon
 export -f get_git_review_icon
 export -f get_git_issue_icon
 
-export COLOR_CYAN COLOR_BLUE COLOR_YELLOW COLOR_RED COLOR_GREEN COLOR_RESET
+export COLOR_CYAN COLOR_BLUE COLOR_YELLOW COLOR_RED COLOR_GREEN COLOR_MAGENTA COLOR_RESET
 

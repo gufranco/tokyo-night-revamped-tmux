@@ -3,49 +3,30 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LIB_DIR="${SCRIPT_DIR}/lib"
 
-source "${LIB_DIR}/coreutils-compat.sh"
-source "${LIB_DIR}/constants.sh"
-source "${LIB_DIR}/themes.sh"
-source "${LIB_DIR}/color-scale.sh"
-source "${LIB_DIR}/cache.sh"
-source "${LIB_DIR}/error-logger.sh"
-source "${LIB_DIR}/tooltip.sh"
+source "${LIB_DIR}/widget-loader.sh"
+source "${LIB_DIR}/tmux-ops.sh"
+source "${LIB_DIR}/widget-common.sh"
+source "${LIB_DIR}/widget-config.sh"
 
-MINIMAL_SESSION=$(tmux show-option -gv @tokyo-night-tmux_minimal_session 2>/dev/null)
-CURRENT_SESSION=$(tmux display-message -p '#S')
+load_widget_dependencies "git"
 
-[[ -n "$MINIMAL_SESSION" ]] && [[ "$MINIMAL_SESSION" == "$CURRENT_SESSION" ]] && exit 0
-
-SHOW_GIT=$(tmux show-option -gv @tokyo-night-tmux_show_git 2>/dev/null)
-[[ "$SHOW_GIT" == "0" ]] && exit 0
+validate_minimal_session
+validate_widget_enabled "@tokyo-night-tmux_show_git"
 
 cd "$1" || exit 0
-
 git rev-parse --git-dir &>/dev/null || exit 0
 
-REFRESH_RATE=$(get_refresh_rate)
-GIT_CACHE_KEY="git_$(pwd | sed 's/\//_/g')"
-CACHED=$(get_cached_value "$GIT_CACHE_KEY" "$REFRESH_RATE")
+cache_key="git_$(pwd | sed 's/\//_/g')"
+cached_output=$(get_cached_widget_output "git" "$cache_key")
+should_use_cache "$cached_output" && echo "$cached_output" && exit 0
 
-if [[ -n "$CACHED" ]]; then
-  echo "$CACHED"
-  exit 0
-fi
+CHECK_UNTRACKED=$(is_widget_feature_enabled "@tokyo-night-tmux_git_untracked" "1")
+SHOW_WEB=$(is_widget_feature_enabled "@tokyo-night-tmux_git_web" "1")
+SHOW_STASH=$(is_widget_feature_enabled "@tokyo-night-tmux_git_stash" "0")
+SHOW_AHEAD_BEHIND=$(is_widget_feature_enabled "@tokyo-night-tmux_git_ahead_behind" "0")
+SHOW_LAST_COMMIT=$(is_widget_feature_enabled "@tokyo-night-tmux_git_last_commit" "0")
 
-CHECK_UNTRACKED=$(tmux show-option -gv @tokyo-night-tmux_git_untracked 2>/dev/null)
-CHECK_UNTRACKED="${CHECK_UNTRACKED:-1}"
-
-SHOW_WEB=$(tmux show-option -gv @tokyo-night-tmux_git_web 2>/dev/null)
-SHOW_WEB="${SHOW_WEB:-1}"
-
-SHOW_STASH=$(tmux show-option -gv @tokyo-night-tmux_git_stash 2>/dev/null)
-SHOW_AHEAD_BEHIND=$(tmux show-option -gv @tokyo-night-tmux_git_ahead_behind 2>/dev/null)
-SHOW_LAST_COMMIT=$(tmux show-option -gv @tokyo-night-tmux_git_last_commit 2>/dev/null)
-
-SHOW_STASH="${SHOW_STASH:-0}"
-SHOW_AHEAD_BEHIND="${SHOW_AHEAD_BEHIND:-0}"
-SHOW_LAST_COMMIT="${SHOW_LAST_COMMIT:-0}"
-
+main() {
 BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
 if [[ ${#BRANCH} -gt 25 ]]; then
@@ -118,11 +99,11 @@ fi
 if [[ $SHOW_AHEAD_BEHIND -eq 1 ]]; then
   ahead=$(git rev-list --count @{upstream}..HEAD 2>/dev/null || echo "0")
   behind=$(git rev-list --count HEAD..@{upstream} 2>/dev/null || echo "0")
-  
+
   if [[ -n "$ahead" ]] && [[ "$ahead" =~ ^[0-9]+$ ]] && [[ $ahead -gt 0 ]]; then
     OUTPUT="${OUTPUT} ${COLOR_GREEN}↑${ahead}${COLOR_RESET}"
   fi
-  
+
   if [[ -n "$behind" ]] && [[ "$behind" =~ ^[0-9]+$ ]] && [[ $behind -gt 0 ]]; then
     OUTPUT="${OUTPUT} ${COLOR_YELLOW}↓${behind}${COLOR_RESET}"
   fi
@@ -133,7 +114,7 @@ if [[ $SHOW_LAST_COMMIT -eq 1 ]]; then
   if [[ -n "$last_commit_time" ]] && [[ "$last_commit_time" =~ ^[0-9]+$ ]]; then
     current_time=$(date +%s)
     time_diff=$(( current_time - last_commit_time ))
-    
+
     local time_str
     if (( time_diff < 3600 )); then
       time_str="${time_diff}m"
@@ -142,7 +123,7 @@ if [[ $SHOW_LAST_COMMIT -eq 1 ]]; then
     else
       time_str="$(( time_diff / 86400 ))d"
     fi
-    
+
     OUTPUT="${OUTPUT} ${COLOR_CYAN}${ICON_COMMIT} ${time_str}${COLOR_RESET}"
   fi
 fi
@@ -194,25 +175,27 @@ if [[ $SHOW_WEB -eq 1 ]]; then
       pr_color=$(get_git_pr_color "$PR_COUNT")
       pr_icon=$(get_git_pr_icon "$PR_COUNT")
       OUTPUT="${OUTPUT} ${pr_color}${PROVIDER_ICON}${pr_icon} ${PR_COUNT}${COLOR_RESET}"
-      
+
       review_color=$(get_git_review_color "$REVIEW_COUNT")
       review_icon=$(get_git_review_icon "$REVIEW_COUNT")
       OUTPUT="${OUTPUT} ${review_color}${review_icon} ${REVIEW_COUNT}${COLOR_RESET}"
-      
+
       issue_color=$(get_git_issue_color "$ISSUE_COUNT")
       issue_icon=$(get_git_issue_icon "$ISSUE_COUNT")
       OUTPUT="${OUTPUT} ${issue_color}${issue_icon} ${ISSUE_COUNT}${COLOR_RESET}"
-      
+
       bug_color=$(get_git_bug_color "$BUG_COUNT")
       OUTPUT="${OUTPUT} ${bug_color}󰃤 ${BUG_COUNT}${COLOR_RESET}"
     fi
   fi
 fi
 
-local tooltip_text
-tooltip_text=$(generate_git_tooltip)
-set_widget_tooltip "git" "$tooltip_text"
+  tooltip_text=$(generate_git_tooltip)
+  set_widget_tooltip "git" "$tooltip_text"
 
-RESULT="${OUTPUT} "
-set_cached_value "$GIT_CACHE_KEY" "$RESULT"
-echo "$RESULT"
+  RESULT="${OUTPUT} "
+  set_cached_value "$cache_key" "$RESULT"
+  echo "$RESULT"
+}
+
+main

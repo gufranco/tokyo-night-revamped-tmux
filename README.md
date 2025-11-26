@@ -32,7 +32,7 @@ Perfect companion for [tokyonight-vim](https://github.com/ghifarit53/tokyonight-
 - **Docker/Kubernetes**: Container and pod status
 - **Git Integration**: Local repository status + GitHub/GitLab web stats (stash, ahead/behind, last commit)
 - **Network Stats**: Real-time upload/download speeds, VPN detection/name, WiFi signal, ping latency
-- **Context Information**: Date/time, timezone, path, SSH sessions, tmux session, music player, system updates, Bluetooth, audio device, screen brightness
+- **Context Information**: Date/time, timezone, weather
 - **Weather**: Current temperature with dynamic icons
 
 ### 🔧 **Highly Customizable**
@@ -84,7 +84,6 @@ These are only required for specific features:
 | `rocm-smi` | GPU monitoring (AMD Linux) | ROCm |
 | `sensors` | Temperature monitoring (Linux) | `apt install lm-sensors` |
 | `istats` | Temperature monitoring (macOS) | `gem install iStats` |
-| `playerctl` | Music player (Linux) | `apt install playerctl` |
 | `blueutil` | Bluetooth (macOS) | `brew install blueutil` |
 | `pactl` / `amixer` | Audio device (Linux) | Usually pre-installed |
 | `SwitchAudioSource` | Audio device (macOS) | `brew install switchaudio-osx` |
@@ -370,86 +369,6 @@ set -g @tokyo-night-tmux_timezone "America/Los_Angeles,America/New_York,Europe/L
 
 Shows abbreviated timezones (PST, EST, GMT) with 󰥔 icon. Supports multiple timezones.
 
-#### SSH Session
-
-```bash
-set -g @tokyo-night-tmux_context_ssh 1
-```
-
-Shows hostname when connected via SSH (󰣀 icon).
-
-#### Current Directory
-
-```bash
-set -g @tokyo-night-tmux_context_path 1
-```
-
-Shows current working directory (󰉋 icon), truncated to 30 characters, `~` for home.
-
-#### Active Tmux Session
-
-```bash
-set -g @tokyo-night-tmux_context_session 1
-```
-
-Shows current tmux session name (󰆍 icon).
-
-#### Music Player
-
-```bash
-set -g @tokyo-night-tmux_context_music 1
-```
-
-Shows currently playing track from Spotify/Apple Music (macOS) or any MPRIS player (Linux).
-- **macOS**: Spotify via AppleScript, Apple Music
-- **Linux**: Any player via `playerctl` or DBus
-- Shows: Artist - Title (truncated to 20 chars)
-- Icons: 󰐊 (Playing), 󰏤 (Paused)
-
-#### System Updates
-
-```bash
-set -g @tokyo-night-tmux_context_updates 1
-```
-
-Shows count of available system updates (󰏕 icon).
-- **macOS**: `softwareupdate -l`
-- **Linux**: `apt`, `dnf`, `pacman`, or `yum`
-- Color-coded: < 5 (Cyan), 5-10 (Yellow), ≥ 10 (Red)
-
-#### Bluetooth Status
-
-```bash
-set -g @tokyo-night-tmux_context_bluetooth 1
-```
-
-Shows Bluetooth status and connected devices count (󰂯 icon).
-- **macOS**: Requires `blueutil` or uses system_profiler
-- **Linux**: Uses `bluetoothctl` or `/sys/class/bluetooth`
-- Only shows when Bluetooth is on
-
-#### Audio Device
-
-```bash
-set -g @tokyo-night-tmux_context_audio 1
-```
-
-Shows active audio output device (󰋋 icon).
-- **macOS**: Requires `SwitchAudioSource` or uses AppleScript
-- **Linux**: Uses `pactl` or `amixer`
-- Device name truncated to 15 characters
-
-#### Screen Brightness
-
-```bash
-set -g @tokyo-night-tmux_context_brightness 1
-```
-
-Shows screen brightness percentage (󰃠 icon).
-- **macOS**: Requires `brightness` command
-- **Linux**: Uses `/sys/class/backlight/` or `xbacklight`
-- Useful for laptops
-
 #### Weather
 
 ```bash
@@ -466,7 +385,6 @@ Shows current temperature with dynamic icons (requires `curl` or `wget`).
 - **Independent Colors**: Hardcoded colors, independent of terminal theme
 - **Prefix Highlight**: Visual indicator when prefix key is pressed
 - **Window Indicators**: Custom pane numbers and zoom indicators
-- **SSH Detection**: Visual feedback for SSH sessions
 - **Clean Design**: Minimalist, professional appearance
 - **Dynamic Elements**: Icons and colors adapt to system state
 
@@ -545,14 +463,6 @@ set -g @tokyo-night-tmux_netspeed_wifi 1
 # Context with all features
 set -g @tokyo-night-tmux_show_context 1
 set -g @tokyo-night-tmux_context_weather 1
-set -g @tokyo-night-tmux_context_ssh 1
-set -g @tokyo-night-tmux_context_path 1
-set -g @tokyo-night-tmux_context_session 1
-set -g @tokyo-night-tmux_context_music 1
-set -g @tokyo-night-tmux_context_updates 1
-set -g @tokyo-night-tmux_context_bluetooth 1
-set -g @tokyo-night-tmux_context_audio 1
-set -g @tokyo-night-tmux_context_brightness 1
 ```
 
 ---
@@ -630,7 +540,7 @@ The widget automatically detects available tools and uses the most accurate meth
 
 1. Increase refresh rate: `set -g @tokyo-night-tmux_refresh_rate 10`
 2. Disable auto-fetch for large repos: `set -g @tokyo-night-tmux_git_disable_auto_fetch 1`
-3. Use minimal mode for SSH sessions
+3. Use minimal mode for better performance
 4. Disable unused widgets
 5. Disable heavy features: temperature, disk I/O, process monitoring if not needed
 
@@ -652,7 +562,6 @@ The widget automatically detects available tools and uses the most accurate meth
 - Widget only shows when containers are running
 - For Kubernetes: ensure `kubectl` is configured and pods exist
 
-### Music player not working
 
 - **macOS**: Ensure Spotify/Apple Music is running and playing
 - **Linux**: Install `playerctl`: `apt install playerctl`

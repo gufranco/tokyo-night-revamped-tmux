@@ -225,29 +225,3 @@ teardown() {
   [[ "$result" =~ ^-?[0-9]+$ ]]
 }
 
-@test "platform-detector.sh - get_music_player_status returns string or empty" {
-  result=$(get_music_player_status)
-  [[ -n "$result" ]] || [[ -z "$result" ]]
-}
-
-@test "platform-detector.sh - get_system_updates returns number" {
-  export MOCK_SYSTEM_UPDATES="0"
-  export MOCK_SOFTWAREUPDATE_OUTPUT=""
-  result=$(get_system_updates)
-  [[ "$result" =~ ^[0-9]+$ ]] || true
-}
-
-@test "platform-detector.sh - get_bluetooth_status returns status" {
-  result=$(get_bluetooth_status)
-  [[ "$result" =~ .*\|.* ]]
-}
-
-@test "platform-detector.sh - get_audio_device returns string or empty" {
-  result=$(get_audio_device)
-  [[ -n "$result" ]] || [[ -z "$result" ]]
-}
-
-@test "platform-detector.sh - get_screen_brightness returns number" {
-  result=$(get_screen_brightness)
-  [[ "$result" =~ ^[0-9]+$ ]]
-}

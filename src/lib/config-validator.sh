@@ -76,11 +76,6 @@ check_dependencies() {
       if [[ "$(tmux show-option -gv @tokyo-night-tmux_context_weather 2>/dev/null)" == "1" ]]; then
         command -v curl >/dev/null 2>&1 || command -v wget >/dev/null 2>&1 || missing_deps+=("curl or wget")
       fi
-      if [[ "$(tmux show-option -gv @tokyo-night-tmux_context_music 2>/dev/null)" == "1" ]]; then
-        if is_linux; then
-          command -v playerctl >/dev/null 2>&1 || missing_deps+=("playerctl")
-        fi
-      fi
       ;;
     system)
       if [[ "$(tmux show-option -gv @tokyo-night-tmux_system_temp 2>/dev/null)" == "1" ]]; then

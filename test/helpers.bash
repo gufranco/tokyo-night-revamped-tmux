@@ -156,8 +156,11 @@ tmux() {
       @tokyo-night-tmux_enable_trends)
         echo "${TMUX_ENABLE_TRENDS:-0}"
         ;;
+      @test_option)
+        echo "${TMUX_SHOW_OPTION_VALUE:-}"
+        ;;
       *)
-        echo ""
+        echo "${TMUX_SHOW_OPTION_VALUE:-}"
         ;;
     esac
   elif [[ "$1" == "display-message" ]]; then
@@ -433,25 +436,6 @@ get_wifi_signal_strength() {
   echo "${MOCK_WIFI_SIGNAL:--65}"
 }
 
-get_music_player_status() {
-  echo "${MOCK_MUSIC_STATUS:-}"
-}
-
-get_system_updates() {
-  echo "${MOCK_SYSTEM_UPDATES:-0}"
-}
-
-get_bluetooth_status() {
-  echo "${MOCK_BLUETOOTH_STATUS:-0|0}"
-}
-
-get_audio_device() {
-  echo "${MOCK_AUDIO_DEVICE:-}"
-}
-
-get_screen_brightness() {
-  echo "${MOCK_BRIGHTNESS:-50}"
-}
 
 get_network_connections() {
   echo "${MOCK_NETWORK_CONNECTIONS:-0}"
