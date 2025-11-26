@@ -8,6 +8,8 @@ source "${LIB_DIR}/constants.sh"
 source "${LIB_DIR}/themes.sh"
 source "${LIB_DIR}/color-scale.sh"
 source "${LIB_DIR}/cache.sh"
+source "${LIB_DIR}/error-logger.sh"
+source "${LIB_DIR}/tooltip.sh"
 
 MINIMAL_SESSION=$(tmux show-option -gv @tokyo-night-tmux_minimal_session 2>/dev/null)
 CURRENT_SESSION=$(tmux display-message -p '#S')
@@ -35,6 +37,14 @@ CHECK_UNTRACKED="${CHECK_UNTRACKED:-1}"
 
 SHOW_WEB=$(tmux show-option -gv @tokyo-night-tmux_git_web 2>/dev/null)
 SHOW_WEB="${SHOW_WEB:-1}"
+
+SHOW_STASH=$(tmux show-option -gv @tokyo-night-tmux_git_stash 2>/dev/null)
+SHOW_AHEAD_BEHIND=$(tmux show-option -gv @tokyo-night-tmux_git_ahead_behind 2>/dev/null)
+SHOW_LAST_COMMIT=$(tmux show-option -gv @tokyo-night-tmux_git_last_commit 2>/dev/null)
+
+SHOW_STASH="${SHOW_STASH:-0}"
+SHOW_AHEAD_BEHIND="${SHOW_AHEAD_BEHIND:-0}"
+SHOW_LAST_COMMIT="${SHOW_LAST_COMMIT:-0}"
 
 BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
@@ -90,6 +100,51 @@ if [[ $UNTRACKED -gt 0 ]]; then
   untracked_color=$(get_git_untracked_color "$UNTRACKED")
   untracked_icon=$(get_git_untracked_icon "$UNTRACKED")
   OUTPUT="${OUTPUT} ${untracked_color}${untracked_icon} ${UNTRACKED}${COLOR_RESET}"
+fi
+
+if [[ $SHOW_STASH -eq 1 ]]; then
+  stash_count=$(git stash list 2>/dev/null | wc -l | tr -d ' ')
+  if [[ -n "$stash_count" ]] && [[ "$stash_count" =~ ^[0-9]+$ ]] && [[ $stash_count -gt 0 ]]; then
+    local stash_color
+    if (( stash_count >= 5 )); then
+      stash_color="${COLOR_YELLOW}"
+    else
+      stash_color="${COLOR_CYAN}"
+    fi
+    OUTPUT="${OUTPUT} ${stash_color}${ICON_STASH} ${stash_count}${COLOR_RESET}"
+  fi
+fi
+
+if [[ $SHOW_AHEAD_BEHIND -eq 1 ]]; then
+  ahead=$(git rev-list --count @{upstream}..HEAD 2>/dev/null || echo "0")
+  behind=$(git rev-list --count HEAD..@{upstream} 2>/dev/null || echo "0")
+  
+  if [[ -n "$ahead" ]] && [[ "$ahead" =~ ^[0-9]+$ ]] && [[ $ahead -gt 0 ]]; then
+    OUTPUT="${OUTPUT} ${COLOR_GREEN}↑${ahead}${COLOR_RESET}"
+  fi
+  
+  if [[ -n "$behind" ]] && [[ "$behind" =~ ^[0-9]+$ ]] && [[ $behind -gt 0 ]]; then
+    OUTPUT="${OUTPUT} ${COLOR_YELLOW}↓${behind}${COLOR_RESET}"
+  fi
+fi
+
+if [[ $SHOW_LAST_COMMIT -eq 1 ]]; then
+  last_commit_time=$(git log -1 --format=%ct 2>/dev/null)
+  if [[ -n "$last_commit_time" ]] && [[ "$last_commit_time" =~ ^[0-9]+$ ]]; then
+    current_time=$(date +%s)
+    time_diff=$(( current_time - last_commit_time ))
+    
+    local time_str
+    if (( time_diff < 3600 )); then
+      time_str="${time_diff}m"
+    elif (( time_diff < 86400 )); then
+      time_str="$(( time_diff / 3600 ))h"
+    else
+      time_str="$(( time_diff / 86400 ))d"
+    fi
+    
+    OUTPUT="${OUTPUT} ${COLOR_CYAN}${ICON_COMMIT} ${time_str}${COLOR_RESET}"
+  fi
 fi
 
 if [[ $SHOW_WEB -eq 1 ]]; then
@@ -153,6 +208,10 @@ if [[ $SHOW_WEB -eq 1 ]]; then
     fi
   fi
 fi
+
+local tooltip_text
+tooltip_text=$(generate_git_tooltip)
+set_widget_tooltip "git" "$tooltip_text"
 
 RESULT="${OUTPUT} "
 set_cached_value "$GIT_CACHE_KEY" "$RESULT"

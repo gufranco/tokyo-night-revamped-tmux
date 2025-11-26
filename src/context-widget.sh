@@ -9,6 +9,8 @@ source "${LIB_DIR}/widget-base.sh"
 source "${LIB_DIR}/themes.sh"
 source "${LIB_DIR}/color-scale.sh"
 source "${LIB_DIR}/format.sh"
+source "${LIB_DIR}/error-logger.sh"
+source "${LIB_DIR}/tooltip.sh"
 
 MINIMAL_SESSION=$(tmux show-option -gv @tokyo-night-tmux_minimal_session 2>/dev/null)
 CURRENT_SESSION=$(tmux display-message -p '#S')
@@ -24,12 +26,14 @@ DATE_FORMAT=$(tmux show-option -gv @tokyo-night-tmux_context_date_format 2>/dev/
 TIME_FORMAT=$(tmux show-option -gv @tokyo-night-tmux_context_time_format 2>/dev/null)
 SHOW_TIMEZONE=$(tmux show-option -gv @tokyo-night-tmux_context_timezone 2>/dev/null)
 TIMEZONES=$(tmux show-option -gv @tokyo-night-tmux_context_timezones 2>/dev/null)
+SHOW_MUSIC=$(tmux show-option -gv @tokyo-night-tmux_context_music 2>/dev/null)
 
 SHOW_WEATHER="${SHOW_WEATHER:-1}"
 WEATHER_UNITS="${WEATHER_UNITS:-m}"
 DATE_FORMAT="${DATE_FORMAT:-YMD}"
 TIME_FORMAT="${TIME_FORMAT:-24H}"
 SHOW_TIMEZONE="${SHOW_TIMEZONE:-0}"
+SHOW_MUSIC="${SHOW_MUSIC:-0}"
 
 OUTPUT=""
 
@@ -137,5 +141,108 @@ if [[ "$SHOW_TIMEZONE" == "1" ]] && [[ -n "$TIMEZONES" ]]; then
   done
 fi
 
-[[ -n "$OUTPUT" ]] && echo "${COLOR_CYAN}░${COLOR_RESET} ${OUTPUT} "
+if [[ $SHOW_SSH -eq 1 ]]; then
+  if [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]] || [[ -n "$SSH_CONNECTION" ]]; then
+    local ssh_host
+    ssh_host="${SSH_CLIENT%% *}"
+    if [[ -z "$ssh_host" ]]; then
+      ssh_host=$(hostname 2>/dev/null || echo "remote")
+    fi
+    [[ -n "$OUTPUT" ]] && OUTPUT="${OUTPUT} "
+    OUTPUT="${OUTPUT}${COLOR_CYAN}${ICON_SSH} ${ssh_host}${COLOR_RESET}"
+  fi
+fi
+
+if [[ $SHOW_PATH -eq 1 ]]; then
+  local current_path
+  current_path="${PWD/#$HOME/~}"
+  if [[ ${#current_path} -gt 30 ]]; then
+    current_path="...${current_path: -27}"
+  fi
+  [[ -n "$OUTPUT" ]] && OUTPUT="${OUTPUT} "
+  OUTPUT="${OUTPUT}${COLOR_CYAN}${ICON_PATH} ${current_path}${COLOR_RESET}"
+fi
+
+if [[ $SHOW_SESSION -eq 1 ]]; then
+  local session_name
+  session_name=$(tmux display-message -p '#S' 2>/dev/null)
+  if [[ -n "$session_name" ]]; then
+    [[ -n "$OUTPUT" ]] && OUTPUT="${OUTPUT} "
+    OUTPUT="${OUTPUT}${COLOR_CYAN}󰆍 ${session_name}${COLOR_RESET}"
+  fi
+fi
+
+if [[ $SHOW_MUSIC -eq 1 ]]; then
+  local music_status
+  music_status=$(get_music_player_status)
+  if [[ -n "$music_status" ]]; then
+    IFS='|' read -r status artist title <<< "$music_status"
+    if [[ -n "$title" ]]; then
+      title="${title:0:20}"
+      [[ -n "$artist" ]] && title="${artist:0:10} - ${title}"
+      local music_icon
+      [[ "$status" == "Playing" ]] && music_icon="${ICON_MUSIC_PLAY}" || music_icon="${ICON_MUSIC_PAUSE}"
+      [[ -n "$OUTPUT" ]] && OUTPUT="${OUTPUT} "
+      OUTPUT="${OUTPUT}${COLOR_CYAN}${music_icon} ${title}${COLOR_RESET}"
+    fi
+  fi
+fi
+
+if [[ $SHOW_UPDATES -eq 1 ]]; then
+  local updates
+  updates=$(get_system_updates)
+  if [[ -n "$updates" ]] && [[ "$updates" =~ ^[0-9]+$ ]] && [[ $updates -gt 0 ]]; then
+    local update_color
+    if (( updates >= 10 )); then
+      update_color="${COLOR_RED}"
+    elif (( updates >= 5 )); then
+      update_color="${COLOR_YELLOW}"
+    else
+      update_color="${COLOR_CYAN}"
+    fi
+    [[ -n "$OUTPUT" ]] && OUTPUT="${OUTPUT} "
+    OUTPUT="${OUTPUT}${update_color}${ICON_UPDATES} ${updates}${COLOR_RESET}"
+  fi
+fi
+
+if [[ $SHOW_BLUETOOTH -eq 1 ]]; then
+  local bluetooth_status
+  bluetooth_status=$(get_bluetooth_status)
+  if [[ -n "$bluetooth_status" ]]; then
+    IFS='|' read -r status devices <<< "$bluetooth_status"
+    if [[ "$status" == "1" ]] || [[ "$status" == "on" ]]; then
+      [[ -n "$OUTPUT" ]] && OUTPUT="${OUTPUT} "
+      if [[ -n "$devices" ]] && [[ "$devices" =~ ^[0-9]+$ ]] && [[ $devices -gt 0 ]]; then
+        OUTPUT="${OUTPUT}${COLOR_CYAN}${ICON_BLUETOOTH} ${devices}${COLOR_RESET}"
+      else
+        OUTPUT="${OUTPUT}${COLOR_CYAN}${ICON_BLUETOOTH}${COLOR_RESET}"
+      fi
+    fi
+  fi
+fi
+
+if [[ $SHOW_AUDIO -eq 1 ]]; then
+  local audio_device
+  audio_device=$(get_audio_device)
+  if [[ -n "$audio_device" ]]; then
+    audio_device="${audio_device:0:15}"
+    [[ -n "$OUTPUT" ]] && OUTPUT="${OUTPUT} "
+    OUTPUT="${OUTPUT}${COLOR_CYAN}${ICON_AUDIO} ${audio_device}${COLOR_RESET}"
+  fi
+fi
+
+if [[ $SHOW_BRIGHTNESS -eq 1 ]]; then
+  local brightness
+  brightness=$(get_screen_brightness)
+  if [[ -n "$brightness" ]] && [[ "$brightness" =~ ^[0-9]+$ ]] && [[ $brightness -gt 0 ]]; then
+    [[ -n "$OUTPUT" ]] && OUTPUT="${OUTPUT} "
+    OUTPUT="${OUTPUT}${COLOR_CYAN}${ICON_BRIGHTNESS} ${brightness}%${COLOR_RESET}"
+  fi
+fi
+
+local tooltip_text
+tooltip_text=$(generate_context_tooltip)
+set_widget_tooltip "context" "$tooltip_text"
+
+[[ -n "$OUTPUT" ]] && echo "${COLOR_CYAN}░${COLOR_RESET} ${OUTPUT}"
 

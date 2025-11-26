@@ -27,16 +27,17 @@ Perfect companion for [tokyonight-vim](https://github.com/ghifarit53/tokyonight-
 - Background processing for long-running operations
 
 ### 📊 **Rich Widgets**
-- **System Monitoring**: CPU, GPU, Memory, Swap, Disk, Battery
-- **Git Integration**: Local repository status + GitHub/GitLab web stats
-- **Network Stats**: Real-time upload/download speeds, VPN detection, ping latency
-- **Context Information**: Date/time, timezone support, path, SSH sessions
+- **System Monitoring**: CPU, GPU, Memory, Swap, Disk, Battery, Temperature, Uptime, Disk I/O
+- **Process Monitoring**: Top processes by CPU usage
+- **Docker/Kubernetes**: Container and pod status
+- **Git Integration**: Local repository status + GitHub/GitLab web stats (stash, ahead/behind, last commit)
+- **Network Stats**: Real-time upload/download speeds, VPN detection/name, WiFi signal, ping latency
+- **Context Information**: Date/time, timezone, path, SSH sessions, tmux session, music player, system updates, Bluetooth, audio device, screen brightness
 - **Weather**: Current temperature with dynamic icons
 
 ### 🔧 **Highly Customizable**
 - Flexible widget ordering system
 - Individual component toggles
-- Multiple number style options
 - Minimal mode for lightweight sessions
 - Extensive configuration options
 
@@ -77,6 +78,16 @@ These are only required for specific features:
 | `curl` / `wget` | Weather widget | Usually pre-installed |
 | `ip` / `ifconfig` | Network widget (Linux) | Usually pre-installed |
 | `free` | Swap monitoring (Linux) | Usually pre-installed |
+| `docker` | Docker widget (containers) | `brew install docker` / `apt install docker.io` |
+| `kubectl` | Kubernetes widget (pods) | `brew install kubectl` / `apt install kubectl` |
+| `nvidia-smi` | GPU monitoring (NVIDIA Linux) | NVIDIA drivers |
+| `rocm-smi` | GPU monitoring (AMD Linux) | ROCm |
+| `sensors` | Temperature monitoring (Linux) | `apt install lm-sensors` |
+| `istats` | Temperature monitoring (macOS) | `gem install iStats` |
+| `playerctl` | Music player (Linux) | `apt install playerctl` |
+| `blueutil` | Bluetooth (macOS) | `brew install blueutil` |
+| `pactl` / `amixer` | Audio device (Linux) | Usually pre-installed |
+| `SwitchAudioSource` | Audio device (macOS) | `brew install switchaudio-osx` |
 
 ---
 
@@ -137,10 +148,12 @@ set -g @tokyo-night-tmux_widgets_order "git,context"
 ```
 
 **Available widgets:**
-- `system` - Unified system metrics (CPU, GPU, Memory, Disk, Battery)
+- `system` - Unified system metrics (CPU, GPU, Memory, Disk, Battery, Temperature, Uptime, Disk I/O)
 - `git` - Git repository status with web integration
 - `netspeed` - Network speed and connectivity
-- `context` - Date, time, path, SSH, and more
+- `context` - Date, time, path, SSH, session, music, updates, and more
+- `process` - Top processes by CPU usage
+- `docker` - Docker containers and Kubernetes pods
 
 ### Minimal Mode
 
@@ -151,26 +164,6 @@ set -g @tokyo-night-tmux_minimal_session "minimal"
 ```
 
 When you create a session with this name (e.g., `tmux new-session -s minimal`), all widgets will be automatically disabled.
-
-### Number Styles
-
-Customize window and pane number display:
-
-```bash
-set -g @tokyo-night-tmux_window_id_style digital
-set -g @tokyo-night-tmux_pane_id_style hsquare
-set -g @tokyo-night-tmux_zoom_id_style dsquare
-```
-
-**Available styles:**
-- `none` - Default numbers (0-9)
-- `digital` - 7-segment display (🯰...🯹)
-- `roman` - Roman numerals (󱂈...󱂐)
-- `fsquare` - Filled squares (󰎡...󰎼)
-- `hsquare` - Hollow squares (󰎣...󰎾)
-- `dsquare` - Double squares (󰎢...󰎽)
-- `super` - Superscript (⁰...⁹)
-- `sub` - Subscript (₀...₉)
 
 ---
 
@@ -195,6 +188,11 @@ set -g @tokyo-night-tmux_system_battery 1
 # Optional: Load average
 set -g @tokyo-night-tmux_system_load 1
 
+# New features (disabled by default)
+set -g @tokyo-night-tmux_system_temp 1        # CPU/GPU temperature
+set -g @tokyo-night-tmux_system_uptime 1      # System uptime
+set -g @tokyo-night-tmux_system_disk_io 1     # Disk I/O stats
+
 # Configuration
 set -g @tokyo-night-tmux_system_disk_path "/"
 set -g @tokyo-night-tmux_system_battery_threshold 20
@@ -212,12 +210,15 @@ set -g @tokyo-night-tmux_system_battery_threshold 20
 
 **Components:**
 - **CPU** (󰾆): User + system CPU usage
-- **GPU** (󰢮): GPU usage (Apple Silicon via `ioreg` or WindowServer fallback)
+- **GPU** (󰢮): GPU usage (Apple Silicon/Linux - universal support)
 - **Memory** (󰍛): Active memory usage
 - **Swap** (󰾴): Swap usage (only shown if > 0)
 - **Disk** (󰋊): Disk usage percentage
 - **Battery** (󰚥): 11-level battery indicator with charging state
 - **Load** (󰧑): System load average (optional)
+- **Temperature** (󰏈): CPU/GPU temperature in °C (optional)
+- **Uptime** (󰅐): System uptime in days/hours/minutes (optional)
+- **Disk I/O** (󰋊): Read/Write speeds in KB/s (optional)
 
 **Color Scale:**
 - 🟢 **Cyan** (< 50%): Normal usage
@@ -234,6 +235,11 @@ Unified Git widget with local repository status and web integration (GitHub/GitL
 set -g @tokyo-night-tmux_show_git 1
 set -g @tokyo-night-tmux_git_untracked 1
 set -g @tokyo-night-tmux_git_web 1
+
+# New Git features (disabled by default)
+set -g @tokyo-night-tmux_git_stash 1           # Show stash count
+set -g @tokyo-night-tmux_git_ahead_behind 1     # Show ahead/behind commits
+set -g @tokyo-night-tmux_git_last_commit 1      # Show time since last commit
 ```
 
 **Local Features:**
@@ -246,6 +252,9 @@ set -g @tokyo-night-tmux_git_web 1
 - **Insertions**: 󰐕 Lines added (dynamic icons)
 - **Deletions**: 󰍵 Lines removed (dynamic icons)
 - **Untracked**: 󰋗 New files (optional, dynamic icons)
+- **Stash** (󰆍): Stash count (optional)
+- **Ahead/Behind** (↑/↓): Commits ahead/behind remote (optional)
+- **Last Commit** (󰜘): Time since last commit (optional)
 
 **Web Features** (requires `gh` or `glab` + `jq`):
 - **Auto-detection**: Automatically detects GitHub or GitLab repositories
@@ -272,27 +281,60 @@ Professional network monitoring with clean, minimalist design.
 
 ```bash
 set -g @tokyo-night-tmux_show_netspeed 1
-set -g @tokyo-night-tmux_netspeed_ping 1      # Show ping latency
-set -g @tokyo-night-tmux_netspeed_vpn 1       # Show VPN indicator
-set -g @tokyo-night-tmux_netspeed_refresh 1   # Update interval (seconds)
+set -g @tokyo-night-tmux_netspeed_ping 1         # Show ping latency
+set -g @tokyo-night-tmux_netspeed_vpn 1          # Show VPN indicator
+set -g @tokyo-night-tmux_netspeed_vpn_name 1     # Show VPN connection name
+set -g @tokyo-night-tmux_netspeed_wifi 1          # Show WiFi signal strength
+set -g @tokyo-night-tmux_netspeed_refresh 1      # Update interval (seconds)
 ```
 
 **Features:**
 - **Download/Upload**: Real-time speeds (KB/s, MB/s)
 - **VPN Detection**: 󰌘 Icon when VPN active
   - Supports: utun, tun, tap, WireGuard, Tailscale, NordLynx
+- **VPN Name**: Shows connection name (e.g., "NordVPN") when enabled
+- **WiFi Signal**: 󰖩 Signal strength in dBm (optional, color-coded)
 - **Ping Latency**: 󰓅 ms (optional, color-coded)
 - **Auto-detect**: No manual interface configuration needed
 - **Pure Bash**: No external dependencies for calculations
 
 **Color Coding:**
-- Ping < 50ms: Green
-- Ping 50-100ms: Yellow
-- Ping > 100ms: Red
+- **Ping**: < 50ms (Green), 50-100ms (Yellow), > 100ms (Red)
+- **WiFi Signal**: > -50dBm (Green), -50 to -70dBm (Yellow), < -70dBm (Red)
+
+### Process Widget
+
+Monitor top processes by CPU usage.
+
+```bash
+set -g @tokyo-night-tmux_show_process 1
+set -g @tokyo-night-tmux_process_count 3    # Number of processes to show (default: 3)
+```
+
+**Features:**
+- Shows top N processes by CPU usage
+- Process names truncated to 10 characters
+- Color-coded: < 25% (Cyan), 25-50% (Yellow), ≥ 50% (Red)
+- Updates based on refresh rate
+
+### Docker Widget
+
+Monitor Docker containers and Kubernetes pods.
+
+```bash
+set -g @tokyo-night-tmux_show_docker 1
+set -g @tokyo-night-tmux_docker_kubernetes 1    # Show Kubernetes pods (requires kubectl)
+```
+
+**Features:**
+- **Docker**: 󰡨 Container count (running)
+- **Kubernetes**: 󰠳 Pod count (running, requires `kubectl`)
+- Color-coded: Normal (Cyan), High count (Yellow)
+- Only shows when containers/pods are running
 
 ### Context Widget
 
-Date, time, path, SSH, and session information.
+Date, time, path, SSH, session, music, updates, and more.
 
 ```bash
 set -g @tokyo-night-tmux_show_context 1
@@ -328,39 +370,94 @@ set -g @tokyo-night-tmux_timezone "America/Los_Angeles,America/New_York,Europe/L
 
 Shows abbreviated timezones (PST, EST, GMT) with 󰥔 icon. Supports multiple timezones.
 
-#### Path
-
-```bash
-set -g @tokyo-night-tmux_show_path 1
-set -g @tokyo-night-tmux_path_format relative  # relative or full
-```
-
 #### SSH Session
 
 ```bash
-set -g @tokyo-night-tmux_show_ssh 1
-set -g @tokyo-night-tmux_ssh_only_when_connected 1
-set -g @tokyo-night-tmux_ssh_show_port 0
+set -g @tokyo-night-tmux_context_ssh 1
 ```
 
-Shows `user@hostname` format, changes color when SSH active.
+Shows hostname when connected via SSH (󰣀 icon).
 
-#### Other Context Widgets
+#### Current Directory
 
 ```bash
-# Attached clients count
-set -g @tokyo-night-tmux_show_clients 1
-set -g @tokyo-night-tmux_clients_minimum 2
-
-# Pane synchronization indicator
-set -g @tokyo-night-tmux_show_sync 1
-set -g @tokyo-night-tmux_sync_label "SYNC"
-
-# Weather (requires curl/wget)
-set -g @tokyo-night-tmux_show_weather 1
-set -g @tokyo-night-tmux_weather_units "m"  # m=metric, u=US, M=SI
-set -g @tokyo-night-tmux_weather_show_icon 1
+set -g @tokyo-night-tmux_context_path 1
 ```
+
+Shows current working directory (󰉋 icon), truncated to 30 characters, `~` for home.
+
+#### Active Tmux Session
+
+```bash
+set -g @tokyo-night-tmux_context_session 1
+```
+
+Shows current tmux session name (󰆍 icon).
+
+#### Music Player
+
+```bash
+set -g @tokyo-night-tmux_context_music 1
+```
+
+Shows currently playing track from Spotify/Apple Music (macOS) or any MPRIS player (Linux).
+- **macOS**: Spotify via AppleScript, Apple Music
+- **Linux**: Any player via `playerctl` or DBus
+- Shows: Artist - Title (truncated to 20 chars)
+- Icons: 󰐊 (Playing), 󰏤 (Paused)
+
+#### System Updates
+
+```bash
+set -g @tokyo-night-tmux_context_updates 1
+```
+
+Shows count of available system updates (󰏕 icon).
+- **macOS**: `softwareupdate -l`
+- **Linux**: `apt`, `dnf`, `pacman`, or `yum`
+- Color-coded: < 5 (Cyan), 5-10 (Yellow), ≥ 10 (Red)
+
+#### Bluetooth Status
+
+```bash
+set -g @tokyo-night-tmux_context_bluetooth 1
+```
+
+Shows Bluetooth status and connected devices count (󰂯 icon).
+- **macOS**: Requires `blueutil` or uses system_profiler
+- **Linux**: Uses `bluetoothctl` or `/sys/class/bluetooth`
+- Only shows when Bluetooth is on
+
+#### Audio Device
+
+```bash
+set -g @tokyo-night-tmux_context_audio 1
+```
+
+Shows active audio output device (󰋋 icon).
+- **macOS**: Requires `SwitchAudioSource` or uses AppleScript
+- **Linux**: Uses `pactl` or `amixer`
+- Device name truncated to 15 characters
+
+#### Screen Brightness
+
+```bash
+set -g @tokyo-night-tmux_context_brightness 1
+```
+
+Shows screen brightness percentage (󰃠 icon).
+- **macOS**: Requires `brightness` command
+- **Linux**: Uses `/sys/class/backlight/` or `xbacklight`
+- Useful for laptops
+
+#### Weather
+
+```bash
+set -g @tokyo-night-tmux_context_weather 1
+set -g @tokyo-night-tmux_context_weather_units "m"  # m=metric, u=US, M=SI
+```
+
+Shows current temperature with dynamic icons (requires `curl` or `wget`).
 
 ---
 
@@ -385,33 +482,77 @@ Control how often widgets update:
 set -g @tokyo-night-tmux_refresh_rate 5  # Update every 5 seconds (default)
 ```
 
-### Individual System Widgets
+### Temperature Monitoring
 
-If you prefer separate widgets with dynamic colors instead of the unified widget:
+The temperature feature supports multiple methods:
+
+**macOS:**
+- `istats` (recommended): `gem install iStats`
+- `osx-cpu-temp`: `brew install osx-cpu-temp`
+- Fallback to thermal zones if available
+
+**Linux:**
+- `/sys/class/thermal/`: Built-in thermal zones
+- `sensors`: `apt install lm-sensors` (more accurate)
+
+Temperature colors:
+- < 60°C: Cyan (normal)
+- 60-80°C: Yellow (moderate)
+- ≥ 80°C: Red (high)
+
+### Example Complete Configuration
 
 ```bash
-# CPU
-set -g @tokyo-night-tmux_show_cpu 1
-set -g @tokyo-night-tmux_show_load_average 1
+# Widget order
+set -g @tokyo-night-tmux_widgets_order "system,process,docker,git,netspeed,context"
 
-# Memory
-set -g @tokyo-night-tmux_show_memory 1
-set -g @tokyo-night-tmux_show_memory_pressure 1
+# System widget with all features
+set -g @tokyo-night-tmux_show_system 1
+set -g @tokyo-night-tmux_system_cpu 1
+set -g @tokyo-night-tmux_system_gpu 1
+set -g @tokyo-night-tmux_system_memory 1
+set -g @tokyo-night-tmux_system_swap 1
+set -g @tokyo-night-tmux_system_disk 1
+set -g @tokyo-night-tmux_system_battery 1
+set -g @tokyo-night-tmux_system_load 1
+set -g @tokyo-night-tmux_system_temp 1
+set -g @tokyo-night-tmux_system_uptime 1
+set -g @tokyo-night-tmux_system_disk_io 1
 
-# Disk
-set -g @tokyo-night-tmux_show_disk 1
-set -g @tokyo-night-tmux_disk_path "/"
+# Process monitoring
+set -g @tokyo-night-tmux_show_process 1
+set -g @tokyo-night-tmux_process_count 3
 
-# GPU
-set -g @tokyo-night-tmux_show_gpu 1
+# Docker/Kubernetes
+set -g @tokyo-night-tmux_show_docker 1
+set -g @tokyo-night-tmux_docker_kubernetes 1
 
-# RAM (alternative to memory, shows GB/TB)
-set -g @tokyo-night-tmux_show_ram 1
+# Git with all features
+set -g @tokyo-night-tmux_show_git 1
+set -g @tokyo-night-tmux_git_untracked 1
+set -g @tokyo-night-tmux_git_web 1
+set -g @tokyo-night-tmux_git_stash 1
+set -g @tokyo-night-tmux_git_ahead_behind 1
+set -g @tokyo-night-tmux_git_last_commit 1
 
-# Battery (standalone)
-set -g @tokyo-night-tmux_show_battery_widget 1
-set -g @tokyo-night-tmux_battery_name "BAT1"
-set -g @tokyo-night-tmux_battery_low_threshold 21
+# Network with all features
+set -g @tokyo-night-tmux_show_netspeed 1
+set -g @tokyo-night-tmux_netspeed_ping 1
+set -g @tokyo-night-tmux_netspeed_vpn 1
+set -g @tokyo-night-tmux_netspeed_vpn_name 1
+set -g @tokyo-night-tmux_netspeed_wifi 1
+
+# Context with all features
+set -g @tokyo-night-tmux_show_context 1
+set -g @tokyo-night-tmux_context_weather 1
+set -g @tokyo-night-tmux_context_ssh 1
+set -g @tokyo-night-tmux_context_path 1
+set -g @tokyo-night-tmux_context_session 1
+set -g @tokyo-night-tmux_context_music 1
+set -g @tokyo-night-tmux_context_updates 1
+set -g @tokyo-night-tmux_context_bluetooth 1
+set -g @tokyo-night-tmux_context_audio 1
+set -g @tokyo-night-tmux_context_brightness 1
 ```
 
 ---
@@ -433,14 +574,21 @@ set -g @tokyo-night-tmux_battery_low_threshold 21
 - **Background Processing**: Long-running operations don't block tmux
 - **Optimized Parsing**: Efficient shell-based parsing
 
-### GPU Monitoring (Apple Silicon)
+### GPU Monitoring
 
-The GPU widget uses the most accurate method available:
+The GPU widget supports multiple platforms and GPU vendors:
 
+**macOS (Apple Silicon)**:
 1. **Primary Method**: `ioreg` Device Utilization % (same as iStats Menu)
 2. **Fallback**: WindowServer CPU estimation with progressive multipliers
 
-This ensures accurate GPU usage reporting that matches professional monitoring tools.
+**Linux (Universal Support)**:
+1. **NVIDIA**: `nvidia-smi` (requires NVIDIA drivers)
+2. **AMD**: `rocm-smi` (requires ROCm)
+3. **Intel**: `intel_gpu_top` (optional, for detailed metrics)
+4. **Generic**: `/sys/class/drm/` frequency-based estimation (fallback)
+
+The widget automatically detects available tools and uses the most accurate method for your GPU.
 
 ### Compatibility
 
@@ -459,11 +607,17 @@ This ensures accurate GPU usage reporting that matches professional monitoring t
 3. Ensure you're not in minimal mode
 4. Check tmux logs: `tmux show-messages`
 
-### GPU always shows 1%
+### GPU always shows 0% or not working
 
-- **macOS**: Ensure you're on Apple Silicon (M1/M2/M3)
-- Check if `ioreg` is accessible: `ioreg -r -d 1 -w 0 -c "IOAccelerator"`
-- Verify WindowServer is running: `ps aux | grep WindowServer`
+- **macOS**: Ensure you're on Apple Silicon (M1/M2/M3/M4)
+  - Check if `ioreg` is accessible: `ioreg -r -d 1 -w 0 -c "IOAccelerator"`
+  - Verify WindowServer is running: `ps aux | grep WindowServer`
+
+- **Linux**:
+  - **NVIDIA**: Install NVIDIA drivers and ensure `nvidia-smi` works: `nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader`
+  - **AMD**: Install ROCm and ensure `rocm-smi` works: `rocm-smi --showuse`
+  - **Intel**: Optional - install `intel-gpu-tools` for better accuracy
+  - **Generic**: Check if `/sys/class/drm/card*/gt_cur_freq_mhz` exists (limited accuracy)
 
 ### Git web features not working
 
@@ -478,6 +632,31 @@ This ensures accurate GPU usage reporting that matches professional monitoring t
 2. Disable auto-fetch for large repos: `set -g @tokyo-night-tmux_git_disable_auto_fetch 1`
 3. Use minimal mode for SSH sessions
 4. Disable unused widgets
+5. Disable heavy features: temperature, disk I/O, process monitoring if not needed
+
+### Temperature not showing
+
+- **macOS**: Install `istats`: `gem install iStats` or `brew install istats`
+- **Linux**: Install `lm-sensors`: `apt install lm-sensors && sensors-detect`
+- Check if thermal zones exist: `ls /sys/class/thermal/thermal_zone*/temp`
+
+### Process widget not showing
+
+- Ensure processes are running (widget only shows when CPU usage > 0%)
+- Check refresh rate isn't too high
+- Verify `ps` command works: `ps aux | head -5`
+
+### Docker widget not showing
+
+- Ensure Docker is running: `docker ps`
+- Widget only shows when containers are running
+- For Kubernetes: ensure `kubectl` is configured and pods exist
+
+### Music player not working
+
+- **macOS**: Ensure Spotify/Apple Music is running and playing
+- **Linux**: Install `playerctl`: `apt install playerctl`
+- Verify player supports MPRIS: `playerctl status`
 
 ### Colors not displaying correctly
 
@@ -539,4 +718,3 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ---
 
 **Made with ❤️ for developers who love beautiful, functional tools.**
-

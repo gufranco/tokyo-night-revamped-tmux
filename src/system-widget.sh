@@ -11,6 +11,12 @@ source "${LIB_DIR}/themes.sh"
 source "${LIB_DIR}/color-scale.sh"
 source "${LIB_DIR}/cache.sh"
 source "${LIB_DIR}/format.sh"
+source "${LIB_DIR}/error-logger.sh"
+source "${LIB_DIR}/tooltip.sh"
+source "${LIB_DIR}/historical-data.sh"
+source "${LIB_DIR}/config-validator.sh"
+source "${LIB_DIR}/compact-mode.sh"
+source "${LIB_DIR}/conditional-display.sh"
 
 is_widget_enabled "@tokyo-night-tmux_show_system" || exit 0
 
@@ -37,11 +43,45 @@ SHOW_MEMORY="${SHOW_MEMORY:-1}"
 SHOW_SWAP="${SHOW_SWAP:-1}"
 SHOW_DISK="${SHOW_DISK:-1}"
 SHOW_BATTERY="${SHOW_BATTERY:-1}"
+SHOW_TEMP=$(tmux show-option -gv @tokyo-night-tmux_system_temp 2>/dev/null)
+SHOW_UPTIME=$(tmux show-option -gv @tokyo-night-tmux_system_uptime 2>/dev/null)
+SHOW_DISK_IO=$(tmux show-option -gv @tokyo-night-tmux_system_disk_io 2>/dev/null)
+
+SHOW_TEMP="${SHOW_TEMP:-0}"
+SHOW_UPTIME="${SHOW_UPTIME:-0}"
+SHOW_DISK_IO="${SHOW_DISK_IO:-0}"
+SHOW_HEALTH=$(tmux show-option -gv @tokyo-night-tmux_system_health 2>/dev/null)
+SHOW_FREQUENCY=$(tmux show-option -gv @tokyo-night-tmux_system_frequency 2>/dev/null)
+SHOW_PRESSURE=$(tmux show-option -gv @tokyo-night-tmux_system_pressure 2>/dev/null)
+SHOW_DISK_SPACE=$(tmux show-option -gv @tokyo-night-tmux_system_disk_space 2>/dev/null)
+SHOW_CONNECTIONS=$(tmux show-option -gv @tokyo-night-tmux_system_connections 2>/dev/null)
+
+SHOW_HEALTH="${SHOW_HEALTH:-0}"
+SHOW_FREQUENCY="${SHOW_FREQUENCY:-0}"
+SHOW_PRESSURE="${SHOW_PRESSURE:-0}"
+SHOW_DISK_SPACE="${SHOW_DISK_SPACE:-0}"
+SHOW_CONNECTIONS="${SHOW_CONNECTIONS:-0}"
+
+CUSTOM_THRESHOLD_CRITICAL=$(tmux show-option -gv @tokyo-night-tmux_threshold_critical 2>/dev/null)
+CUSTOM_THRESHOLD_WARNING=$(tmux show-option -gv @tokyo-night-tmux_threshold_warning 2>/dev/null)
+CUSTOM_THRESHOLD_HIGH=$(tmux show-option -gv @tokyo-night-tmux_threshold_high 2>/dev/null)
+
+THRESHOLD_CRITICAL="${CUSTOM_THRESHOLD_CRITICAL:-80}"
+THRESHOLD_WARNING="${CUSTOM_THRESHOLD_WARNING:-50}"
+THRESHOLD_HIGH="${CUSTOM_THRESHOLD_HIGH:-75}"
 
 get_cpu_color_and_icon() {
   local usage=$1
   local icon
-  local color=$(get_system_color "$usage")
+  local color
+  
+  if (( usage >= THRESHOLD_CRITICAL )); then
+    color="${COLOR_RED}"
+  elif (( usage >= THRESHOLD_WARNING )); then
+    color="${COLOR_YELLOW}"
+  else
+    color="${COLOR_CYAN}"
+  fi
   
   local idx=$(( usage / 10 ))
   (( idx > 10 )) && idx=10
@@ -53,7 +93,15 @@ get_cpu_color_and_icon() {
 get_gpu_color_and_icon() {
   local usage=$1
   local icon
-  local color=$(get_system_color "$usage")
+  local color
+  
+  if (( usage >= THRESHOLD_CRITICAL )); then
+    color="${COLOR_RED}"
+  elif (( usage >= THRESHOLD_WARNING )); then
+    color="${COLOR_YELLOW}"
+  else
+    color="${COLOR_CYAN}"
+  fi
   
   local idx=$(( usage / 10 ))
   (( idx > 10 )) && idx=10
@@ -65,7 +113,15 @@ get_gpu_color_and_icon() {
 get_memory_color_and_icon() {
   local usage=$1
   local icon
-  local color=$(get_system_color "$usage")
+  local color
+  
+  if (( usage >= THRESHOLD_CRITICAL )); then
+    color="${COLOR_RED}"
+  elif (( usage >= THRESHOLD_WARNING )); then
+    color="${COLOR_YELLOW}"
+  else
+    color="${COLOR_CYAN}"
+  fi
   
   local idx=$(( usage / 10 ))
   (( idx > 10 )) && idx=10
@@ -139,40 +195,23 @@ main() {
     fi
   fi
 
-  if [[ $SHOW_GPU -eq 1 ]] && is_apple_silicon; then
+  if [[ $SHOW_GPU -eq 1 ]]; then
     local gpu_usage gpu_display
     
-    gpu_usage=$(ioreg -r -d 1 -w 0 -c "IOAccelerator" 2>/dev/null | grep -o '"Device Utilization %"=[0-9]*' | sed 's/.*=//' | head -1)
-    
-    if [[ -z "$gpu_usage" ]] || [[ ! "$gpu_usage" =~ ^[0-9]+$ ]]; then
-      local windowserver_cpu
-      windowserver_cpu=$(ps axo %cpu,command 2>/dev/null | awk '/WindowServer/ && /-daemon/ {cpu=$1; gsub(/,/, ".", cpu); cpu_num=cpu+0; if (cpu_num > 0) print int(cpu_num); exit}')
-      
-      if [[ -n "$windowserver_cpu" ]] && [[ "$windowserver_cpu" =~ ^[0-9]+$ ]] && [[ $windowserver_cpu -gt 0 ]]; then
-        if [[ $windowserver_cpu -le 3 ]]; then
-          gpu_usage=$(( windowserver_cpu * 2 ))
-        elif [[ $windowserver_cpu -le 10 ]]; then
-          gpu_usage=$(( windowserver_cpu * 3 ))
-        elif [[ $windowserver_cpu -le 25 ]]; then
-          gpu_usage=$(( windowserver_cpu * 4 ))
-        elif [[ $windowserver_cpu -le 40 ]]; then
-          gpu_usage=$(( windowserver_cpu * 5 ))
-        else
-          gpu_usage=$(( windowserver_cpu * 6 ))
-        fi
-        (( gpu_usage > 100 )) && gpu_usage=100
-        (( gpu_usage < 1 )) && gpu_usage=1
-      else
-        gpu_usage=1
-      fi
+    if is_apple_silicon; then
+      gpu_usage=$(get_gpu_usage_percentage)
+    elif is_linux; then
+      gpu_usage=$(get_gpu_usage_percentage)
     else
-      (( gpu_usage > 100 )) && gpu_usage=100
-      (( gpu_usage < 1 )) && gpu_usage=1
+      gpu_usage=0
     fi
     
-    gpu_display=$(get_gpu_color_and_icon "$gpu_usage")
-    [[ -n "$output" ]] && output="${output} "
-    output="${output}${gpu_display} $(pad_percentage "$gpu_usage")${COLOR_RESET}"
+    if [[ -n "$gpu_usage" ]] && [[ "$gpu_usage" =~ ^[0-9]+$ ]] && [[ $gpu_usage -gt 0 ]]; then
+      gpu_usage=$(validate_percentage "$gpu_usage")
+      gpu_display=$(get_gpu_color_and_icon "$gpu_usage")
+      [[ -n "$output" ]] && output="${output} "
+      output="${output}${gpu_display} $(pad_percentage "$gpu_usage")${COLOR_RESET}"
+    fi
   fi
   
   if [[ $SHOW_MEMORY -eq 1 ]]; then
@@ -244,17 +283,64 @@ main() {
   fi
 
   if [[ $SHOW_DISK -eq 1 ]]; then
-    local disk_path disk_percent disk_display
-    disk_path=$(tmux show-option -gv @tokyo-night-tmux_system_disk_path 2>/dev/null)
-    disk_path="${disk_path:-/}"
-    disk_percent=$(df -h "$disk_path" 2>/dev/null | awk 'NR==2 {gsub(/%/, "", $5); print $5}')
-  
-    if [[ -n "$disk_percent" ]]; then
-      disk_percent=$(validate_percentage "$disk_percent")
-      disk_display=$(get_disk_color_and_icon "$disk_percent")
-      
-      [[ -n "$output" ]] && output="${output} "
-      output="${output}${disk_display} $(pad_percentage "$disk_percent")${COLOR_RESET}"
+    local multiple_disks
+    multiple_disks=$(tmux show-option -gv @tokyo-night-tmux_system_multiple_disks 2>/dev/null)
+    multiple_disks="${multiple_disks:-0}"
+    
+    if [[ $multiple_disks -eq 1 ]]; then
+      local disks_list
+      disks_list=$(get_multiple_disks)
+      if [[ -n "$disks_list" ]]; then
+        local disk_count=0
+        local max_disks=3
+        for disk_info in $disks_list; do
+          if [[ $disk_count -ge $max_disks ]]; then
+            break
+          fi
+          IFS=':' read -r device mount usage <<< "$disk_info"
+          usage="${usage//%/}"
+          usage=$(validate_percentage "$usage")
+          local disk_display
+          disk_display=$(get_disk_color_and_icon "$usage")
+          local mount_name
+          mount_name=$(basename "$mount" 2>/dev/null || echo "$mount")
+          mount_name="${mount_name:0:8}"
+          [[ -n "$output" ]] && output="${output} "
+          output="${output}${disk_display} ${mount_name}:$(pad_percentage "$usage")${COLOR_RESET}"
+          ((disk_count++))
+        done
+      fi
+    else
+      local disk_path disk_percent disk_display
+      disk_path=$(tmux show-option -gv @tokyo-night-tmux_system_disk_path 2>/dev/null)
+      disk_path="${disk_path:-/}"
+      disk_percent=$(df -h "$disk_path" 2>/dev/null | awk 'NR==2 {gsub(/%/, "", $5); print $5}')
+    
+      if [[ -n "$disk_percent" ]]; then
+        disk_percent=$(validate_percentage "$disk_percent")
+        disk_display=$(get_disk_color_and_icon "$disk_percent")
+        
+        local disk_text
+        if [[ $SHOW_DISK_SPACE -eq 1 ]]; then
+          local disk_space
+          disk_space=$(get_disk_space_gb "$disk_path")
+          read -r total_gb used_gb free_gb <<< "$disk_space"
+          if [[ -n "$total_gb" ]] && [[ "$total_gb" =~ ^[0-9]+$ ]] && [[ $total_gb -gt 0 ]]; then
+            local formatted_space
+            formatted_space=$(format_compact_value "$used_gb" "GB")
+            local formatted_total
+            formatted_total=$(format_compact_value "$total_gb" "GB")
+            disk_text="${disk_display} ${formatted_space}/${formatted_total} ($(pad_percentage "$disk_percent"))${COLOR_RESET}"
+          else
+            disk_text="${disk_display} $(pad_percentage "$disk_percent")${COLOR_RESET}"
+          fi
+        else
+          disk_text="${disk_display} $(pad_percentage "$disk_percent")${COLOR_RESET}"
+        fi
+        
+        [[ -n "$output" ]] && output="${output} "
+        output="${output}${disk_text}"
+      fi
     fi
   fi
   
@@ -323,7 +409,139 @@ main() {
     fi
   fi
 
+  if [[ $SHOW_TEMP -eq 1 ]]; then
+    local cpu_temp gpu_temp temp_display
+    cpu_temp=$(get_cpu_temperature)
+    gpu_temp=$(get_gpu_temperature)
+    
+    if [[ -n "$cpu_temp" ]] && [[ "$cpu_temp" =~ ^[0-9]+$ ]] && [[ $cpu_temp -gt 0 ]]; then
+      local temp_color
+      if (( cpu_temp >= 80 )); then
+        temp_color="${COLOR_RED}"
+      elif (( cpu_temp >= 60 )); then
+        temp_color="${COLOR_YELLOW}"
+      else
+        temp_color="${COLOR_CYAN}"
+      fi
+      
+      [[ -n "$output" ]] && output="${output} "
+      output="${output}${temp_color}${ICON_TEMPERATURE} ${cpu_temp}°C${COLOR_RESET}"
+      
+      if [[ -n "$gpu_temp" ]] && [[ "$gpu_temp" =~ ^[0-9]+$ ]] && [[ $gpu_temp -gt 0 ]] && [[ $gpu_temp -ne $cpu_temp ]]; then
+        if (( gpu_temp >= 80 )); then
+          temp_color="${COLOR_RED}"
+        elif (( gpu_temp >= 60 )); then
+          temp_color="${COLOR_YELLOW}"
+        else
+          temp_color="${COLOR_CYAN}"
+        fi
+        output="${output} ${temp_color}${ICON_TEMPERATURE} ${gpu_temp}°C${COLOR_RESET}"
+      fi
+    fi
+  fi
+
+  if [[ $SHOW_UPTIME -eq 1 ]]; then
+    local uptime_seconds uptime_formatted
+    uptime_seconds=$(get_system_uptime)
+    if [[ -n "$uptime_seconds" ]] && [[ "$uptime_seconds" =~ ^[0-9]+$ ]] && [[ $uptime_seconds -gt 0 ]]; then
+      uptime_formatted=$(format_uptime "$uptime_seconds")
+      [[ -n "$output" ]] && output="${output} "
+      output="${output}${COLOR_CYAN}${ICON_UPTIME} ${uptime_formatted}${COLOR_RESET}"
+    fi
+  fi
+
+  if [[ $SHOW_DISK_IO -eq 1 ]]; then
+    local disk_io read_kb write_kb
+    disk_io=$(get_disk_io)
+    read -r read_kb write_kb <<< "$disk_io"
+    
+    if [[ -n "$read_kb" ]] && [[ "$read_kb" =~ ^[0-9]+$ ]] && [[ $read_kb -gt 0 ]]; then
+      local io_color
+      if (( read_kb + write_kb > 100000 )); then
+        io_color="${COLOR_RED}"
+      elif (( read_kb + write_kb > 50000 )); then
+        io_color="${COLOR_YELLOW}"
+      else
+        io_color="${COLOR_CYAN}"
+      fi
+      
+      [[ -n "$output" ]] && output="${output} "
+      output="${output}${io_color}${ICON_DISK_IO} R:${read_kb}KB W:${write_kb}KB${COLOR_RESET}"
+    fi
+  fi
+
+  if [[ $SHOW_HEALTH -eq 1 ]]; then
+    local health_status health_issues health_icon health_color
+    health_status=$(get_system_health_status)
+    IFS='|' read -r health_state health_issues <<< "$health_status"
+    
+    case "$health_state" in
+      critical)
+        health_icon="${ICON_HEALTH_CRITICAL}"
+        health_color="${COLOR_RED}"
+        ;;
+      warning)
+        health_icon="${ICON_HEALTH_WARNING}"
+        health_color="${COLOR_YELLOW}"
+        ;;
+      *)
+        health_icon="${ICON_HEALTH_OK}"
+        health_color="${COLOR_GREEN}"
+        ;;
+    esac
+    
+    [[ -n "$output" ]] && output="${output} "
+    output="${output}${health_color}${health_icon}${COLOR_RESET}"
+  fi
+
+  if [[ $SHOW_FREQUENCY -eq 1 ]]; then
+    local cpu_freq
+    cpu_freq=$(get_cpu_frequency)
+    if [[ -n "$cpu_freq" ]] && [[ "$cpu_freq" =~ ^[0-9]+$ ]] && [[ $cpu_freq -gt 0 ]]; then
+      [[ -n "$output" ]] && output="${output} "
+      output="${output}${COLOR_CYAN}${ICON_FREQUENCY} ${cpu_freq}GHz${COLOR_RESET}"
+    fi
+  fi
+
+  if [[ $SHOW_PRESSURE -eq 1 ]]; then
+    local mem_pressure
+    mem_pressure=$(get_memory_pressure)
+    if [[ -n "$mem_pressure" ]] && [[ "$mem_pressure" =~ ^[0-9]+$ ]]; then
+      local pressure_color
+      if (( mem_pressure < 20 )); then
+        pressure_color="${COLOR_RED}"
+      elif (( mem_pressure < 40 )); then
+        pressure_color="${COLOR_YELLOW}"
+      else
+        pressure_color="${COLOR_CYAN}"
+      fi
+      [[ -n "$output" ]] && output="${output} "
+      output="${output}${pressure_color}${ICON_PRESSURE} ${mem_pressure}%${COLOR_RESET}"
+    fi
+  fi
+
+  if [[ $SHOW_CONNECTIONS -eq 1 ]]; then
+    local connections
+    connections=$(get_network_connections)
+    if [[ -n "$connections" ]] && [[ "$connections" =~ ^[0-9]+$ ]] && [[ $connections -gt 0 ]]; then
+      local conn_color
+      if (( connections >= 1000 )); then
+        conn_color="${COLOR_RED}"
+      elif (( connections >= 500 )); then
+        conn_color="${COLOR_YELLOW}"
+      else
+        conn_color="${COLOR_CYAN}"
+      fi
+      [[ -n "$output" ]] && output="${output} "
+      output="${output}${conn_color}${ICON_CONNECTIONS} ${connections}${COLOR_RESET}"
+    fi
+  fi
+
   if [[ -n "$output" ]]; then
+    local tooltip_text
+    tooltip_text=$(generate_system_tooltip)
+    set_widget_tooltip "system" "$tooltip_text"
+    
     local result="${COLOR_CYAN}░${COLOR_RESET} ${output} "
     set_cached_value "system" "$result"
     echo "$result"

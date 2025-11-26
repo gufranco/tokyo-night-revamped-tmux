@@ -145,8 +145,10 @@ get_ping_latency() {
   
   if [[ "$OSTYPE" == "darwin"* ]]; then
     ping_ms=$(ping -c 1 -W 1000 8.8.8.8 2>/dev/null | grep 'time=' | awk -F'time=' '{print $2}' | awk '{print $1}' | cut -d'.' -f1)
+  elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    ping_ms=$(ping -c 1 -w 1 8.8.8.8 2>/dev/null | grep 'time=' | awk -F'time=' '{print $2}' | awk '{print $1}' | cut -d'.' -f1)
   else
-    ping_ms=$(ping -c 1 -W 1 8.8.8.8 2>/dev/null | grep 'time=' | awk -F'time=' '{print $2}' | awk '{print $1}' | cut -d'.' -f1)
+    ping_ms=$(ping -c 1 8.8.8.8 2>/dev/null | grep 'time=' | awk -F'time=' '{print $2}' | awk '{print $1}' | cut -d'.' -f1)
   fi
   
   [[ -n "$ping_ms" ]] && echo "$ping_ms" | tee "$cache_file"

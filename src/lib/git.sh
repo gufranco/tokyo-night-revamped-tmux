@@ -13,7 +13,7 @@ get_git_branch_truncated() {
   local branch
   branch="$(get_git_branch)"
   
-  if [[ ${
+  if [[ ${#branch} -gt $max_length ]]; then
     echo "${branch:0:${max_length}}…"
   else
     echo "${branch}"
