@@ -33,34 +33,37 @@ main() {
   local mouse_mode=0
   local hostname=""
   local tmux_data
+  local combined_query=""
 
-  if [[ $SHOW_SESSION -eq 1 ]] || [[ $SHOW_ZOOM -eq 1 ]]; then
-    tmux_data=$(tmux display-message -p '#{?client_prefix,1,0}::#{S}::#{?window_zoomed_flag,1,0}' 2>/dev/null || echo "0::::0")
-    IFS='::' read -r prefix_active session_name zoom_mode <<< "$tmux_data"
+  if [[ $SHOW_SESSION -eq 1 ]] || [[ $SHOW_ZOOM -eq 1 ]] || [[ $SHOW_WINDOWS -eq 1 ]] || [[ $SHOW_PANES -eq 1 ]] || [[ $SHOW_SYNC -eq 1 ]] || [[ $SHOW_MOUSE -eq 1 ]]; then
+    combined_query="#{?client_prefix,1,0}"
+    [[ $SHOW_SESSION -eq 1 ]] && combined_query="${combined_query}::#{S}"
+    [[ $SHOW_ZOOM -eq 1 ]] && combined_query="${combined_query}::#{?window_zoomed_flag,1,0}"
+    [[ $SHOW_SYNC -eq 1 ]] && combined_query="${combined_query}::#{?#{==:#{pane_synchronized},1},1,0}"
+    [[ $SHOW_MOUSE -eq 1 ]] && combined_query="${combined_query}::#{?mouse_flag,1,0}"
+    [[ $SHOW_WINDOWS -eq 1 ]] && combined_query="${combined_query}::#{window_count}"
+    [[ $SHOW_PANES -eq 1 ]] && combined_query="${combined_query}::#{pane_count}"
+
+    tmux_data=$(tmux display-message -p "$combined_query" 2>/dev/null || echo "")
+
+    if [[ -n "$tmux_data" ]]; then
+      IFS='::' read -r prefix_active session_name zoom_mode sync_mode mouse_mode window_count pane_count <<< "$tmux_data"
+      prefix_active="${prefix_active:-0}"
+      session_name="${session_name:-}"
+      zoom_mode="${zoom_mode:-0}"
+      sync_mode="${sync_mode:-0}"
+      mouse_mode="${mouse_mode:-0}"
+      window_count="${window_count:-0}"
+      pane_count="${pane_count:-0}"
+    fi
   else
     prefix_active=$(tmux display-message -p '#{?client_prefix,1,0}' 2>/dev/null || echo "0")
   fi
 
-  if [[ $SHOW_WINDOWS -eq 1 ]] || [[ $SHOW_PANES -eq 1 ]]; then
-    local windows_panes
-    windows_panes=$(tmux list-windows -F '#{window_index}' 2>/dev/null | wc -l | tr -d ' ')
-    window_count="${windows_panes:-0}"
-    pane_count=$(tmux list-panes 2>/dev/null | wc -l | tr -d ' ')
-  fi
-
-  if [[ $SHOW_SYNC -eq 1 ]]; then
-    sync_mode=$(tmux show-options -gv synchronize-panes 2>/dev/null || echo "off")
-    [[ "$sync_mode" == "on" ]] && sync_mode=1 || sync_mode=0
-  fi
-
-  if [[ $SHOW_MOUSE -eq 1 ]]; then
-    mouse_mode=$(tmux show-options -gv mouse 2>/dev/null || echo "off")
-    [[ "$mouse_mode" == "on" ]] && mouse_mode=1 || mouse_mode=0
-  fi
-
   if [[ $SHOW_HOSTNAME -eq 1 ]]; then
-    if [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
+    if [[ -n "${SSH_CLIENT:-}" ]] || [[ -n "${SSH_TTY:-}" ]]; then
       hostname="${HOSTNAME:-$(hostname -s 2>/dev/null || hostname 2>/dev/null | cut -d. -f1 || echo "")}"
+      hostname="${hostname//[^a-zA-Z0-9._-]/}"
     fi
   fi
 

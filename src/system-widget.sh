@@ -356,7 +356,9 @@ main() {
           icon="${BATTERY_ICONS[$idx]}"
 
           if (( battery_percent < battery_threshold )); then
-            color="#[fg=${THEME[red]},bg=default,blink,bold]"
+            local red_color
+            red_color=$(get_color_red)
+            color="#[fg=${red_color},bg=default,blink,bold]"
           elif (( battery_percent < 30 )); then
             color="${COLOR_YELLOW}"
           else

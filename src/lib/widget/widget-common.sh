@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="${SCRIPT_DIR}/.."
+
+source "${LIB_DIR}/tmux/tmux-config.sh"
+source "${LIB_DIR}/tmux/tmux-ops.sh"
+source "${LIB_DIR}/utils/tmux-cache.sh"
+
 get_widget_cache_key() {
   local widget_name="${1}"
   local suffix="${2:-}"

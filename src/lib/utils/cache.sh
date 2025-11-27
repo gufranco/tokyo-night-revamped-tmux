@@ -58,7 +58,32 @@ set_cached_value() {
   local cache_file
 
   cache_file=$(get_cache_file "$widget_name")
+
+  if [[ ! -w "$CACHE_DIR" ]] 2>/dev/null; then
+    return 1
+  fi
+
   echo "$value" > "$cache_file" 2>/dev/null
+}
+
+invalidate_cache() {
+  local widget_name="${1:-}"
+
+  if [[ -z "$widget_name" ]]; then
+    rm -f "${CACHE_DIR}"/*.cache 2>/dev/null
+    if declare -f invalidate_tmux_cache >/dev/null 2>&1; then
+      invalidate_tmux_cache
+    fi
+    return 0
+  fi
+
+  local cache_file
+  cache_file=$(get_cache_file "$widget_name")
+  rm -f "$cache_file" 2>/dev/null
+}
+
+clear_all_caches() {
+  invalidate_cache
 }
 
 export -f get_refresh_rate
@@ -66,3 +91,5 @@ export -f get_cache_file
 export -f is_cache_valid
 export -f get_cached_value
 export -f set_cached_value
+export -f invalidate_cache
+export -f clear_all_caches

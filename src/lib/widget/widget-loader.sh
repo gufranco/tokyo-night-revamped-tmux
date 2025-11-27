@@ -8,6 +8,10 @@ load_core_libs() {
   source "${LIB_DIR}/utils/constants.sh"
   source "${LIB_DIR}/ui/themes.sh"
   source "${LIB_DIR}/ui/color-scale.sh"
+
+  if declare -f init_color_variables >/dev/null 2>&1; then
+    init_color_variables
+  fi
 }
 
 load_widget_base() {

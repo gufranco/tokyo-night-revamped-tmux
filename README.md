@@ -602,6 +602,81 @@ The widget automatically detects available tools and uses the most accurate meth
 - **Tmux**: 3.0+ required
 - **Nerd Fonts**: v3+ required for icons
 
+### Public API
+
+The following functions are available for use in custom scripts or extensions:
+
+#### Platform Detection (`lib/utils/platform-cache.sh`)
+- `get_os()` - Returns operating system name (Darwin, Linux)
+- `get_arch()` - Returns architecture (arm64, x86_64)
+- `is_macos()` - Returns true if running on macOS
+- `is_linux()` - Returns true if running on Linux
+- `is_apple_silicon()` - Returns true if running on Apple Silicon
+
+#### CPU Functions (`lib/cpu/cpu.sh`)
+- `get_cpu_count()` - Returns number of CPU cores
+- `get_cpu_usage_percentage()` - Returns CPU usage as percentage (0-100)
+- `get_load_average()` - Returns system load average
+- `get_cpu_temperature()` - Returns CPU temperature in Celsius
+- `get_cpu_frequency()` - Returns base CPU frequency in MHz
+- `get_cpu_frequency_current()` - Returns estimated current CPU frequency in MHz
+
+#### GPU Functions (`lib/gpu/gpu.sh`)
+- `get_gpu_usage_percentage()` - Returns GPU usage as percentage (0-100)
+- `get_gpu_temperature()` - Returns GPU temperature in Celsius
+
+#### Memory Functions (`lib/ram/ram.sh`)
+- `get_total_memory_kb()` - Returns total memory in KB
+- `get_active_memory_kb()` - Returns active memory in KB
+- `get_memory_pressure()` - Returns memory pressure value
+
+#### Disk Functions (`lib/disk/disk.sh`)
+- `get_disk_usage()` - Returns disk usage percentage
+- `get_disk_space_gb()` - Returns available disk space in GB
+- `get_multiple_disks()` - Returns usage for multiple disks
+- `get_disk_io()` - Returns disk I/O stats (read/write in KB/s)
+
+#### Network Functions (`lib/network/network.sh`, `lib/network/network-utils.sh`)
+- `get_default_network_interface()` - Returns default network interface name
+- `get_network_connections()` - Returns number of network connections
+- `get_vpn_connection_name()` - Returns VPN connection name if active
+- `get_wifi_signal_strength()` - Returns WiFi signal strength in dBm
+- `get_interface_ipv4()` - Returns IPv4 address for interface
+- `detect_vpn()` - Detects active VPN connection
+
+#### Git Functions (`lib/git/git.sh`)
+- `get_git_branch()` - Returns current git branch name
+- `get_git_status()` - Returns git status information
+- `get_git_changes()` - Returns number of modified files
+- `get_git_insertions()` - Returns number of lines added
+- `get_git_deletions()` - Returns number of lines removed
+
+#### Utility Functions (`lib/utils/system.sh`)
+- `safe_divide(numerator, denominator, default)` - Safe division with default on zero
+- `clamp_value(value, min, max)` - Clamps value between min and max
+- `validate_percentage(value)` - Validates and clamps percentage (0-100)
+- `validate_positive_integer(value)` - Validates positive integer
+
+#### Cache Functions (`lib/utils/cache.sh`)
+- `get_cached_value(widget_name, refresh_rate)` - Gets cached widget output
+- `set_cached_value(widget_name, value)` - Sets cached widget output
+- `invalidate_cache(widget_name)` - Invalidates cache for widget or all
+- `clear_all_caches()` - Clears all caches
+
+#### Health Check Functions (`lib/utils/health-check.sh`)
+- `check_widget_health(widget_name, max_execution_time)` - Checks widget health
+- `check_system_resources(cpu_threshold, mem_threshold)` - Checks system resources
+
+#### Tmux Functions (`lib/tmux/tmux-ops.sh`, `lib/tmux/tmux-config.sh`)
+- `get_tmux_option(option, default)` - Gets tmux option with caching
+- `set_tmux_option(option, value)` - Sets tmux option
+- `is_tmux_option_enabled(option)` - Checks if option is enabled
+- `get_session_name()` - Returns current session name
+- `is_minimal_session()` - Checks if current session is minimal
+- `is_option_enabled(option)` - Checks if option is enabled (cached)
+- `should_show_widget(option)` - Checks if widget should be shown
+- `get_numeric_option(option, default, min, max)` - Gets numeric option with validation
+
 ---
 
 ## 🐛 Troubleshooting

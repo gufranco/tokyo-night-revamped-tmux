@@ -1,11 +1,23 @@
 #!/usr/bin/env bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="${SCRIPT_DIR}/.."
+
+if [[ -f "${LIB_DIR}/utils/tmux-cache.sh" ]]; then
+  source "${LIB_DIR}/utils/tmux-cache.sh"
+fi
+
 get_tmux_option() {
   local option="${1}"
   local default="${2:-}"
-  local value
-  value=$(tmux show-option -gv "$option" 2>/dev/null)
-  [[ -z "$value" ]] && echo "$default" || echo "$value"
+
+  if declare -f get_cached_tmux_option >/dev/null 2>&1; then
+    get_cached_tmux_option "$option" "$default"
+  else
+    local value
+    value=$(tmux show-option -gv "$option" 2>/dev/null)
+    [[ -z "$value" ]] && echo "$default" || echo "$value"
+  fi
 }
 
 set_tmux_option() {

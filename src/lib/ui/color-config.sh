@@ -56,7 +56,7 @@ get_widget_color() {
   local custom_color
   custom_color=$(get_tmux_option "${option_name}" "")
 
-  if [[ -n "${custom_color}" ]]; then
+  if [[ -n "${custom_color}" ]] && [[ "${custom_color}" != "" ]]; then
     echo "${custom_color}"
   else
     echo "${default_color}"

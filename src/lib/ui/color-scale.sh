@@ -6,36 +6,63 @@ LIB_DIR="${SCRIPT_DIR}/.."
 source "${LIB_DIR}/ui/color-config.sh"
 
 get_color_cyan() {
-  get_custom_color "widget_cyan" "${THEME[cyan]}"
+  local color
+  color=$(get_custom_color "widget_cyan" "${THEME[cyan]:-#7dcfff}")
+  [[ -z "$color" ]] && echo "#7dcfff" || echo "$color"
 }
 
 get_color_blue() {
-  get_custom_color "widget_blue" "${THEME[blue]}"
+  local color
+  color=$(get_custom_color "widget_blue" "${THEME[blue]:-#7aa2f7}")
+  [[ -z "$color" ]] && echo "#7aa2f7" || echo "$color"
 }
 
 get_color_yellow() {
-  get_custom_color "widget_yellow" "${THEME[yellow]}"
+  local color
+  color=$(get_custom_color "widget_yellow" "${THEME[yellow]:-#e0af68}")
+  [[ -z "$color" ]] && echo "#e0af68" || echo "$color"
 }
 
 get_color_red() {
-  get_custom_color "widget_red" "${THEME[red]}"
+  local color
+  color=$(get_custom_color "widget_red" "${THEME[red]:-#f7768e}")
+  [[ -z "$color" ]] && echo "#f7768e" || echo "$color"
 }
 
 get_color_green() {
-  get_custom_color "widget_green" "${THEME[green]}"
+  local color
+  color=$(get_custom_color "widget_green" "${THEME[green]:-#73daca}")
+  [[ -z "$color" ]] && echo "#73daca" || echo "$color"
 }
 
 get_color_magenta() {
-  get_custom_color "widget_magenta" "${THEME[magenta]}"
+  local color
+  color=$(get_custom_color "widget_magenta" "${THEME[magenta]:-#bb9af7}")
+  [[ -z "$color" ]] && echo "#bb9af7" || echo "$color"
 }
 
-COLOR_CYAN="#[fg=$(get_color_cyan),bg=default]"
-COLOR_BLUE="#[fg=$(get_color_blue),bg=default]"
-COLOR_YELLOW="#[fg=$(get_color_yellow),bg=default]"
-COLOR_RED="#[fg=$(get_color_red),bg=default,bold]"
-COLOR_GREEN="#[fg=$(get_color_green),bg=default]"
-COLOR_MAGENTA="#[fg=$(get_color_magenta),bg=default]"
-COLOR_RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"
+ensure_color_value() {
+  local color_value="${1}"
+  local fallback="${2}"
+
+  if [[ -z "${color_value}" ]] || [[ "${color_value}" == "" ]]; then
+    echo "${fallback}"
+  else
+    echo "${color_value}"
+  fi
+}
+
+init_color_variables() {
+  COLOR_CYAN="#[fg=$(get_color_cyan),bg=default]"
+  COLOR_BLUE="#[fg=$(get_color_blue),bg=default]"
+  COLOR_YELLOW="#[fg=$(get_color_yellow),bg=default]"
+  COLOR_RED="#[fg=$(get_color_red),bg=default,bold]"
+  COLOR_GREEN="#[fg=$(get_color_green),bg=default]"
+  COLOR_MAGENTA="#[fg=$(get_color_magenta),bg=default]"
+  COLOR_RESET="#[fg=${THEME[foreground]:-#a9b1d6},bg=${THEME[background]:-#1A1B26},nobold,noitalics,nounderscore,nodim]"
+}
+
+init_color_variables
 
 readonly SYSTEM_NORMAL_MAX=49
 readonly SYSTEM_MODERATE_MAX=74
@@ -103,9 +130,9 @@ get_count_color() {
   if (( value > max_high )); then
     echo "${COLOR_RED}"
   elif (( value > max_moderate )); then
-    echo "${COLOR_YELLOW}"
-  elif (( value > max_normal )); then
     echo "${COLOR_BLUE}"
+  elif (( value > max_normal )); then
+    echo "${COLOR_YELLOW}"
   else
     echo "${COLOR_CYAN}"
   fi
@@ -119,10 +146,22 @@ get_system_color() {
   local color_high
   local color_critical
 
-  color_normal=$(get_widget_color "system" "normal" "$(get_color_cyan)")
-  color_moderate=$(get_widget_color "system" "moderate" "$(get_color_blue)")
-  color_high=$(get_widget_color "system" "high" "$(get_color_yellow)")
-  color_critical=$(get_widget_color "system" "critical" "$(get_color_red)")
+  local default_cyan default_blue default_yellow default_red
+
+  default_cyan=$(get_color_cyan 2>/dev/null || echo "#7dcfff")
+  default_blue=$(get_color_blue 2>/dev/null || echo "#7aa2f7")
+  default_yellow=$(get_color_yellow 2>/dev/null || echo "#e0af68")
+  default_red=$(get_color_red 2>/dev/null || echo "#f7768e")
+
+  color_normal=$(get_widget_color "system" "normal" "$default_cyan")
+  color_moderate=$(get_widget_color "system" "moderate" "$default_blue")
+  color_high=$(get_widget_color "system" "high" "$default_yellow")
+  color_critical=$(get_widget_color "system" "critical" "$default_red")
+
+  color_normal="${color_normal:-$default_cyan}"
+  color_moderate="${color_moderate:-$default_blue}"
+  color_high="${color_high:-$default_yellow}"
+  color_critical="${color_critical:-$default_red}"
 
   if (( percentage >= 90 )); then
     echo "#[fg=${color_critical},bg=default,bold]"
@@ -143,10 +182,22 @@ get_load_average_color() {
   local color_high
   local color_critical
 
-  color_low=$(get_widget_color "system" "load_low" "$(get_color_cyan)")
-  color_moderate=$(get_widget_color "system" "load_moderate" "$(get_color_blue)")
-  color_high=$(get_widget_color "system" "load_high" "$(get_color_yellow)")
-  color_critical=$(get_widget_color "system" "load_critical" "$(get_color_red)")
+  local default_cyan default_blue default_yellow default_red
+
+  default_cyan=$(get_color_cyan 2>/dev/null || echo "#7dcfff")
+  default_blue=$(get_color_blue 2>/dev/null || echo "#7aa2f7")
+  default_yellow=$(get_color_yellow 2>/dev/null || echo "#e0af68")
+  default_red=$(get_color_red 2>/dev/null || echo "#f7768e")
+
+  color_low=$(get_widget_color "system" "load_low" "$default_cyan")
+  color_moderate=$(get_widget_color "system" "load_moderate" "$default_blue")
+  color_high=$(get_widget_color "system" "load_high" "$default_yellow")
+  color_critical=$(get_widget_color "system" "load_critical" "$default_red")
+
+  color_low="${color_low:-$default_cyan}"
+  color_moderate="${color_moderate:-$default_blue}"
+  color_high="${color_high:-$default_yellow}"
+  color_critical="${color_critical:-$default_red}"
 
   if [[ -z "$load" ]] || [[ -z "$cpu_count" ]] || [[ "$cpu_count" -eq 0 ]]; then
     echo "#[fg=${color_low},bg=default]"
@@ -177,10 +228,22 @@ get_git_changes_color() {
   local color_high
   local color_critical
 
-  color_normal=$(get_widget_color "git" "changes_normal" "$(get_color_cyan)")
-  color_moderate=$(get_widget_color "git" "changes_moderate" "$(get_color_blue)")
-  color_high=$(get_widget_color "git" "changes_high" "$(get_color_yellow)")
-  color_critical=$(get_widget_color "git" "changes_critical" "$(get_color_red)")
+  local default_cyan default_blue default_yellow default_red
+
+  default_cyan=$(get_color_cyan 2>/dev/null || echo "#7dcfff")
+  default_blue=$(get_color_blue 2>/dev/null || echo "#7aa2f7")
+  default_yellow=$(get_color_yellow 2>/dev/null || echo "#e0af68")
+  default_red=$(get_color_red 2>/dev/null || echo "#f7768e")
+
+  color_normal=$(get_widget_color "git" "changes_normal" "$default_cyan")
+  color_moderate=$(get_widget_color "git" "changes_moderate" "$default_blue")
+  color_high=$(get_widget_color "git" "changes_high" "$default_yellow")
+  color_critical=$(get_widget_color "git" "changes_critical" "$default_red")
+
+  color_normal="${color_normal:-$default_cyan}"
+  color_moderate="${color_moderate:-$default_blue}"
+  color_high="${color_high:-$default_yellow}"
+  color_critical="${color_critical:-$default_red}"
 
   if (( count > GIT_CHANGES_HIGH_MAX )); then
     echo "#[fg=${color_critical},bg=default]"
@@ -200,10 +263,22 @@ get_git_lines_color() {
   local color_high
   local color_critical
 
-  color_normal=$(get_widget_color "git" "lines_normal" "$(get_color_cyan)")
-  color_moderate=$(get_widget_color "git" "lines_moderate" "$(get_color_blue)")
-  color_high=$(get_widget_color "git" "lines_high" "$(get_color_yellow)")
-  color_critical=$(get_widget_color "git" "lines_critical" "$(get_color_red)")
+  local default_cyan default_blue default_yellow default_red
+
+  default_cyan=$(get_color_cyan 2>/dev/null || echo "#7dcfff")
+  default_blue=$(get_color_blue 2>/dev/null || echo "#7aa2f7")
+  default_yellow=$(get_color_yellow 2>/dev/null || echo "#e0af68")
+  default_red=$(get_color_red 2>/dev/null || echo "#f7768e")
+
+  color_normal=$(get_widget_color "git" "lines_normal" "$default_cyan")
+  color_moderate=$(get_widget_color "git" "lines_moderate" "$default_blue")
+  color_high=$(get_widget_color "git" "lines_high" "$default_yellow")
+  color_critical=$(get_widget_color "git" "lines_critical" "$default_red")
+
+  color_normal="${color_normal:-$default_cyan}"
+  color_moderate="${color_moderate:-$default_blue}"
+  color_high="${color_high:-$default_yellow}"
+  color_critical="${color_critical:-$default_red}"
 
   if (( count > GIT_LINES_HIGH_MAX )); then
     echo "#[fg=${color_critical},bg=default]"
@@ -222,9 +297,19 @@ get_git_untracked_color() {
   local color_high
   local color_critical
 
-  color_normal=$(get_widget_color "git" "untracked_normal" "$(get_color_cyan)")
-  color_high=$(get_widget_color "git" "untracked_high" "$(get_color_yellow)")
-  color_critical=$(get_widget_color "git" "untracked_critical" "$(get_color_red)")
+  local default_cyan default_yellow default_red
+
+  default_cyan=$(get_color_cyan 2>/dev/null || echo "#7dcfff")
+  default_yellow=$(get_color_yellow 2>/dev/null || echo "#e0af68")
+  default_red=$(get_color_red 2>/dev/null || echo "#f7768e")
+
+  color_normal=$(get_widget_color "git" "untracked_normal" "$default_cyan")
+  color_high=$(get_widget_color "git" "untracked_high" "$default_yellow")
+  color_critical=$(get_widget_color "git" "untracked_critical" "$default_red")
+
+  color_normal="${color_normal:-$default_cyan}"
+  color_high="${color_high:-$default_yellow}"
+  color_critical="${color_critical:-$default_red}"
 
   if (( count > GIT_UNTRACKED_HIGH_MAX )); then
     echo "#[fg=${color_critical},bg=default]"
@@ -241,11 +326,22 @@ get_git_pr_color() {
   local color_medium
   local color_high
 
-  color_low=$(get_widget_color "git" "pr_low" "$(get_color_green)")
-  color_medium=$(get_widget_color "git" "pr_medium" "$(get_color_blue)")
-  color_high=$(get_widget_color "git" "pr_high" "$(get_color_yellow)")
+  local default_green default_blue default_yellow default_cyan
 
-  [[ $count -eq 0 ]] && echo "#[fg=$(get_color_cyan),bg=default]" && return
+  default_green=$(get_color_green 2>/dev/null || echo "#73daca")
+  default_blue=$(get_color_blue 2>/dev/null || echo "#7aa2f7")
+  default_yellow=$(get_color_yellow 2>/dev/null || echo "#e0af68")
+  default_cyan=$(get_color_cyan 2>/dev/null || echo "#7dcfff")
+
+  color_low=$(get_widget_color "git" "pr_low" "$default_green")
+  color_medium=$(get_widget_color "git" "pr_medium" "$default_blue")
+  color_high=$(get_widget_color "git" "pr_high" "$default_yellow")
+
+  color_low="${color_low:-$default_green}"
+  color_medium="${color_medium:-$default_blue}"
+  color_high="${color_high:-$default_yellow}"
+
+  [[ $count -eq 0 ]] && echo "#[fg=$default_cyan,bg=default]" && return
 
   if (( count >= 5 )); then
     echo "#[fg=${color_high},bg=default]"
@@ -261,10 +357,19 @@ get_git_review_color() {
   local color_low
   local color_high
 
-  color_low=$(get_widget_color "git" "review_low" "$(get_color_yellow)")
-  color_high=$(get_widget_color "git" "review_high" "$(get_color_red)")
+  local default_yellow default_red default_cyan
 
-  [[ $count -eq 0 ]] && echo "#[fg=$(get_color_cyan),bg=default]" && return
+  default_yellow=$(get_color_yellow 2>/dev/null || echo "#e0af68")
+  default_red=$(get_color_red 2>/dev/null || echo "#f7768e")
+  default_cyan=$(get_color_cyan 2>/dev/null || echo "#7dcfff")
+
+  color_low=$(get_widget_color "git" "review_low" "$default_yellow")
+  color_high=$(get_widget_color "git" "review_high" "$default_red")
+
+  color_low="${color_low:-$default_yellow}"
+  color_high="${color_high:-$default_red}"
+
+  [[ $count -eq 0 ]] && echo "#[fg=$default_cyan,bg=default]" && return
 
   if (( count >= 3 )); then
     echo "#[fg=${color_high},bg=default]"
@@ -279,11 +384,22 @@ get_git_issue_color() {
   local color_medium
   local color_high
 
-  color_low=$(get_widget_color "git" "issue_low" "$(get_color_green)")
-  color_medium=$(get_widget_color "git" "issue_medium" "$(get_color_blue)")
-  color_high=$(get_widget_color "git" "issue_high" "$(get_color_yellow)")
+  local default_green default_blue default_yellow default_cyan
 
-  [[ $count -eq 0 ]] && echo "#[fg=$(get_color_cyan),bg=default]" && return
+  default_green=$(get_color_green 2>/dev/null || echo "#73daca")
+  default_blue=$(get_color_blue 2>/dev/null || echo "#7aa2f7")
+  default_yellow=$(get_color_yellow 2>/dev/null || echo "#e0af68")
+  default_cyan=$(get_color_cyan 2>/dev/null || echo "#7dcfff")
+
+  color_low=$(get_widget_color "git" "issue_low" "$default_green")
+  color_medium=$(get_widget_color "git" "issue_medium" "$default_blue")
+  color_high=$(get_widget_color "git" "issue_high" "$default_yellow")
+
+  color_low="${color_low:-$default_green}"
+  color_medium="${color_medium:-$default_blue}"
+  color_high="${color_high:-$default_yellow}"
+
+  [[ $count -eq 0 ]] && echo "#[fg=$default_cyan,bg=default]" && return
 
   if (( count >= 10 )); then
     echo "#[fg=${color_high},bg=default]"
@@ -299,8 +415,16 @@ get_git_bug_color() {
   local color_normal
   local color_critical
 
-  color_normal=$(get_widget_color "git" "bug_normal" "$(get_color_cyan)")
-  color_critical=$(get_widget_color "git" "bug_critical" "$(get_color_red)")
+  local default_cyan default_red
+
+  default_cyan=$(get_color_cyan 2>/dev/null || echo "#7dcfff")
+  default_red=$(get_color_red 2>/dev/null || echo "#f7768e")
+
+  color_normal=$(get_widget_color "git" "bug_normal" "$default_cyan")
+  color_critical=$(get_widget_color "git" "bug_critical" "$default_red")
+
+  color_normal="${color_normal:-$default_cyan}"
+  color_critical="${color_critical:-$default_red}"
 
   [[ $count -eq 0 ]] && echo "#[fg=${color_normal},bg=default]" || echo "#[fg=${color_critical},bg=default]"
 }
@@ -368,10 +492,8 @@ get_git_pr_icon() {
   local idx=0
 
   if (( count >= 5 )); then
-    idx=3
-  elif (( count >= 3 )); then
     idx=2
-  elif (( count >= 1 )); then
+  elif (( count >= 3 )); then
     idx=1
   fi
 
@@ -383,8 +505,6 @@ get_git_review_icon() {
   local idx=0
 
   if (( count >= 3 )); then
-    idx=2
-  elif (( count >= 1 )); then
     idx=1
   fi
 
@@ -396,10 +516,8 @@ get_git_issue_icon() {
   local idx=0
 
   if (( count >= 10 )); then
-    idx=3
-  elif (( count >= 5 )); then
     idx=2
-  elif (( count >= 1 )); then
+  elif (( count >= 5 )); then
     idx=1
   fi
 
@@ -413,10 +531,22 @@ get_net_speed_color() {
   local color_high
   local color_very_high
 
-  color_low=$(get_widget_color "network" "speed_low" "$(get_color_cyan)")
-  color_medium=$(get_widget_color "network" "speed_medium" "$(get_color_blue)")
-  color_high=$(get_widget_color "network" "speed_high" "$(get_color_green)")
-  color_very_high=$(get_widget_color "network" "speed_very_high" "$(get_color_yellow)")
+  local default_cyan default_blue default_green default_yellow
+
+  default_cyan=$(get_color_cyan 2>/dev/null || echo "#7dcfff")
+  default_blue=$(get_color_blue 2>/dev/null || echo "#7aa2f7")
+  default_green=$(get_color_green 2>/dev/null || echo "#73daca")
+  default_yellow=$(get_color_yellow 2>/dev/null || echo "#e0af68")
+
+  color_low=$(get_widget_color "network" "speed_low" "$default_cyan")
+  color_medium=$(get_widget_color "network" "speed_medium" "$default_blue")
+  color_high=$(get_widget_color "network" "speed_high" "$default_green")
+  color_very_high=$(get_widget_color "network" "speed_very_high" "$default_yellow")
+
+  color_low="${color_low:-$default_cyan}"
+  color_medium="${color_medium:-$default_blue}"
+  color_high="${color_high:-$default_green}"
+  color_very_high="${color_very_high:-$default_yellow}"
 
   if (( bytes_per_sec >= NET_SPEED_HIGH_MAX )); then
     echo "#[fg=${color_very_high},bg=default]"
@@ -436,10 +566,22 @@ get_net_ping_color() {
   local color_high
   local color_very_high
 
-  color_excellent=$(get_widget_color "network" "ping_excellent" "$(get_color_cyan)")
-  color_good=$(get_widget_color "network" "ping_good" "$(get_color_blue)")
-  color_high=$(get_widget_color "network" "ping_high" "$(get_color_yellow)")
-  color_very_high=$(get_widget_color "network" "ping_very_high" "$(get_color_red)")
+  local default_cyan default_blue default_yellow default_red
+
+  default_cyan=$(get_color_cyan 2>/dev/null || echo "#7dcfff")
+  default_blue=$(get_color_blue 2>/dev/null || echo "#7aa2f7")
+  default_yellow=$(get_color_yellow 2>/dev/null || echo "#e0af68")
+  default_red=$(get_color_red 2>/dev/null || echo "#f7768e")
+
+  color_excellent=$(get_widget_color "network" "ping_excellent" "$default_cyan")
+  color_good=$(get_widget_color "network" "ping_good" "$default_blue")
+  color_high=$(get_widget_color "network" "ping_high" "$default_yellow")
+  color_very_high=$(get_widget_color "network" "ping_very_high" "$default_red")
+
+  color_excellent="${color_excellent:-$default_cyan}"
+  color_good="${color_good:-$default_blue}"
+  color_high="${color_high:-$default_yellow}"
+  color_very_high="${color_very_high:-$default_red}"
 
   if (( ping_ms >= 100 )); then
     echo "#[fg=${color_very_high},bg=default]"
@@ -462,30 +604,49 @@ get_temperature_color_and_icon() {
   local color_hot
   local color_very_hot
 
+  local default_magenta default_cyan default_blue default_green default_yellow default_red
+
+  default_magenta=$(get_color_magenta 2>/dev/null || echo "#bb9af7")
+  default_cyan=$(get_color_cyan 2>/dev/null || echo "#7dcfff")
+  default_blue=$(get_color_blue 2>/dev/null || echo "#7aa2f7")
+  default_green=$(get_color_green 2>/dev/null || echo "#73daca")
+  default_yellow=$(get_color_yellow 2>/dev/null || echo "#e0af68")
+  default_red=$(get_color_red 2>/dev/null || echo "#f7768e")
+
   temp_num=$(echo "$temp_str" | grep -oE '[-+]?[0-9]+' | head -1)
 
-  color_freezing=$(get_widget_color "temperature" "freezing" "${THEME[magenta]}")
-  color_cold=$(get_widget_color "temperature" "cold" "$(get_color_cyan)")
-  color_cool=$(get_widget_color "temperature" "cool" "$(get_color_blue)")
-  color_comfortable=$(get_widget_color "temperature" "comfortable" "$(get_color_green)")
-  color_hot=$(get_widget_color "temperature" "hot" "$(get_color_yellow)")
-  color_very_hot=$(get_widget_color "temperature" "very_hot" "$(get_color_red)")
+  color_freezing=$(get_widget_color "temperature" "freezing" "$default_magenta")
+  color_cold=$(get_widget_color "temperature" "cold" "$default_cyan")
+  color_cool=$(get_widget_color "temperature" "cool" "$default_blue")
+  color_comfortable=$(get_widget_color "temperature" "comfortable" "$default_green")
+  color_hot=$(get_widget_color "temperature" "hot" "$default_yellow")
+  color_very_hot=$(get_widget_color "temperature" "very_hot" "$default_red")
 
-  [[ -z "$temp_num" ]] && echo "#[fg=$(get_color_cyan),bg=default]󰖙" && return
+  color_freezing="${color_freezing:-$default_magenta}"
+  color_cold="${color_cold:-$default_cyan}"
+  color_cool="${color_cool:-$default_blue}"
+  color_comfortable="${color_comfortable:-$default_green}"
+  color_hot="${color_hot:-$default_yellow}"
+  color_very_hot="${color_very_hot:-$default_red}"
 
-  if (( temp_num < TEMP_FREEZING_MAX )); then
+  if [[ -z "$temp_num" ]]; then
+    echo "#[fg=${color_cold},bg=default]󰖙"
+    return
+  fi
+
+  if (( temp_num <= TEMP_FREEZING_MAX )); then
     icon="󰜗"
     color="#[fg=${color_freezing},bg=default]"
-  elif (( temp_num < TEMP_COLD_MAX )); then
+  elif (( temp_num <= TEMP_COLD_MAX )); then
     icon="󰖐"
     color="#[fg=${color_cold},bg=default]"
-  elif (( temp_num < TEMP_COOL_MAX )); then
+  elif (( temp_num <= TEMP_COOL_MAX )); then
     icon="󰖐"
     color="#[fg=${color_cool},bg=default]"
-  elif (( temp_num < TEMP_COMFORTABLE_MAX )); then
+  elif (( temp_num <= TEMP_COMFORTABLE_MAX )); then
     icon="󰖙"
     color="#[fg=${color_comfortable},bg=default]"
-  elif (( temp_num < TEMP_HOT_MAX )); then
+  elif (( temp_num <= TEMP_HOT_MAX )); then
     icon="󰖙"
     color="#[fg=${color_hot},bg=default]"
   else
@@ -534,34 +695,41 @@ get_timezone_period_color() {
   local color_afternoon
   local color_evening
 
-  color_weekend=$(get_widget_color "timezone" "weekend" "$(get_color_cyan)")
-  color_night=$(get_widget_color "timezone" "night" "$(get_color_magenta)")
-  color_morning=$(get_widget_color "timezone" "morning" "$(get_color_cyan)")
-  color_day=$(get_widget_color "timezone" "day" "$(get_color_green)")
-  color_afternoon=$(get_widget_color "timezone" "afternoon" "$(get_color_yellow)")
-  color_evening=$(get_widget_color "timezone" "evening" "$(get_color_blue)")
+  local default_cyan default_magenta default_green default_yellow default_blue
+
+  default_cyan=$(get_color_cyan 2>/dev/null || echo "#7dcfff")
+  default_magenta=$(get_color_magenta 2>/dev/null || echo "#bb9af7")
+  default_green=$(get_color_green 2>/dev/null || echo "#73daca")
+  default_yellow=$(get_color_yellow 2>/dev/null || echo "#e0af68")
+  default_blue=$(get_color_blue 2>/dev/null || echo "#7aa2f7")
+
+  color_weekend=$(get_widget_color "timezone" "weekend" "$default_cyan")
+  color_night=$(get_widget_color "timezone" "night" "$default_magenta")
+  color_morning=$(get_widget_color "timezone" "morning" "$default_cyan")
+  color_day=$(get_widget_color "timezone" "day" "$default_green")
+  color_afternoon=$(get_widget_color "timezone" "afternoon" "$default_yellow")
+  color_evening=$(get_widget_color "timezone" "evening" "$default_blue")
+
+  color_weekend="${color_weekend:-$default_cyan}"
+  color_night="${color_night:-$default_magenta}"
+  color_morning="${color_morning:-$default_cyan}"
+  color_day="${color_day:-$default_green}"
+  color_afternoon="${color_afternoon:-$default_yellow}"
+  color_evening="${color_evening:-$default_blue}"
 
   if [[ $is_weekend -eq 1 ]]; then
-    echo "${color_weekend//bg=default/bg=default,dim}"
+    echo "#[fg=${color_weekend},bg=default]"
     return
   fi
 
-  if (( hour >= 0 && hour < 7 )); then
-    echo "${color_night//bg=default/bg=default,dim}"
-  elif (( hour >= 7 && hour < 9 )); then
-    echo "${color_morning}"
-  elif (( hour >= 9 && hour < 12 )); then
-    echo "${color_day}"
-  elif (( hour >= 12 && hour < 14 )); then
-    echo "${color_afternoon}"
-  elif (( hour >= 14 && hour < 18 )); then
-    echo "${color_day}"
-  elif (( hour >= 18 && hour < 20 )); then
-    echo "${color_evening}"
-  elif (( hour >= 20 && hour < 23 )); then
-    echo "${color_night}"
+  if (( hour >= 22 || hour < 5 )); then
+    echo "#[fg=${color_night},bg=default]"
+  elif (( hour >= 5 && hour < 12 )); then
+    echo "#[fg=${color_morning},bg=default]"
+  elif (( hour >= 12 && hour < 18 )); then
+    echo "#[fg=${color_day},bg=default]"
   else
-    echo "${color_night//bg=default/bg=default,dim}"
+    echo "#[fg=${color_evening},bg=default]"
   fi
 }
 
@@ -570,8 +738,7 @@ format_colored_value() {
   local icon=$2
   local value=$3
   local unit=${4:-}
-
-  echo "${color}${icon} ${value}${unit}${COLOR_RESET}"
+  echo "${color}${icon} ${value}${unit}"
 }
 
 format_if_nonzero() {
@@ -583,6 +750,13 @@ format_if_nonzero() {
   [[ $value -gt 0 ]] && echo " $(format_colored_value "$color" "$icon" "$value" "$unit")"
 }
 
+export -f get_color_cyan
+export -f get_color_blue
+export -f get_color_yellow
+export -f get_color_red
+export -f get_color_green
+export -f get_color_magenta
+export -f init_color_variables
 export -f get_percentage_color
 export -f get_count_color
 export -f get_system_color
@@ -610,4 +784,3 @@ export -f get_git_review_icon
 export -f get_git_issue_icon
 
 export COLOR_CYAN COLOR_BLUE COLOR_YELLOW COLOR_RED COLOR_GREEN COLOR_MAGENTA COLOR_RESET
-

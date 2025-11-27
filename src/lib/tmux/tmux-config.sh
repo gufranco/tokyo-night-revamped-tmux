@@ -15,6 +15,10 @@ should_show_widget() {
   is_option_enabled "${1}"
 }
 
+is_widget_enabled() {
+  should_show_widget "${1}"
+}
+
 get_numeric_option() {
   local value
   value=$(get_tmux_option "${1}" "${2}")
@@ -34,5 +38,6 @@ get_numeric_option() {
 
 export -f is_option_enabled
 export -f should_show_widget
+export -f is_widget_enabled
 export -f get_numeric_option
 
