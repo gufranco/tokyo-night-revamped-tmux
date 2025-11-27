@@ -2,7 +2,9 @@
 
 pad_percentage() {
   local value=$1
-  printf "%-4s" "${value}%"
+  local padded
+  padded=$(printf "%-4s" "${value}%")
+  printf "%s" "$padded"
 }
 
 pad_number() {

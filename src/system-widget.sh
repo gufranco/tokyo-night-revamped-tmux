@@ -402,7 +402,8 @@ main() {
         else
           temp_color="${COLOR_CYAN}"
         fi
-        output="${output} ${temp_color}${ICON_TEMPERATURE} ${gpu_temp}°C${COLOR_RESET}"
+        [[ -n "$output" ]] && output="${output} "
+        output="${output}${temp_color}${ICON_TEMPERATURE} ${gpu_temp}°C${COLOR_RESET}"
       fi
     fi
   fi

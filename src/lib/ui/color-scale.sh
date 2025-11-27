@@ -726,8 +726,10 @@ get_timezone_period_color() {
     echo "#[fg=${color_night},bg=default]"
   elif (( hour >= 5 && hour < 12 )); then
     echo "#[fg=${color_morning},bg=default]"
-  elif (( hour >= 12 && hour < 18 )); then
+  elif (( hour >= 12 && hour < 14 )); then
     echo "#[fg=${color_day},bg=default]"
+  elif (( hour >= 14 && hour < 18 )); then
+    echo "#[fg=${color_afternoon},bg=default]"
   else
     echo "#[fg=${color_evening},bg=default]"
   fi
