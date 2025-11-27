@@ -130,9 +130,9 @@ get_count_color() {
   if (( value > max_high )); then
     echo "${COLOR_RED}"
   elif (( value > max_moderate )); then
-    echo "${COLOR_BLUE}"
-  elif (( value > max_normal )); then
     echo "${COLOR_YELLOW}"
+  elif (( value > max_normal )); then
+    echo "${COLOR_BLUE}"
   else
     echo "${COLOR_CYAN}"
   fi

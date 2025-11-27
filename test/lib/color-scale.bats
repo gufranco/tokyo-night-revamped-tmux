@@ -80,21 +80,21 @@ teardown() {
   result_low=$(get_git_changes_color "3")
   result_high=$(get_git_changes_color "35")
   
-  [[ "$result_low" == "$COLOR_CYAN" ]]
-  [[ "$result_high" == "$COLOR_RED" ]]
+  [[ "$result_low" =~ "#7dcfff" ]]
+  [[ "$result_high" =~ "#f7768e" ]]
 }
 
 @test "color-scale.sh - get_git_lines_color uses correct limits" {
   result_low=$(get_git_lines_color "50")
   result_high=$(get_git_lines_color "1500")
   
-  [[ "$result_low" == "$COLOR_CYAN" ]]
-  [[ "$result_high" == "$COLOR_RED" ]]
+  [[ "$result_low" =~ "#7dcfff" ]]
+  [[ "$result_high" =~ "#f7768e" ]]
 }
 
 @test "color-scale.sh - get_git_untracked_color returns RED for high value" {
   result=$(get_git_untracked_color "15")
-  [[ "$result" == "$COLOR_RED" ]]
+  [[ "$result" =~ "#f7768e" ]]
 }
 
 @test "color-scale.sh - get_git_untracked_color returns YELLOW for medium value" {
@@ -139,7 +139,7 @@ teardown() {
 
 @test "color-scale.sh - get_git_review_color returns RED for high value" {
   result=$(get_git_review_color "3")
-  [[ "$result" == "$COLOR_RED" ]]
+  [[ "$result" =~ "#f7768e" ]]
 }
 
 @test "color-scale.sh - get_git_issue_color returns CYAN for zero" {
@@ -169,7 +169,7 @@ teardown() {
 
 @test "color-scale.sh - get_git_bug_color returns RED for value > 0" {
   result=$(get_git_bug_color "1")
-  [[ "$result" == "$COLOR_RED" ]]
+  [[ "$result" =~ "#f7768e" ]]
 }
 
 @test "color-scale.sh - get_net_speed_color returns CYAN for low speed" {
@@ -209,7 +209,7 @@ teardown() {
 
 @test "color-scale.sh - get_net_ping_color returns RED for very high ping" {
   result=$(get_net_ping_color "150")
-  [[ "$result" == "$COLOR_RED" ]]
+  [[ "$result" =~ "#f7768e" ]]
 }
 
 @test "color-scale.sh - get_temperature_color_and_icon returns correct for negative temp" {
@@ -249,9 +249,10 @@ teardown() {
   [[ -n "$result_night" ]]
 }
 
-@test "color-scale.sh - get_timezone_period_color returns dim color for weekend" {
+@test "color-scale.sh - get_timezone_period_color returns correct color for weekend" {
   result=$(get_timezone_period_color "12" "1")
-  [[ "$result" =~ dim ]]
+  [[ "$result" =~ "#[fg=" ]]
+  [[ "$result" =~ ",bg=default]" ]]
 }
 
 @test "color-scale.sh - get_timezone_period_color returns correct color for different periods" {

@@ -7,7 +7,7 @@ setup() {
   source "${BATS_TEST_DIRNAME}/../../src/lib/utils/coreutils-compat.sh"
   source "${BATS_TEST_DIRNAME}/../../src/lib/utils/constants.sh"
   source "${BATS_TEST_DIRNAME}/../../src/lib/widget/widget-base.sh"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/network-utils.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/network/network-utils.sh"
   source "${BATS_TEST_DIRNAME}/../../src/lib/ui/themes.sh"
   source "${BATS_TEST_DIRNAME}/../../src/lib/ui/color-scale.sh"
   source "${BATS_TEST_DIRNAME}/../../src/lib/utils/cache.sh"
