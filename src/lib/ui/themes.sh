@@ -81,4 +81,9 @@ THEME['ghmagenta']="#A371F7"
 THEME['ghred']="#d73a4a"
 THEME['ghyellow']="#d29922"
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/color-config.sh"
+
+apply_custom_theme_colors
+
 RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"

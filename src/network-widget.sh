@@ -3,10 +3,10 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LIB_DIR="${SCRIPT_DIR}/lib"
 
-source "${LIB_DIR}/widget-loader.sh"
-source "${LIB_DIR}/tmux-ops.sh"
-source "${LIB_DIR}/widget-common.sh"
-source "${LIB_DIR}/widget-config.sh"
+source "${LIB_DIR}/widget/widget-loader.sh"
+source "${LIB_DIR}/tmux/tmux-ops.sh"
+source "${LIB_DIR}/widget/widget-common.sh"
+source "${LIB_DIR}/widget/widget-config.sh"
 
 load_widget_dependencies "network"
 
@@ -25,31 +25,28 @@ SHOW_INTERFACE=$(is_widget_feature_enabled "@tokyo-night-tmux_netspeed_show_inte
 
 main() {
   local interface
-  local TIME_DIFF
-  local refresh_rate
-  refresh_rate=$(get_refresh_rate)
-  TIME_DIFF="${refresh_rate:-5}"
-  
   interface="${INTERFACE}"
-  
+
   if [[ -z "$interface" ]]; then
     interface=$(find_interface) || exit 0
     tmux set-option -g @tokyo-night-tmux_netspeed_iface "$interface"
   fi
 
-  read -r rx1 tx1 < <(get_bytes "$interface") || exit 0
-  sleep "$TIME_DIFF"
-  read -r rx2 tx2 < <(get_bytes "$interface") || exit 0
+  source "${LIB_DIR}/network/network-speed.sh"
+  local speed_data
+  speed_data=$(get_network_speed "$interface")
+  read -r rx_diff tx_diff time_diff <<< "$speed_data"
 
-  local rx_diff tx_diff rx_bps tx_bps rx_speed tx_speed rx_color tx_color
-  rx_diff=$((rx2 - rx1))
-  tx_diff=$((tx2 - tx1))
+  if [[ -z "$time_diff" ]] || [[ $time_diff -eq 0 ]]; then
+    time_diff=1
+  fi
 
-  rx_bps=$((rx_diff / TIME_DIFF))
-  tx_bps=$((tx_diff / TIME_DIFF))
+  local rx_bps tx_bps rx_speed tx_speed rx_color tx_color
+  rx_bps=$((rx_diff / time_diff))
+  tx_bps=$((tx_diff / time_diff))
 
-  rx_speed=$(format_speed "$rx_diff" "$TIME_DIFF")
-  tx_speed=$(format_speed "$tx_diff" "$TIME_DIFF")
+  rx_speed=$(format_speed "$rx_diff" "$time_diff")
+  tx_speed=$(format_speed "$tx_diff" "$time_diff")
 
   rx_color=$(get_net_speed_color "$rx_bps")
   tx_color=$(get_net_speed_color "$tx_bps")
@@ -94,7 +91,7 @@ main() {
   if [[ $SHOW_PING -eq 1 ]]; then
     local ping_ms ping_color
     ping_ms=$(get_ping_latency)
-    
+
     if [[ -n "$ping_ms" ]] && [[ "$ping_ms" =~ ^[0-9]+$ ]]; then
       ping_color=$(get_net_ping_color "$ping_ms")
       OUTPUT="${OUTPUT} ${ping_color}󰓅 $(pad_number "$ping_ms" "ms" 5)${COLOR_RESET}"

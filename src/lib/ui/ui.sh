@@ -2,8 +2,8 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [[ -f "${SCRIPT_DIR}/../src/themes.sh" ]]; then
-  source "${SCRIPT_DIR}/../src/themes.sh"
+if [[ -f "${SCRIPT_DIR}/themes.sh" ]]; then
+  source "${SCRIPT_DIR}/themes.sh"
 fi
 
 RESET="#[fg=${THEME[foreground]},bg=${THEME[background]},nobold,noitalics,nounderscore,nodim]"

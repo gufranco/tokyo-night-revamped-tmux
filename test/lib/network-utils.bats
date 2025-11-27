@@ -4,9 +4,9 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 
 setup() {
   setup_test_environment
-  source "${BATS_TEST_DIRNAME}/../../src/lib/coreutils-compat.sh"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/cache.sh"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/network-utils.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/coreutils-compat.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/cache.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/network/network-utils.sh"
 }
 
 teardown() {
@@ -19,7 +19,7 @@ teardown() {
   echo "Inter-|   Receive                                                |  Transmit" > "${TEST_TMPDIR}/proc/net/dev"
   echo " face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed" >> "${TEST_TMPDIR}/proc/net/dev"
   echo "  eth0: 1000000    1000    0    0    0     0          0         0  2000000    2000    0    0    0     0       0          0" >> "${TEST_TMPDIR}/proc/net/dev"
-  
+
   # Teste básico - função exists
   function_exists get_bytes
 }
@@ -28,7 +28,7 @@ teardown() {
   export MOCK_UNAME_S="Darwin"
   export MOCK_NETSTAT_OUTPUT="Name  Mtu   Network       Address            Ipkts Ierrs     Ibytes    Opkts Oerrs     Obytes  Coll
 en0   1500  <Link#6>      aa:bb:cc:dd:ee:ff  12345     0   1000000  12345     0   2000000     0"
-  
+
   # Teste básico - função exists
   function_exists get_bytes
 }
@@ -53,7 +53,7 @@ en0   1500  <Link#6>      aa:bb:cc:dd:ee:ff  12345     0   1000000  12345     0 
   mkdir -p "${TEST_TMPDIR}/proc/net"
   echo "Iface   Destination     Gateway         Flags   RefCnt  Use     Metric  Mask            MTU     Window  IRTT" > "${TEST_TMPDIR}/proc/net/route"
   echo "eth0    00000000        0101A8C0        0003    0       0       0       00000000        0       0       0" >> "${TEST_TMPDIR}/proc/net/route"
-  
+
   # Teste básico
   function_exists find_interface
 }
@@ -72,10 +72,10 @@ en0   1500  <Link#6>      aa:bb:cc:dd:ee:ff  12345     0   1000000  12345     0 
   [[ "$result" == "en0" ]]
 }
 
-@test "network-utils.sh - interface_ipv4 returns IP on macOS" {
+@test "network-utils.sh - get_interface_ipv4 returns IP on macOS" {
   export MOCK_UNAME_S="Darwin"
   export MOCK_IPCONFIG_IP="192.168.1.100"
-  result=$(interface_ipv4 "en0")
+  result=$(get_interface_ipv4 "en0")
   [[ "$result" == "192.168.1.100" ]]
 }
 
@@ -83,7 +83,7 @@ en0   1500  <Link#6>      aa:bb:cc:dd:ee:ff  12345     0   1000000  12345     0 
   export MOCK_UNAME_S="Darwin"
   export MOCK_NETSTAT_ROUTES="0.0.0.0           192.168.1.1        UGSc           utun0
 192.168.1.0      192.168.1.1        UGSc           en0"
-  
+
   result=$(detect_vpn_macos)
   [[ -n "$result" ]]
 }
@@ -91,7 +91,7 @@ en0   1500  <Link#6>      aa:bb:cc:dd:ee:ff  12345     0   1000000  12345     0 
 @test "network-utils.sh - detect_vpn_macos returns error when not there are VPN" {
   export MOCK_UNAME_S="Darwin"
   export MOCK_NETSTAT_ROUTES=""
-  
+
   run detect_vpn_macos
   [[ $status -ne 0 ]]
 }
@@ -103,7 +103,7 @@ en0   1500  <Link#6>      aa:bb:cc:dd:ee:ff  12345     0   1000000  12345     0 
 3: tun0: <POINTOPOINT,UP,LOWER_UP> mtu 1500"
   export MOCK_IP_ADDR_OUTPUT="3: tun0: <POINTOPOINT,UP,LOWER_UP> mtu 1500
     inet 10.0.0.1/24 scope global tun0"
-  
+
   result=$(detect_vpn_linux)
   [[ -n "$result" ]]
 }
@@ -111,7 +111,7 @@ en0   1500  <Link#6>      aa:bb:cc:dd:ee:ff  12345     0   1000000  12345     0 
 @test "network-utils.sh - detect_vpn returns interface on macOS" {
   export MOCK_UNAME_S="Darwin"
   export MOCK_NETSTAT_ROUTES="0.0.0.0           192.168.1.1        UGSc           utun0"
-  
+
   result=$(detect_vpn)
   [[ -n "$result" ]]
 }
@@ -121,7 +121,7 @@ en0   1500  <Link#6>      aa:bb:cc:dd:ee:ff  12345     0   1000000  12345     0 
   export MOCK_IP_LINK_OUTPUT="3: tun0: <POINTOPOINT,UP,LOWER_UP> mtu 1500"
   export MOCK_IP_ADDR_OUTPUT="3: tun0: <POINTOPOINT,UP,LOWER_UP> mtu 1500
     inet 10.0.0.1/24 scope global tun0"
-  
+
   result=$(detect_vpn)
   [[ -n "$result" ]]
 }

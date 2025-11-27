@@ -4,11 +4,11 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 
 setup() {
   setup_test_environment
-  source "${BATS_TEST_DIRNAME}/../../src/lib/coreutils-compat.sh"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/constants.sh"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/themes.sh"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/color-scale.sh"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/cache.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/coreutils-compat.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/constants.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/ui/themes.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/ui/color-scale.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/cache.sh"
 }
 
 teardown() {

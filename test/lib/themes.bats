@@ -4,7 +4,7 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 
 setup() {
   setup_test_environment
-  source "${BATS_TEST_DIRNAME}/../../src/lib/themes.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/ui/themes.sh"
 }
 
 teardown() {
@@ -19,7 +19,7 @@ teardown() {
 @test "themes.sh - THEME night tem colors corretas" {
   export TMUX_THEME="night"
   # Recarregar for aplicar tema
-  source "${BATS_TEST_DIRNAME}/../../src/lib/themes.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/ui/themes.sh"
   
   [[ -n "${THEME[background]}" ]]
   [[ -n "${THEME[foreground]}" ]]
@@ -27,7 +27,7 @@ teardown() {
 
 @test "themes.sh - THEME storm tem colors corretas" {
   export TMUX_THEME="storm"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/themes.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/ui/themes.sh"
   
   [[ -n "${THEME[background]}" ]]
   [[ -n "${THEME[foreground]}" ]]
@@ -35,7 +35,7 @@ teardown() {
 
 @test "themes.sh - THEME day tem colors corretas" {
   export TMUX_THEME="day"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/themes.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/ui/themes.sh"
   
   [[ -n "${THEME[background]}" ]]
   [[ -n "${THEME[foreground]}" ]]

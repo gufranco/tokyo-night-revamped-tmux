@@ -4,8 +4,8 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 
 setup() {
   setup_test_environment
-  source "${BATS_TEST_DIRNAME}/../../src/lib/cache.sh"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/widget-base.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/cache.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/widget/widget-base.sh"
   source "${BATS_TEST_DIRNAME}/../../src/lib/widget-common.sh"
 }
 

@@ -3,10 +3,10 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LIB_DIR="${SCRIPT_DIR}/lib"
 
-source "${LIB_DIR}/widget-loader.sh"
-source "${LIB_DIR}/tmux-ops.sh"
-source "${LIB_DIR}/widget-common.sh"
-source "${LIB_DIR}/widget-config.sh"
+source "${LIB_DIR}/widget/widget-loader.sh"
+source "${LIB_DIR}/tmux/tmux-ops.sh"
+source "${LIB_DIR}/widget/widget-common.sh"
+source "${LIB_DIR}/widget/widget-config.sh"
 
 load_widget_dependencies "git"
 

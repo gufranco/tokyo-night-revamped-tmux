@@ -128,6 +128,46 @@ Or press `Prefix + :` and type `source-file ~/.tmux.conf`
 
 ## ⚙️ Configuration
 
+### Status Left
+
+The status left displays user information and session context. It's fully customizable:
+
+```bash
+# Show session name (default: enabled)
+set -g @tokyo-night-tmux_status_left_show_session 1
+
+# Show window and pane counts (default: disabled)
+set -g @tokyo-night-tmux_status_left_show_windows 1
+set -g @tokyo-night-tmux_status_left_show_panes 1
+
+# Show sync mode indicator (default: enabled)
+set -g @tokyo-night-tmux_status_left_show_sync 1
+
+# Show zoom mode indicator (default: enabled)
+set -g @tokyo-night-tmux_status_left_show_zoom 1
+
+# Show mouse mode indicator (default: disabled)
+set -g @tokyo-night-tmux_status_left_show_mouse 1
+
+# Show hostname when in SSH session (default: disabled)
+set -g @tokyo-night-tmux_status_left_show_hostname 1
+```
+
+**Format:** `󰀄 username [@session] [w:p] [SYNC|ZOOM|MOUSE|@hostname] ░`
+
+**Color behavior:**
+- **Green + Bold**: When prefix (Ctrl+B) is active
+- **Cyan**: Normal state
+- **Yellow**: Indicators (SYNC, ZOOM, MOUSE, hostname)
+
+**Note:** Status-left length is unlimited (set to 0) for maximum flexibility.
+
+### Status Right
+
+The status right displays widgets in the order specified by `@tokyo-night-tmux_widgets_order`. Each widget is dynamically loaded and can be individually configured.
+
+**Note:** Status-right length is unlimited (set to 0) for maximum flexibility.
+
 ### Widget Ordering
 
 Customize which widgets appear and in what order:
@@ -150,9 +190,9 @@ set -g @tokyo-night-tmux_widgets_order "git,context"
 - `system` - Unified system metrics (CPU, GPU, Memory, Disk, Battery, Temperature, Uptime, Disk I/O)
 - `git` - Git repository status with web integration
 - `netspeed` - Network speed and connectivity
-- `context` - Date, time, path, SSH, session, music, updates, and more
-- `process` - Top processes by CPU usage
-- `docker` - Docker containers and Kubernetes pods
+- `context` - Date, time, timezone, weather, and more
+
+**Note:** The `process` and `docker` widgets are integrated into the `system` widget and can be enabled via system widget options.
 
 ### Minimal Mode
 
@@ -301,36 +341,6 @@ set -g @tokyo-night-tmux_netspeed_refresh 1      # Update interval (seconds)
 - **Ping**: < 50ms (Green), 50-100ms (Yellow), > 100ms (Red)
 - **WiFi Signal**: > -50dBm (Green), -50 to -70dBm (Yellow), < -70dBm (Red)
 
-### Process Widget
-
-Monitor top processes by CPU usage.
-
-```bash
-set -g @tokyo-night-tmux_show_process 1
-set -g @tokyo-night-tmux_process_count 3    # Number of processes to show (default: 3)
-```
-
-**Features:**
-- Shows top N processes by CPU usage
-- Process names truncated to 10 characters
-- Color-coded: < 25% (Cyan), 25-50% (Yellow), ≥ 50% (Red)
-- Updates based on refresh rate
-
-### Docker Widget
-
-Monitor Docker containers and Kubernetes pods.
-
-```bash
-set -g @tokyo-night-tmux_show_docker 1
-set -g @tokyo-night-tmux_docker_kubernetes 1    # Show Kubernetes pods (requires kubectl)
-```
-
-**Features:**
-- **Docker**: 󰡨 Container count (running)
-- **Kubernetes**: 󰠳 Pod count (running, requires `kubectl`)
-- Color-coded: Normal (Cyan), High count (Yellow)
-- Only shows when containers/pods are running
-
 ### Context Widget
 
 Date, time, path, SSH, session, music, updates, and more.
@@ -422,7 +432,7 @@ Temperature colors:
 
 ```bash
 # Widget order
-set -g @tokyo-night-tmux_widgets_order "system,process,docker,git,netspeed,context"
+set -g @tokyo-night-tmux_widgets_order "system,git,netspeed,context"
 
 # System widget with all features
 set -g @tokyo-night-tmux_show_system 1
@@ -436,14 +446,6 @@ set -g @tokyo-night-tmux_system_load 1
 set -g @tokyo-night-tmux_system_temp 1
 set -g @tokyo-night-tmux_system_uptime 1
 set -g @tokyo-night-tmux_system_disk_io 1
-
-# Process monitoring
-set -g @tokyo-night-tmux_show_process 1
-set -g @tokyo-night-tmux_process_count 3
-
-# Docker/Kubernetes
-set -g @tokyo-night-tmux_show_docker 1
-set -g @tokyo-night-tmux_docker_kubernetes 1
 
 # Git with all features
 set -g @tokyo-night-tmux_show_git 1
@@ -463,6 +465,7 @@ set -g @tokyo-night-tmux_netspeed_wifi 1
 # Context with all features
 set -g @tokyo-night-tmux_show_context 1
 set -g @tokyo-night-tmux_context_weather 1
+set -g @tokyo-night-tmux_context_timezone 1
 ```
 
 ---
@@ -472,17 +475,87 @@ set -g @tokyo-night-tmux_context_weather 1
 ### Architecture
 
 - **Pure Bash**: No compiled binaries required
-- **Modular Design**: Each widget is independent
+- **Modular Design**: Organized by context (CPU, GPU, RAM, Disk, Network, etc.)
+- **SOLID Principles**: Single Responsibility, Open/Closed, Dependency Inversion
+- **DRY Code**: No code duplication, reusable functions
 - **Efficient Caching**: Reduces system calls and API requests
 - **Cross-Platform**: Unified codebase for macOS and Linux
 - **Smart Fallbacks**: Graceful degradation when tools are missing
+- **Minimal Entry Point**: `tokyo-night.tmux` only loads theme configuration
+
+### Project Structure
+
+The codebase is organized by context for better maintainability:
+
+```
+src/
+├── lib/
+│   ├── cpu/              # CPU-related functions
+│   │   └── cpu.sh
+│   ├── gpu/              # GPU-related functions
+│   │   └── gpu.sh
+│   ├── ram/              # Memory-related functions
+│   │   └── ram.sh
+│   ├── disk/             # Disk-related functions
+│   │   └── disk.sh
+│   ├── network/          # Network-related functions
+│   │   ├── network.sh
+│   │   ├── network-utils.sh
+│   │   └── network-speed.sh
+│   ├── git/              # Git-related functions
+│   │   └── git.sh
+│   ├── tmux/             # Tmux configuration and operations
+│   │   ├── theme-config.sh
+│   │   ├── status-left.sh
+│   │   ├── status-right.sh
+│   │   ├── tmux-config.sh
+│   │   └── tmux-ops.sh
+│   ├── ui/               # UI components (colors, themes, formatting)
+│   │   ├── themes.sh
+│   │   ├── color-scale.sh
+│   │   ├── color-config.sh
+│   │   ├── format.sh
+│   │   ├── conditional-display.sh
+│   │   ├── tooltip.sh
+│   │   └── ui.sh
+│   ├── utils/            # Utility functions
+│   │   ├── cache.sh
+│   │   ├── constants.sh
+│   │   ├── has-command.sh
+│   │   ├── platform-cache.sh
+│   │   └── ...
+│   ├── widget/           # Widget framework
+│   │   ├── widget-base.sh
+│   │   ├── widget-common.sh
+│   │   ├── widget-config.sh
+│   │   ├── widget-loader.sh
+│   │   └── widget-actions.sh
+│   └── platform-detector.sh  # Platform detection and system functions
+├── system-widget.sh      # System monitoring widget
+├── git-widget.sh         # Git status widget
+├── network-widget.sh     # Network monitoring widget
+├── context-widget.sh     # Context information widget
+└── tokyo-night.tmux      # Main entry point (minimal)
+```
+
+**Key Design Decisions:**
+
+- **Context-Based Organization**: Functions are grouped by their domain (CPU, GPU, RAM, etc.) for better code organization
+- **Separation of Concerns**: UI logic, business logic, and utilities are separated
+- **Single Entry Point**: `tokyo-night.tmux` is minimal and only loads `theme-config.sh`
+- **Lazy Loading**: Widgets load dependencies only when needed via `widget-loader.sh`
+- **No Comments**: Code follows self-documenting principles (SOLID/DRY)
+- **Consistent Style**: All scripts follow the same code style and conventions
 
 ### Performance
 
 - **No External Dependencies**: Uses only standard Unix tools for core functionality
 - **Smart Caching**: Widgets cache results to reduce overhead
+- **Platform Caching**: OS detection and command availability are cached
 - **Background Processing**: Long-running operations don't block tmux
 - **Optimized Parsing**: Efficient shell-based parsing
+- **Lazy Loading**: Dependencies are loaded only when needed
+- **Minimal Overhead**: Entry point is minimal, configuration is centralized
 
 ### GPU Monitoring
 
@@ -500,11 +573,34 @@ The GPU widget supports multiple platforms and GPU vendors:
 
 The widget automatically detects available tools and uses the most accurate method for your GPU.
 
+### CPU Frequency Monitoring
+
+**macOS**:
+- **Apple Silicon**: Estimated base frequency based on CPU generation (M1-M5)
+- **Intel**: Uses `sysctl hw.cpufrequency` when available
+
+**Linux**:
+- Uses `/proc/cpuinfo` or `/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq`
+- Current frequency estimation based on CPU usage and temperature
+
+### Temperature Monitoring
+
+**macOS**:
+- **Intel Macs**: Uses `istats` (recommended) or `osx-cpu-temp`
+- **Apple Silicon**: Uses `osx-cpu-temp` or `istats` (limited support)
+
+**Linux**:
+- Primary: `/sys/class/thermal/thermal_zone*/temp`
+- Fallback: `sensors` command (lm-sensors package)
+- CoreTemp: `/sys/devices/platform/coretemp.0/hwmon/`
+
 ### Compatibility
 
-- **macOS**: 10.14+ (tested on Apple Silicon and Intel)
+- **macOS**: 10.14+ (tested on Apple Silicon M1-M5 and Intel)
 - **Linux**: All major distributions
 - **Bash**: 4.2+ required (macOS needs Homebrew bash)
+- **Tmux**: 3.0+ required
+- **Nerd Fonts**: v3+ required for icons
 
 ---
 
@@ -550,22 +646,11 @@ The widget automatically detects available tools and uses the most accurate meth
 - **Linux**: Install `lm-sensors`: `apt install lm-sensors && sensors-detect`
 - Check if thermal zones exist: `ls /sys/class/thermal/thermal_zone*/temp`
 
-### Process widget not showing
+### CPU frequency showing 0 or incorrect
 
-- Ensure processes are running (widget only shows when CPU usage > 0%)
-- Check refresh rate isn't too high
-- Verify `ps` command works: `ps aux | head -5`
-
-### Docker widget not showing
-
-- Ensure Docker is running: `docker ps`
-- Widget only shows when containers are running
-- For Kubernetes: ensure `kubectl` is configured and pods exist
-
-
-- **macOS**: Ensure Spotify/Apple Music is running and playing
-- **Linux**: Install `playerctl`: `apt install playerctl`
-- Verify player supports MPRIS: `playerctl status`
+- **macOS Apple Silicon**: Frequency is estimated based on CPU generation (M1-M5). Real-time frequency is not available via public APIs.
+- **macOS Intel**: Ensure `sysctl hw.cpufrequency` returns a value
+- **Linux**: Check if `/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq` exists and is readable
 
 ### Colors not displaying correctly
 
@@ -592,10 +677,19 @@ We welcome contributions! Please follow these guidelines:
 1. Clone the repository: `git clone https://github.com/gufranco/tokyo-night-revamped-tmux.git`
 2. Create a branch: `git checkout -b feature/your-feature`
 3. Make your changes
-4. Test thoroughly
+4. Test thoroughly: `make test`
 5. Commit: `git commit -m "Add: your feature"`
 6. Push: `git push origin feature/your-feature`
 7. Open a Pull Request
+
+**Code Style Guidelines:**
+
+- Follow SOLID and DRY principles
+- No comments in code (self-documenting code)
+- Use `[[ ]]` for conditionals (not `[ ]`)
+- Consistent indentation (2 spaces)
+- Functions organized by context
+- Export functions that need to be shared
 
 [pre-commit](https://pre-commit.com/) hooks are provided for code consistency and will run automatically.
 

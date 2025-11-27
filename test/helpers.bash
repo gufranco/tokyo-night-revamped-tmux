@@ -615,8 +615,8 @@ load_lib() {
       ;;
     color-scale.sh)
       if [[ -z "${THEME[@]:-}" ]]; then
-        local constants_path="${BATS_TEST_DIRNAME}/../src/lib/constants.sh"
-        local themes_path="${BATS_TEST_DIRNAME}/../src/lib/themes.sh"
+        local constants_path="${BATS_TEST_DIRNAME}/../src/lib/utils/constants.sh"
+        local themes_path="${BATS_TEST_DIRNAME}/../src/lib/ui/themes.sh"
         [[ -f "$constants_path" ]] && source "$constants_path" 2>/dev/null || true
         [[ -f "$themes_path" ]] && source "$themes_path" 2>/dev/null || true
       fi

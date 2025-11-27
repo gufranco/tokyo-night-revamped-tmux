@@ -4,7 +4,7 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 
 setup() {
   setup_test_environment
-  source "${BATS_TEST_DIRNAME}/../../src/lib/coreutils-compat.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/coreutils-compat.sh"
 }
 
 teardown() {

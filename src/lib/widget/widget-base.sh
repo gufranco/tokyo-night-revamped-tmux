@@ -2,12 +2,12 @@
 
 validate_percentage() {
   local value="${1}"
-  
+
   if [[ ! "$value" =~ ^[0-9]+$ ]]; then
     echo "1"
     return
   fi
-  
+
   if (( value <= 0 )); then
     echo "1"
   elif (( value > 100 )); then
@@ -20,7 +20,7 @@ validate_percentage() {
 validate_number() {
   local value="${1}"
   local default="${2:-0}"
-  
+
   if [[ "$value" =~ ^[0-9]+$ ]]; then
     echo "$value"
   else
@@ -33,7 +33,7 @@ get_color_3tier() {
   local theme_red="${2}"
   local theme_yellow="${3}"
   local theme_cyan="${4}"
-  
+
   if (( value >= 80 )); then
     echo "${theme_red},bold"
   elif (( value >= 50 )); then
@@ -49,7 +49,7 @@ get_color_4tier() {
   local theme_yellow="${3}"
   local theme_blue="${4}"
   local theme_cyan="${5}"
-  
+
   if (( value >= 90 )); then
     echo "${theme_red},bold"
   elif (( value >= 75 )); then
@@ -63,7 +63,7 @@ get_color_4tier() {
 
 get_cpu_icon() {
   local usage="${1}"
-  
+
   if (( usage >= 80 )); then
     echo "󰀪"
   elif (( usage >= 50 )); then
@@ -75,7 +75,7 @@ get_cpu_icon() {
 
 get_memory_icon() {
   local usage="${1}"
-  
+
   if (( usage >= 80 )); then
     echo "󰀪"
   elif (( usage >= 60 )); then
@@ -87,7 +87,7 @@ get_memory_icon() {
 
 get_disk_icon() {
   local usage="${1}"
-  
+
   if (( usage >= 90 )); then
     echo "󰀪"
   elif (( usage >= 75 )); then
@@ -103,7 +103,7 @@ format_widget_output() {
   local value="${3}"
   local unit="${4:-%}"
   local reset="${5}"
-  
+
   echo "#[fg=${color},bg=default]░ ${icon}${reset} ${value}${unit} "
 }
 
@@ -113,27 +113,16 @@ format_widget_value() {
   local value="${3}"
   local unit="${4:-%}"
   local reset="${5}"
-  
+
   echo "#[fg=${color},bg=default]${icon}${reset} ${value}${unit}"
 }
 
-is_macos() {
-  [[ "$OSTYPE" == "darwin"* ]]
-}
-
-is_linux() {
-  [[ "$OSTYPE" == "linux-gnu"* ]]
-}
-
-is_apple_silicon() {
-  [[ "$(uname)" == "Darwin" ]] && [[ "$(uname -m)" == "arm64" ]]
-}
 
 is_widget_enabled() {
   local option_name="${1}"
   local value
   value=$(tmux show-option -gv "${option_name}" 2>/dev/null)
-  
+
   [[ "${value}" == "1" ]]
 }
 

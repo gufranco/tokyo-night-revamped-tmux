@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="${SCRIPT_DIR}/.."
+
+source "${LIB_DIR}/utils/platform-cache.sh"
+source "${LIB_DIR}/utils/tmux-cache.sh"
+source "${LIB_DIR}/utils/coreutils-compat.sh"
+
 CACHE_DIR="/tmp/tmux_tokyo_night_cache"
 mkdir -p "$CACHE_DIR" 2>/dev/null
 
-is_macos() {
-  [[ "$OSTYPE" == "darwin"* ]]
-}
-
 get_refresh_rate() {
-  local rate
-  rate=$(tmux show-option -gv @tokyo-night-tmux_refresh_rate 2>/dev/null)
-  echo "${rate:-5}"
+  get_cached_refresh_rate
 }
 
 get_cache_file() {
@@ -25,12 +26,7 @@ is_cache_valid() {
   [[ ! -f "$cache_file" ]] && return 1
 
   local cache_time current_time cache_age
-
-  if is_macos; then
-    cache_time=$(stat -f "%m" "$cache_file" 2>/dev/null)
-  else
-    cache_time=$(stat -c "%Y" "$cache_file" 2>/dev/null)
-  fi
+  cache_time=$(get_file_mtime "$cache_file")
 
   [[ -z "$cache_time" ]] && return 1
   [[ ! "$cache_time" =~ ^[0-9]+$ ]] && return 1

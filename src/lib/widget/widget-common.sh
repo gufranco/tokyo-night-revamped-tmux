@@ -3,7 +3,7 @@
 get_widget_cache_key() {
   local widget_name="${1}"
   local suffix="${2:-}"
-  
+
   if [[ -n "$suffix" ]]; then
     echo "${widget_name}_${suffix}"
   else
@@ -16,8 +16,8 @@ get_cached_widget_output() {
   local cache_key
   cache_key=$(get_widget_cache_key "$widget_name" "${2:-}")
   local refresh_rate
-  refresh_rate=$(get_refresh_rate)
-  
+  refresh_rate=$(get_cached_refresh_rate)
+
   get_cached_value "$cache_key" "$refresh_rate"
 }
 

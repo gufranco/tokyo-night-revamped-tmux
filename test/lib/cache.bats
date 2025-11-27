@@ -4,8 +4,8 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 
 setup() {
   setup_test_environment
-  source "${BATS_TEST_DIRNAME}/../../src/lib/coreutils-compat.sh"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/cache.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/coreutils-compat.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/cache.sh"
 }
 
 teardown() {
@@ -24,7 +24,7 @@ teardown() {
   [[ "$result" == "10" ]]
 }
 
-@test "cache.sh - get_cache_file returns caminho correct" {
+@test "cache.sh - get_cache_file returns correct path" {
   result=$(get_cache_file "test_widget")
   [[ "$result" == "/tmp/tmux_tokyo_night_cache/test_widget.cache" ]]
 }
@@ -68,7 +68,6 @@ teardown() {
   current_time=$(get_current_timestamp)
   touch -d "@$current_time" "$cache_file" 2>/dev/null || true
 
-  # Mock of get_cache_file for retornar nosso file of teste
   export CACHE_DIR="${TEST_TMPDIR}"
 
   # Criar função mock for get_cache_file
@@ -90,7 +89,7 @@ teardown() {
   fi
 }
 
-@test "cache.sh - set_cached_value salva value on cache" {
+@test "cache.sh - set_cached_value saves value in cache" {
   cache_file="${TEST_TMPDIR}/test_widget.cache"
   export CACHE_DIR="${TEST_TMPDIR}"
 

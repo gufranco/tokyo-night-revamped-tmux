@@ -23,6 +23,54 @@ teardown() {
   [[ "$result" =~ ^[0-9]+$ ]]
 }
 
+@test "platform-detector.sh - get_cpu_frequency_current returns number" {
+  result=$(get_cpu_frequency_current)
+  [[ "$result" =~ ^[0-9]+$ ]]
+}
+
+@test "platform-detector.sh - get_cpu_frequency_current uses real value when available" {
+  local base_freq
+  base_freq=$(get_cpu_frequency)
+  local current_freq
+  current_freq=$(get_cpu_frequency_current)
+  
+  [[ -n "$base_freq" ]]
+  [[ -n "$current_freq" ]]
+  [[ "$current_freq" =~ ^[0-9]+$ ]]
+  
+  if [[ "$base_freq" -gt 0 ]]; then
+    [[ "$current_freq" -gt 0 ]]
+    [[ "$current_freq" -le $(( base_freq * 120 / 100 )) ]]
+    [[ "$current_freq" -ge $(( base_freq * 35 / 100 )) ]]
+  fi
+}
+
+@test "platform-detector.sh - get_cpu_frequency_current falls back to estimate when real value unavailable" {
+  local os
+  os="$(uname -s)"
+  local arch
+  arch="$(uname -m)"
+  
+  if [[ "$os" == "Darwin" ]] && [[ "$arch" == "arm64" ]]; then
+    local base_freq
+    base_freq=$(get_cpu_frequency)
+    local current_freq
+    current_freq=$(get_cpu_frequency_current)
+    
+    [[ -n "$base_freq" ]]
+    [[ -n "$current_freq" ]]
+    [[ "$current_freq" =~ ^[0-9]+$ ]]
+    
+    if [[ "$base_freq" -gt 0 ]]; then
+      [[ "$current_freq" -gt 0 ]]
+      [[ "$current_freq" -le $(( base_freq * 120 / 100 )) ]]
+      [[ "$current_freq" -ge $(( base_freq * 35 / 100 )) ]]
+    fi
+  else
+    skip "Test only relevant for macOS Apple Silicon"
+  fi
+}
+
 @test "platform-detector.sh - get_disk_space_gb returns space info" {
   result=$(get_disk_space_gb "/")
   [[ -n "$result" ]]

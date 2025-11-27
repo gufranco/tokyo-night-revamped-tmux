@@ -4,9 +4,9 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 
 setup() {
   setup_test_environment
-  source "${BATS_TEST_DIRNAME}/../../src/lib/constants.sh"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/themes.sh"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/color-scale.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/constants.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/ui/themes.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/ui/color-scale.sh"
 }
 
 teardown() {
@@ -53,7 +53,7 @@ teardown() {
   [[ "$result" == "$COLOR_CYAN" ]]
 }
 
-@test "color-scale.sh - get_system_color uses limits corretos" {
+@test "color-scale.sh - get_system_color uses correct limits" {
   result_low=$(get_system_color "30")
   result_high=$(get_system_color "90")
   
@@ -76,7 +76,7 @@ teardown() {
   [[ "$result" == "$COLOR_RED" ]]
 }
 
-@test "color-scale.sh - get_git_changes_color uses limits corretos" {
+@test "color-scale.sh - get_git_changes_color uses correct limits" {
   result_low=$(get_git_changes_color "3")
   result_high=$(get_git_changes_color "35")
   
@@ -84,7 +84,7 @@ teardown() {
   [[ "$result_high" == "$COLOR_RED" ]]
 }
 
-@test "color-scale.sh - get_git_lines_color uses limits corretos" {
+@test "color-scale.sh - get_git_lines_color uses correct limits" {
   result_low=$(get_git_lines_color "50")
   result_high=$(get_git_lines_color "1500")
   
@@ -92,17 +92,17 @@ teardown() {
   [[ "$result_high" == "$COLOR_RED" ]]
 }
 
-@test "color-scale.sh - get_git_untracked_color returns RED for value alto" {
+@test "color-scale.sh - get_git_untracked_color returns RED for high value" {
   result=$(get_git_untracked_color "15")
   [[ "$result" == "$COLOR_RED" ]]
 }
 
-@test "color-scale.sh - get_git_untracked_color returns YELLOW for value médio" {
+@test "color-scale.sh - get_git_untracked_color returns YELLOW for medium value" {
   result=$(get_git_untracked_color "5")
   [[ "$result" == "$COLOR_YELLOW" ]]
 }
 
-@test "color-scale.sh - get_git_untracked_color returns CYAN for value baixo" {
+@test "color-scale.sh - get_git_untracked_color returns CYAN for low value" {
   result=$(get_git_untracked_color "2")
   [[ "$result" == "$COLOR_CYAN" ]]
 }
@@ -112,17 +112,17 @@ teardown() {
   [[ "$result" == "$COLOR_CYAN" ]]
 }
 
-@test "color-scale.sh - get_git_pr_color returns GREEN for value baixo" {
+@test "color-scale.sh - get_git_pr_color returns GREEN for low value" {
   result=$(get_git_pr_color "2")
   [[ "$result" == "$COLOR_GREEN" ]]
 }
 
-@test "color-scale.sh - get_git_pr_color returns BLUE for value médio" {
+@test "color-scale.sh - get_git_pr_color returns BLUE for medium value" {
   result=$(get_git_pr_color "3")
   [[ "$result" == "$COLOR_BLUE" ]]
 }
 
-@test "color-scale.sh - get_git_pr_color returns YELLOW for value alto" {
+@test "color-scale.sh - get_git_pr_color returns YELLOW for high value" {
   result=$(get_git_pr_color "5")
   [[ "$result" == "$COLOR_YELLOW" ]]
 }
@@ -132,12 +132,12 @@ teardown() {
   [[ "$result" == "$COLOR_CYAN" ]]
 }
 
-@test "color-scale.sh - get_git_review_color returns YELLOW for value baixo" {
+@test "color-scale.sh - get_git_review_color returns YELLOW for low value" {
   result=$(get_git_review_color "2")
   [[ "$result" == "$COLOR_YELLOW" ]]
 }
 
-@test "color-scale.sh - get_git_review_color returns RED for value alto" {
+@test "color-scale.sh - get_git_review_color returns RED for high value" {
   result=$(get_git_review_color "3")
   [[ "$result" == "$COLOR_RED" ]]
 }
@@ -147,17 +147,17 @@ teardown() {
   [[ "$result" == "$COLOR_CYAN" ]]
 }
 
-@test "color-scale.sh - get_git_issue_color returns GREEN for value baixo" {
+@test "color-scale.sh - get_git_issue_color returns GREEN for low value" {
   result=$(get_git_issue_color "3")
   [[ "$result" == "$COLOR_GREEN" ]]
 }
 
-@test "color-scale.sh - get_git_issue_color returns BLUE for value médio" {
+@test "color-scale.sh - get_git_issue_color returns BLUE for medium value" {
   result=$(get_git_issue_color "7")
   [[ "$result" == "$COLOR_BLUE" ]]
 }
 
-@test "color-scale.sh - get_git_issue_color returns YELLOW for value alto" {
+@test "color-scale.sh - get_git_issue_color returns YELLOW for high value" {
   result=$(get_git_issue_color "12")
   [[ "$result" == "$COLOR_YELLOW" ]]
 }
@@ -172,72 +172,72 @@ teardown() {
   [[ "$result" == "$COLOR_RED" ]]
 }
 
-@test "color-scale.sh - get_net_speed_color returns CYAN for speed baixa" {
+@test "color-scale.sh - get_net_speed_color returns CYAN for low speed" {
   result=$(get_net_speed_color "500000")
   [[ "$result" == "$COLOR_CYAN" ]]
 }
 
-@test "color-scale.sh - get_net_speed_color returns BLUE for speed média" {
+@test "color-scale.sh - get_net_speed_color returns BLUE for medium speed" {
   result=$(get_net_speed_color "5000000")
   [[ "$result" == "$COLOR_BLUE" ]]
 }
 
-@test "color-scale.sh - get_net_speed_color returns GREEN for speed alta" {
+@test "color-scale.sh - get_net_speed_color returns GREEN for high speed" {
   result=$(get_net_speed_color "20000000")
   [[ "$result" == "$COLOR_GREEN" ]]
 }
 
-@test "color-scale.sh - get_net_speed_color returns YELLOW for speed muito alta" {
+@test "color-scale.sh - get_net_speed_color returns YELLOW for very high speed" {
   result=$(get_net_speed_color "60000000")
   [[ "$result" == "$COLOR_YELLOW" ]]
 }
 
-@test "color-scale.sh - get_net_ping_color returns CYAN for ping baixo" {
+@test "color-scale.sh - get_net_ping_color returns CYAN for low ping" {
   result=$(get_net_ping_color "15")
   [[ "$result" == "$COLOR_CYAN" ]]
 }
 
-@test "color-scale.sh - get_net_ping_color returns BLUE for ping médio" {
+@test "color-scale.sh - get_net_ping_color returns BLUE for medium ping" {
   result=$(get_net_ping_color "30")
   [[ "$result" == "$COLOR_BLUE" ]]
 }
 
-@test "color-scale.sh - get_net_ping_color returns YELLOW for ping alto" {
+@test "color-scale.sh - get_net_ping_color returns YELLOW for high ping" {
   result=$(get_net_ping_color "75")
   [[ "$result" == "$COLOR_YELLOW" ]]
 }
 
-@test "color-scale.sh - get_net_ping_color returns RED for ping muito alto" {
+@test "color-scale.sh - get_net_ping_color returns RED for very high ping" {
   result=$(get_net_ping_color "150")
   [[ "$result" == "$COLOR_RED" ]]
 }
 
-@test "color-scale.sh - get_temperature_color_and_icon returns correta for temp negativa" {
+@test "color-scale.sh - get_temperature_color_and_icon returns correct for negative temp" {
   result=$(get_temperature_color_and_icon "-5°C")
   [[ -n "$result" ]]
 }
 
-@test "color-scale.sh - get_temperature_color_and_icon returns correta for temp baixa" {
+@test "color-scale.sh - get_temperature_color_and_icon returns correct for low temp" {
   result=$(get_temperature_color_and_icon "5°C")
   [[ -n "$result" ]]
 }
 
-@test "color-scale.sh - get_temperature_color_and_icon returns correta for temp confortável" {
+@test "color-scale.sh - get_temperature_color_and_icon returns correct for comfortable temp" {
   result=$(get_temperature_color_and_icon "22°C")
   [[ -n "$result" ]]
 }
 
-@test "color-scale.sh - get_temperature_color_and_icon returns correta for temp alta" {
+@test "color-scale.sh - get_temperature_color_and_icon returns correct for high temp" {
   result=$(get_temperature_color_and_icon "35°C")
   [[ -n "$result" ]]
 }
 
-@test "color-scale.sh - get_timezone_period_icon returns icon of fim of semana" {
+@test "color-scale.sh - get_timezone_period_icon returns icon for weekend" {
   result=$(get_timezone_period_icon "12" "1")
   [[ "$result" == "󰙵" ]]
 }
 
-@test "color-scale.sh - get_timezone_period_icon returns icon correct for diferentes times" {
+@test "color-scale.sh - get_timezone_period_icon returns correct icon for different times" {
   result_morning=$(get_timezone_period_icon "8" "0")
   result_noon=$(get_timezone_period_icon "12" "0")
   result_evening=$(get_timezone_period_icon "19" "0")
@@ -249,12 +249,12 @@ teardown() {
   [[ -n "$result_night" ]]
 }
 
-@test "color-scale.sh - get_timezone_period_color returns cor dim for fim of semana" {
+@test "color-scale.sh - get_timezone_period_color returns dim color for weekend" {
   result=$(get_timezone_period_color "12" "1")
   [[ "$result" =~ dim ]]
 }
 
-@test "color-scale.sh - get_timezone_period_color returns cor correta for diferentes periods" {
+@test "color-scale.sh - get_timezone_period_color returns correct color for different periods" {
   result_morning=$(get_timezone_period_color "8" "0")
   result_noon=$(get_timezone_period_color "12" "0")
   result_evening=$(get_timezone_period_color "19" "0")
@@ -266,7 +266,7 @@ teardown() {
   [[ -n "$result_night" ]]
 }
 
-@test "color-scale.sh - get_git_changes_icon returns icon correct" {
+@test "color-scale.sh - get_git_changes_icon returns correct icon" {
   result_low=$(get_git_changes_icon "3")
   result_high=$(get_git_changes_icon "35")
   
@@ -274,7 +274,7 @@ teardown() {
   [[ -n "$result_high" ]]
 }
 
-@test "color-scale.sh - get_git_insertions_icon returns icon correct" {
+@test "color-scale.sh - get_git_insertions_icon returns correct icon" {
   result_low=$(get_git_insertions_icon "50")
   result_high=$(get_git_insertions_icon "1500")
   
@@ -282,7 +282,7 @@ teardown() {
   [[ -n "$result_high" ]]
 }
 
-@test "color-scale.sh - get_git_deletions_icon returns icon correct" {
+@test "color-scale.sh - get_git_deletions_icon returns correct icon" {
   result_low=$(get_git_deletions_icon "50")
   result_high=$(get_git_deletions_icon "1500")
   
@@ -290,7 +290,7 @@ teardown() {
   [[ -n "$result_high" ]]
 }
 
-@test "color-scale.sh - get_git_untracked_icon returns icon correct" {
+@test "color-scale.sh - get_git_untracked_icon returns correct icon" {
   result_low=$(get_git_untracked_icon "2")
   result_high=$(get_git_untracked_icon "15")
   
@@ -298,7 +298,7 @@ teardown() {
   [[ -n "$result_high" ]]
 }
 
-@test "color-scale.sh - get_git_pr_icon returns icon correct" {
+@test "color-scale.sh - get_git_pr_icon returns correct icon" {
   result_zero=$(get_git_pr_icon "0")
   result_low=$(get_git_pr_icon "2")
   result_high=$(get_git_pr_icon "5")
@@ -308,7 +308,7 @@ teardown() {
   [[ -n "$result_high" ]]
 }
 
-@test "color-scale.sh - get_git_review_icon returns icon correct" {
+@test "color-scale.sh - get_git_review_icon returns correct icon" {
   result_zero=$(get_git_review_icon "0")
   result_low=$(get_git_review_icon "2")
   result_high=$(get_git_review_icon "3")
@@ -318,7 +318,7 @@ teardown() {
   [[ -n "$result_high" ]]
 }
 
-@test "color-scale.sh - get_git_issue_icon returns icon correct" {
+@test "color-scale.sh - get_git_issue_icon returns correct icon" {
   result_zero=$(get_git_issue_icon "0")
   result_low=$(get_git_issue_icon "3")
   result_high=$(get_git_issue_icon "12")
