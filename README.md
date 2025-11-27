@@ -218,19 +218,9 @@ set -g @tokyo-night-tmux_show_system 1
 
 # Component toggles (all enabled by default)
 set -g @tokyo-night-tmux_system_cpu 1
-set -g @tokyo-night-tmux_system_gpu 1
 set -g @tokyo-night-tmux_system_memory 1
-set -g @tokyo-night-tmux_system_swap 1
 set -g @tokyo-night-tmux_system_disk 1
 set -g @tokyo-night-tmux_system_battery 1
-
-# Optional: Load average
-set -g @tokyo-night-tmux_system_load 1
-
-# New features (disabled by default)
-set -g @tokyo-night-tmux_system_temp 1        # CPU/GPU temperature
-set -g @tokyo-night-tmux_system_uptime 1      # System uptime
-set -g @tokyo-night-tmux_system_disk_io 1     # Disk I/O stats
 
 # Configuration
 set -g @tokyo-night-tmux_system_disk_path "/"
@@ -437,15 +427,9 @@ set -g @tokyo-night-tmux_widgets_order "system,git,netspeed,context"
 # System widget with all features
 set -g @tokyo-night-tmux_show_system 1
 set -g @tokyo-night-tmux_system_cpu 1
-set -g @tokyo-night-tmux_system_gpu 1
 set -g @tokyo-night-tmux_system_memory 1
-set -g @tokyo-night-tmux_system_swap 1
 set -g @tokyo-night-tmux_system_disk 1
 set -g @tokyo-night-tmux_system_battery 1
-set -g @tokyo-night-tmux_system_load 1
-set -g @tokyo-night-tmux_system_temp 1
-set -g @tokyo-night-tmux_system_uptime 1
-set -g @tokyo-night-tmux_system_disk_io 1
 
 # Git with all features
 set -g @tokyo-night-tmux_show_git 1

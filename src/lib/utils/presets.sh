@@ -38,11 +38,8 @@ apply_preset() {
       tmux set-option -g @tokyo-night-tmux_show_health 1
       tmux set-option -g @tokyo-night-tmux_widgets_order "system,process,docker,health,netspeed,context"
       tmux set-option -g @tokyo-night-tmux_system_cpu 1
-      tmux set-option -g @tokyo-night-tmux_system_gpu 1
       tmux set-option -g @tokyo-night-tmux_system_memory 1
       tmux set-option -g @tokyo-night-tmux_system_disk 1
-      tmux set-option -g @tokyo-night-tmux_system_temp 1
-      tmux set-option -g @tokyo-night-tmux_system_uptime 1
       ;;
     full)
       tmux set-option -g @tokyo-night-tmux_show_system 1

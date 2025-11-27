@@ -113,17 +113,6 @@ check_dependencies() {
       fi
       ;;
     system)
-      if [[ "$(tmux show-option -gv @tokyo-night-tmux_system_temp 2>/dev/null)" == "1" ]]; then
-        if is_macos; then
-          if ! has_command istats; then
-            missing_deps+=("istats (optional)")
-          fi
-        else
-          if [[ ! -d /sys/class/thermal ]] && ! has_command sensors; then
-            missing_deps+=("sensors (optional)")
-          fi
-        fi
-      fi
       ;;
   esac
 

@@ -56,15 +56,11 @@ generate_system_tooltip() {
     tooltip="${tooltip}System widget: Disabled\n"
   else
     local cpu=$(tmux show-option -gv @tokyo-night-tmux_system_cpu 2>/dev/null)
-    local gpu=$(tmux show-option -gv @tokyo-night-tmux_system_gpu 2>/dev/null)
     local mem=$(tmux show-option -gv @tokyo-night-tmux_system_memory 2>/dev/null)
     local disk=$(tmux show-option -gv @tokyo-night-tmux_system_disk 2>/dev/null)
     local battery=$(tmux show-option -gv @tokyo-night-tmux_system_battery 2>/dev/null)
-    local temp=$(tmux show-option -gv @tokyo-night-tmux_system_temp 2>/dev/null)
-    local uptime=$(tmux show-option -gv @tokyo-night-tmux_system_uptime 2>/dev/null)
 
     [[ "$cpu" != "1" ]] && tooltip="${tooltip}CPU: Disabled\n"
-    [[ "$gpu" != "1" ]] && tooltip="${tooltip}GPU: Disabled\n"
     [[ "$mem" != "1" ]] && tooltip="${tooltip}Memory: Disabled\n"
     [[ "$disk" != "1" ]] && tooltip="${tooltip}Disk: Disabled\n"
     [[ "$battery" != "1" ]] && tooltip="${tooltip}Battery: Disabled\n"
