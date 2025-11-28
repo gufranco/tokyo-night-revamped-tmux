@@ -10,7 +10,7 @@
 A beautiful, feature-rich tmux theme inspired by the vibrant lights of Downtown Tokyo at night.  
 Perfect companion for [tokyonight-vim](https://github.com/ghifarit53/tokyonight-vim) and adapted from the original [Tokyo Night VSCode theme](https://github.com/enkia/tokyo-night-vscode-theme).
 
-**Quick Links:** [Features](#-features) • [Installation](#-installation) • [Configuration](#-configuration) • [Widgets](#-widgets) • [Contributing](#-contributing)
+**Quick Links:** [Features](#-features) • [Installation](#-installation) • [Configuration](#-configuration) • [Widgets](#-widgets) • [Examples](examples/) • [API Docs](docs/API.md) • [Contributing](#-contributing)
 
 ---
 

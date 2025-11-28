@@ -142,4 +142,16 @@ clean: ## Clean temporary test files
 	@rm -rf /tmp/tmux_tokyo_night_ping_cache
 	@echo "$(GREEN)Cleanup complete$(NC)"
 
+benchmark: ## Run performance benchmarks
+	@echo "$(GREEN)Running benchmarks...$(NC)"
+	@bash scripts/benchmark.sh
+
+check-deps: ## Check dependencies
+	@echo "$(GREEN)Checking dependencies...$(NC)"
+	@bash scripts/check-dependencies.sh
+
+install-hooks: ## Install pre-commit hooks
+	@echo "$(GREEN)Installing pre-commit hooks...$(NC)"
+	@bash scripts/install-hooks.sh
+
 .DEFAULT_GOAL := help

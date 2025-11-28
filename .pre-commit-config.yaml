@@ -1,0 +1,85 @@
+# Pre-commit hooks for Tokyo Night Revamped Tmux
+# Install: pip install pre-commit && pre-commit install
+# See https://pre-commit.com for more information
+
+repos:
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^test/fixtures/
+      - id: end-of-file-fixer
+        exclude: ^test/fixtures/
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+      - id: detect-private-key
+
+  # Shell script checks
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.6
+    hooks:
+      - id: shellcheck
+        args: ['--severity=warning']
+        files: \.(sh|bash|tmux)$
+        exclude: ^test/
+
+  # Markdown checks
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.38.0
+    hooks:
+      - id: markdownlint
+        args: ['--fix']
+        exclude: ^CHANGELOG.md$
+
+  # Commit message format
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: []
+
+  # Local hooks
+  - repo: local
+    hooks:
+      # Validate bash syntax
+      - id: bash-syntax
+        name: Check Bash Syntax
+        entry: bash -n
+        language: system
+        files: \.(sh|bash)$
+        exclude: ^test/
+
+      # Run tests before commit
+      - id: run-tests
+        name: Run Unit Tests
+        entry: make test-lib
+        language: system
+        pass_filenames: false
+        stages: [push]
+
+      # Check for debugger statements
+      - id: no-debug-statements
+        name: No Debug Statements
+        entry: '(set -x|bash -x)'
+        language: pygrep
+        files: \.(sh|bash)$
+        exclude: ^test/
+
+      # Ensure no TODOs in code
+      - id: no-todos
+        name: No TODO Comments
+        entry: '(TODO|FIXME|XXX):'
+        language: pygrep
+        files: \.(sh|bash)$
+        exclude: ^(test/|docs/|CHANGELOG.md|TODO.md)
+

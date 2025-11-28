@@ -8,6 +8,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+#### Phase 2: Enhanced Tooling & Documentation
+- Pre-commit hooks configuration (`.pre-commit-config.yaml`)
+  - Trailing whitespace checks
+  - Shell script validation
+  - Markdown linting
+  - Conventional commit message validation
+  - Automated test running on push
+- Installation script for pre-commit hooks (`scripts/install-hooks.sh`)
+- Comprehensive configuration examples
+  - `examples/minimal.tmux.conf` - Minimal setup
+  - `examples/power-user.tmux.conf` - Full features
+  - `examples/developer.tmux.conf` - Development focus
+  - `examples/minimal-performance.tmux.conf` - Maximum performance
+  - `examples/themes/custom-colors.tmux.conf` - Color customization
+  - `examples/README.md` - Configuration guide
+- API documentation (`docs/API.md`)
+  - Complete public API reference
+  - Function descriptions with examples
+  - Custom widget development guide
+- Benchmarking suite (`scripts/benchmark.sh`)
+  - Widget performance testing
+  - Function benchmarking
+  - Cache performance measurement
+  - Automated performance reports
+- Security scanning workflows
+  - CodeQL security analysis (`.github/workflows/codeql.yml`)
+  - Dependabot configuration (`.github/dependabot.yml`)
+  - Automated dependency updates
+- Migration guide (`docs/MIGRATION.md`)
+  - Version migration instructions
+  - Breaking changes documentation
+  - Rollback procedures
+- Widget development templates
+  - `templates/custom-widget.sh` - Widget template
+  - `docs/CUSTOM_WIDGETS.md` - Complete widget development guide
+- Dependency health check script (`scripts/check-dependencies.sh`)
+  - Validates required dependencies
+  - Checks optional features
+  - Platform information
+  - Configuration status
+  - Installation instructions
+
+### Added (Phase 1)
 - GitHub Actions CI/CD workflows for automated testing
   - Multi-platform testing (Ubuntu, macOS)
   - Multi-version testing (Bash 4.4-5.2, tmux 3.0-3.4)
