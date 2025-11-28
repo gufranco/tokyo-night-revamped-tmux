@@ -5,7 +5,7 @@ LIB_DIR="${SCRIPT_DIR}/.."
 
 source "${LIB_DIR}/network/network-utils.sh"
 
-NETWORK_STATE_DIR="/tmp/tmux_tokyo_night_network"
+NETWORK_STATE_DIR="/tmp/tmux_yoru_network"
 mkdir -p "$NETWORK_STATE_DIR" 2>/dev/null
 
 get_network_speed() {

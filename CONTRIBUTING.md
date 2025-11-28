@@ -1,4 +1,4 @@
-# Contributing to Tokyo Night Revamped Tmux
+# Contributing to yoru
 
 First off, thank you for considering contributing! 🎉
 
@@ -40,8 +40,8 @@ This project adheres to a [Code of Conduct](CODE_OF_CONDUCT.md). By participatin
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/tokyo-night-revamped-tmux.git
-   cd tokyo-night-revamped-tmux
+   git clone https://github.com/YOUR_USERNAME/yoru.git
+   cd yoru
    ```
 3. Install dependencies:
    ```bash
@@ -82,7 +82,7 @@ The project includes an `.editorconfig` file. Install the EditorConfig plugin fo
 ## Project Structure
 
 ```
-tokyo-night-revamped-tmux/
+yoru/
 ├── src/
 │   ├── lib/              # Core library functions
 │   │   ├── cpu/          # CPU-related functions
@@ -409,9 +409,9 @@ See [DEBUGGING.md](docs/DEBUGGING.md) for debugging tips.
 
 ## Questions?
 
-- Open a [Discussion](https://github.com/gufranco/tokyo-night-revamped-tmux/discussions)
+- Open a [Discussion](https://github.com/gufranco/yoru/discussions)
 - Join our community (if applicable)
-- Check existing [Issues](https://github.com/gufranco/tokyo-night-revamped-tmux/issues)
+- Check existing [Issues](https://github.com/gufranco/yoru/issues)
 
 ---
 

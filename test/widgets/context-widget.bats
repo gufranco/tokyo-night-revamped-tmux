@@ -33,7 +33,7 @@ teardown() {
 @test "context-widget.sh - uses weather cache when valid" {
   export TMUX_SHOW_CONTEXT="1"
   export TMUX_CONTEXT_WEATHER="1"
-  weather_cache="${TEST_TMPDIR}/tmux_tokyo_night_weather_cache"
+  weather_cache="${TEST_TMPDIR}/tmux_yoru_weather_cache"
   echo "+15°C" > "$weather_cache"
   current_time=$(get_current_timestamp)
   export MOCK_FILE_MTIME=$(( current_time - 100 ))
@@ -46,7 +46,7 @@ teardown() {
   export TMUX_SHOW_CONTEXT="1"
   export TMUX_CONTEXT_WEATHER="1"
   export MOCK_CURL_OUTPUT="+20°C"
-  weather_cache="${TEST_TMPDIR}/tmux_tokyo_night_weather_cache"
+  weather_cache="${TEST_TMPDIR}/tmux_yoru_weather_cache"
   old_time=$(( $(get_current_timestamp) - 1000 ))
   create_test_cache_file "$weather_cache" "+15°C" "$old_time"
 

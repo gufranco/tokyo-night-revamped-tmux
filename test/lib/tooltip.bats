@@ -5,12 +5,12 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 setup() {
   setup_test_environment
   source "${BATS_TEST_DIRNAME}/../../src/lib/ui/tooltip.sh"
-  mkdir -p /tmp/tmux_tokyo_night_tooltips 2>/dev/null
+  mkdir -p /tmp/tmux_yoru_tooltips 2>/dev/null
 }
 
 teardown() {
   cleanup_test_environment
-  rm -rf /tmp/tmux_tokyo_night_tooltips 2>/dev/null || true
+  rm -rf /tmp/tmux_yoru_tooltips 2>/dev/null || true
 }
 
 @test "tooltip.sh - set_widget_tooltip stores tooltip" {

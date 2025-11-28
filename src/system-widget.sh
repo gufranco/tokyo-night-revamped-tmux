@@ -10,19 +10,19 @@ source "${LIB_DIR}/widget/widget-config.sh"
 
 load_widget_dependencies "system"
 
-validate_widget_enabled "@tokyo-night-tmux_show_system"
+validate_widget_enabled "@yoru_show_system"
 
 cached_output=$(get_cached_widget_output "system")
 should_use_cache "$cached_output" && echo "$cached_output" && exit 0
 
-SHOW_CPU=$(is_widget_feature_enabled "@tokyo-night-tmux_system_cpu" "1")
-SHOW_MEMORY=$(is_widget_feature_enabled "@tokyo-night-tmux_system_memory" "1")
-SHOW_DISK=$(is_widget_feature_enabled "@tokyo-night-tmux_system_disk" "1")
-SHOW_BATTERY=$(is_widget_feature_enabled "@tokyo-night-tmux_system_battery" "1")
+SHOW_CPU=$(is_widget_feature_enabled "@yoru_system_cpu" "1")
+SHOW_MEMORY=$(is_widget_feature_enabled "@yoru_system_memory" "1")
+SHOW_DISK=$(is_widget_feature_enabled "@yoru_system_disk" "1")
+SHOW_BATTERY=$(is_widget_feature_enabled "@yoru_system_battery" "1")
 
-WIDGET_THRESHOLD_CRITICAL=$(get_widget_threshold "@tokyo-night-tmux_threshold_critical" "80")
-WIDGET_THRESHOLD_WARNING=$(get_widget_threshold "@tokyo-night-tmux_threshold_warning" "50")
-WIDGET_WIDGET_THRESHOLD_HIGH=$(get_widget_threshold "@tokyo-night-tmux_threshold_high" "75")
+WIDGET_THRESHOLD_CRITICAL=$(get_widget_threshold "@yoru_threshold_critical" "80")
+WIDGET_THRESHOLD_WARNING=$(get_widget_threshold "@yoru_threshold_warning" "50")
+WIDGET_WIDGET_THRESHOLD_HIGH=$(get_widget_threshold "@yoru_threshold_high" "75")
 
 get_cpu_color_and_icon() {
   local usage=$1
@@ -123,7 +123,7 @@ main() {
 
   if [[ $SHOW_DISK -eq 1 ]]; then
     local multiple_disks
-    multiple_disks=$(tmux show-option -gv @tokyo-night-tmux_system_multiple_disks 2>/dev/null)
+    multiple_disks=$(tmux show-option -gv @yoru_system_multiple_disks 2>/dev/null)
     multiple_disks="${multiple_disks:-0}"
 
     if [[ $multiple_disks -eq 1 ]]; then
@@ -151,7 +151,7 @@ main() {
       fi
     else
       local disk_path disk_percent disk_display
-      disk_path=$(tmux show-option -gv @tokyo-night-tmux_system_disk_path 2>/dev/null)
+      disk_path=$(tmux show-option -gv @yoru_system_disk_path 2>/dev/null)
       disk_path="${disk_path:-/}"
       disk_percent=$(df -h "$disk_path" 2>/dev/null | awk 'NR==2 {gsub(/%/, "", $5); print $5}')
 
@@ -170,8 +170,8 @@ main() {
 
   if [[ $SHOW_BATTERY -eq 1 ]]; then
     local battery_name battery_threshold battery_exists=0
-    battery_name=$(tmux show-option -gv @tokyo-night-tmux_system_battery_name 2>/dev/null)
-    battery_threshold=$(tmux show-option -gv @tokyo-night-tmux_system_battery_threshold 2>/dev/null)
+    battery_name=$(tmux show-option -gv @yoru_system_battery_name 2>/dev/null)
+    battery_threshold=$(tmux show-option -gv @yoru_system_battery_threshold 2>/dev/null)
     battery_threshold="${battery_threshold:-$DEFAULT_BATTERY_LOW}"
 
     if is_macos; then

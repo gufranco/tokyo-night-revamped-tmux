@@ -1,10 +1,10 @@
 # Architecture Documentation
 
-This document describes the architecture and design decisions of Tokyo Night Revamped Tmux.
+This document describes the architecture and design decisions of yoru.
 
 ## 📐 Overview
 
-Tokyo Night Revamped Tmux follows a **modular, layered architecture** with clear separation of concerns:
+yoru follows a **modular, layered architecture** with clear separation of concerns:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -147,7 +147,7 @@ source "${LIB_DIR}/widget/widget-loader.sh"
 
 # 2. Early exit checks
 is_minimal_session && exit 0
-is_widget_enabled "@tokyo-night-tmux_show_<widget>" || exit 0
+is_widget_enabled "@yoru_show_<widget>" || exit 0
 
 # 3. Check cache
 local cache_key="<widget>"
@@ -309,7 +309,7 @@ User Config → Color Config → Color Scale → Widget
 **Purpose**: Debug issues in production
 
 **Features**:
-- Opt-in logging (`@tokyo-night-tmux_enable_logging`)
+- Opt-in logging (`@yoru_enable_logging`)
 - Rotating log files
 - Performance profiling
 - Sanitized output
@@ -501,5 +501,5 @@ Typical widget execution times (cached):
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md) for development guidelines.
 
-For questions about architecture, open a [Discussion](https://github.com/gufranco/tokyo-night-revamped-tmux/discussions).
+For questions about architecture, open a [Discussion](https://github.com/gufranco/yoru/discussions).
 

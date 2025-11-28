@@ -9,8 +9,8 @@ setup() {
 
 teardown() {
   cleanup_test_environment
-  rm -f /tmp/tmux_tokyo_night_cache/*.cache 2>/dev/null || true
-  rm -f "${HOME}/.tmux/tokyo-night-data"/*.csv 2>/dev/null || true
+  rm -f /tmp/tmux_yoru_cache/*.cache 2>/dev/null || true
+  rm -f "${HOME}/.tmux/yoru-data"/*.csv 2>/dev/null || true
 }
 
 @test "platform-detector.sh - get_network_connections returns number" {

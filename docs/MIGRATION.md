@@ -1,6 +1,6 @@
 # Migration Guide
 
-This guide helps you migrate between major versions of Tokyo Night Revamped Tmux.
+This guide helps you migrate between major versions of yoru.
 
 ## 📋 Table of Contents
 
@@ -80,7 +80,7 @@ This script will:
 
 ```bash
 # Check installed version
-cd ~/.tmux/plugins/tokyo-night-revamped-tmux
+cd ~/.tmux/plugins/yoru
 git describe --tags
 ```
 
@@ -107,7 +107,7 @@ cp ~/.tmux.conf ~/.tmux.conf.backup.$(date +%Y%m%d)
 ### Migrating to 1.x (Initial Release)
 
 **From**: Custom setup or other themes  
-**To**: Tokyo Night Revamped Tmux 1.x
+**To**: yoru 1.x
 
 #### Step 1: Install TPM
 
@@ -121,7 +121,7 @@ Add to your `.tmux.conf`:
 
 ```bash
 set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'gufranco/tokyo-night-revamped-tmux'
+set -g @plugin 'gufranco/yoru'
 
 # Your configuration here
 
@@ -140,16 +140,16 @@ Choose which widgets to enable:
 
 ```bash
 # System widget
-set -g @tokyo-night-tmux_show_system 1
+set -g @yoru_show_system 1
 
 # Git widget
-set -g @tokyo-night-tmux_show_git 1
+set -g @yoru_show_git 1
 
 # Network widget
-set -g @tokyo-night-tmux_show_netspeed 1
+set -g @yoru_show_netspeed 1
 
 # Context widget
-set -g @tokyo-night-tmux_show_context 1
+set -g @yoru_show_context 1
 ```
 
 #### Step 5: Reload
@@ -225,7 +225,7 @@ tmux source ~/.tmux.conf
 If migration fails:
 
 1. Check [DEBUGGING.md](DEBUGGING.md)
-2. Search [existing issues](https://github.com/gufranco/tokyo-night-revamped-tmux/issues)
+2. Search [existing issues](https://github.com/gufranco/yoru/issues)
 3. Open a new issue with:
    - Old version
    - New version
@@ -270,7 +270,7 @@ If something breaks:
 cp ~/.tmux.conf.backup ~/.tmux.conf
 
 # 2. Checkout old version
-cd ~/.tmux/plugins/tokyo-night-revamped-tmux
+cd ~/.tmux/plugins/yoru
 git fetch --all --tags
 git checkout tags/v1.0.0  # Replace with your version
 
@@ -302,7 +302,7 @@ We follow [Semantic Versioning](https://semver.org/):
 
 ```bash
 # Check for updates
-cd ~/.tmux/plugins/tokyo-night-revamped-tmux
+cd ~/.tmux/plugins/yoru
 git fetch
 git log HEAD..origin/master --oneline
 
@@ -323,6 +323,6 @@ git log HEAD..origin/master --oneline
 
 ## Questions?
 
-- [Report Migration Issue](https://github.com/gufranco/tokyo-night-revamped-tmux/issues/new?template=bug_report.yml)
-- [Ask Question](https://github.com/gufranco/tokyo-night-revamped-tmux/discussions)
+- [Report Migration Issue](https://github.com/gufranco/yoru/issues/new?template=bug_report.yml)
+- [Ask Question](https://github.com/gufranco/yoru/discussions)
 

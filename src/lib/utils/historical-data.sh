@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-readonly HISTORICAL_DATA_DIR="${HOME}/.tmux/tokyo-night-data"
+readonly HISTORICAL_DATA_DIR="${HOME}/.tmux/yoru-data"
 readonly MAX_HISTORY_POINTS=100
 
 mkdir -p "$HISTORICAL_DATA_DIR" 2>/dev/null

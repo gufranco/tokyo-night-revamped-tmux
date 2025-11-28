@@ -26,7 +26,7 @@ teardown() {
 
 @test "cache.sh - get_cache_file returns correct path" {
   result=$(get_cache_file "test_widget")
-  [[ "$result" == "/tmp/tmux_tokyo_night_cache/test_widget.cache" ]]
+  [[ "$result" == "/tmp/tmux_yoru_cache/test_widget.cache" ]]
 }
 
 @test "cache.sh - is_cache_valid returns false for file non-existent" {

@@ -11,7 +11,7 @@ cd "$PROJECT_ROOT"
 
 if ! command -v pre-commit >/dev/null 2>&1; then
   echo "pre-commit not found. Installing..."
-  
+
   if command -v pip3 >/dev/null 2>&1; then
     pip3 install pre-commit
   elif command -v pip >/dev/null 2>&1; then

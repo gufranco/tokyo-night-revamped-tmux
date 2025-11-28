@@ -1,14 +1,16 @@
-# Tokyo Night Revamped Tmux
+# yoru (夜)
 
 ![Tmux](https://img.shields.io/badge/tmux-3.0+-blue.svg)
 ![Bash](https://img.shields.io/badge/bash-4.2+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)
-![Tests](https://github.com/gufranco/tokyo-night-revamped-tmux/workflows/Tests/badge.svg)
-![Lint](https://github.com/gufranco/tokyo-night-revamped-tmux/workflows/Lint/badge.svg)
+![Tests](https://github.com/gufranco/yoru/workflows/Tests/badge.svg)
+![Lint](https://github.com/gufranco/yoru/workflows/Lint/badge.svg)
 
-A beautiful, feature-rich tmux theme inspired by the vibrant lights of Downtown Tokyo at night.  
-Perfect companion for [tokyonight-vim](https://github.com/ghifarit53/tokyonight-vim) and adapted from the original [Tokyo Night VSCode theme](https://github.com/enkia/tokyo-night-vscode-theme).
+> A nocturnal tmux experience inspired by Tokyo nights
+
+Beautiful, feature-rich tmux theme with Tokyo Night aesthetics and enterprise-grade developer tooling.  
+Where Japanese minimalism meets terminal elegance. Perfect companion for [tokyonight-vim](https://github.com/ghifarit53/tokyonight-vim).
 
 **Quick Links:** [Features](#-features) • [Installation](#-installation) • [Configuration](#-configuration) • [Widgets](#-widgets) • [Examples](examples/) • [API Docs](docs/API.md) • [Contributing](#-contributing)
 
@@ -99,7 +101,7 @@ These are only required for specific features:
 Add to your `~/.tmux.conf`:
 
 ```bash
-set -g @plugin "gufranco/tokyo-night-revamped-tmux"
+set -g @plugin "gufranco/yoru"
 ```
 
 Then press `Prefix + I` to install the plugin.
@@ -107,13 +109,13 @@ Then press `Prefix + I` to install the plugin.
 ### Manual Installation
 
 ```bash
-git clone https://github.com/gufranco/tokyo-night-revamped-tmux.git ~/.tmux/plugins/tokyo-night-revamped-tmux
+git clone https://github.com/gufranco/yoru.git ~/.tmux/plugins/yoru
 ```
 
 Add to `~/.tmux.conf`:
 
 ```bash
-run-shell ~/.tmux/plugins/tokyo-night-revamped-tmux/tokyo-night.tmux
+run-shell ~/.tmux/plugins/yoru/tokyo-night.tmux
 ```
 
 ### Reload Configuration
@@ -136,23 +138,23 @@ The status left displays user information and session context. It's fully custom
 
 ```bash
 # Show session name (default: enabled)
-set -g @tokyo-night-tmux_status_left_show_session 1
+set -g @yoru_status_left_show_session 1
 
 # Show window and pane counts (default: disabled)
-set -g @tokyo-night-tmux_status_left_show_windows 1
-set -g @tokyo-night-tmux_status_left_show_panes 1
+set -g @yoru_status_left_show_windows 1
+set -g @yoru_status_left_show_panes 1
 
 # Show sync mode indicator (default: enabled)
-set -g @tokyo-night-tmux_status_left_show_sync 1
+set -g @yoru_status_left_show_sync 1
 
 # Show zoom mode indicator (default: enabled)
-set -g @tokyo-night-tmux_status_left_show_zoom 1
+set -g @yoru_status_left_show_zoom 1
 
 # Show mouse mode indicator (default: disabled)
-set -g @tokyo-night-tmux_status_left_show_mouse 1
+set -g @yoru_status_left_show_mouse 1
 
 # Show hostname when in SSH session (default: disabled)
-set -g @tokyo-night-tmux_status_left_show_hostname 1
+set -g @yoru_status_left_show_hostname 1
 ```
 
 **Format:** `󰀄 username [@session] [w:p] [SYNC|ZOOM|MOUSE|@hostname] ░`
@@ -166,7 +168,7 @@ set -g @tokyo-night-tmux_status_left_show_hostname 1
 
 ### Status Right
 
-The status right displays widgets in the order specified by `@tokyo-night-tmux_widgets_order`. Each widget is dynamically loaded and can be individually configured.
+The status right displays widgets in the order specified by `@yoru_widgets_order`. Each widget is dynamically loaded and can be individually configured.
 
 **Note:** Status-right length is unlimited (set to 0) for maximum flexibility.
 
@@ -176,16 +178,16 @@ Customize which widgets appear and in what order:
 
 ```bash
 # Default order
-set -g @tokyo-night-tmux_widgets_order "system,git,netspeed,context"
+set -g @yoru_widgets_order "system,git,netspeed,context"
 
 # Developer-focused setup
-set -g @tokyo-night-tmux_widgets_order "system,git,context"
+set -g @yoru_widgets_order "system,git,context"
 
 # System monitoring setup
-set -g @tokyo-night-tmux_widgets_order "system,netspeed,context"
+set -g @yoru_widgets_order "system,netspeed,context"
 
 # Minimal setup
-set -g @tokyo-night-tmux_widgets_order "git,context"
+set -g @yoru_widgets_order "git,context"
 ```
 
 **Available widgets:**
@@ -201,7 +203,7 @@ set -g @tokyo-night-tmux_widgets_order "git,context"
 Create lightweight tmux sessions without widgets:
 
 ```bash
-set -g @tokyo-night-tmux_minimal_session "minimal"
+set -g @yoru_minimal_session "minimal"
 ```
 
 When you create a session with this name (e.g., `tmux new-session -s minimal`), all widgets will be automatically disabled.
@@ -216,17 +218,17 @@ When you create a session with this name (e.g., `tmux new-session -s minimal`), 
 
 ```bash
 # Master toggle
-set -g @tokyo-night-tmux_show_system 1
+set -g @yoru_show_system 1
 
 # Component toggles (all enabled by default)
-set -g @tokyo-night-tmux_system_cpu 1
-set -g @tokyo-night-tmux_system_memory 1
-set -g @tokyo-night-tmux_system_disk 1
-set -g @tokyo-night-tmux_system_battery 1
+set -g @yoru_system_cpu 1
+set -g @yoru_system_memory 1
+set -g @yoru_system_disk 1
+set -g @yoru_system_battery 1
 
 # Configuration
-set -g @tokyo-night-tmux_system_disk_path "/"
-set -g @tokyo-night-tmux_system_battery_threshold 20
+set -g @yoru_system_disk_path "/"
+set -g @yoru_system_battery_threshold 20
 ```
 
 **Features:**
@@ -259,14 +261,14 @@ set -g @tokyo-night-tmux_system_battery_threshold 20
 Unified Git widget with local repository status and web integration (GitHub/GitLab).
 
 ```bash
-set -g @tokyo-night-tmux_show_git 1
-set -g @tokyo-night-tmux_git_untracked 1
-set -g @tokyo-night-tmux_git_web 1
+set -g @yoru_show_git 1
+set -g @yoru_git_untracked 1
+set -g @yoru_git_web 1
 
 # New Git features (disabled by default)
-set -g @tokyo-night-tmux_git_stash 1           # Show stash count
-set -g @tokyo-night-tmux_git_ahead_behind 1     # Show ahead/behind commits
-set -g @tokyo-night-tmux_git_last_commit 1      # Show time since last commit
+set -g @yoru_git_stash 1           # Show stash count
+set -g @yoru_git_ahead_behind 1     # Show ahead/behind commits
+set -g @yoru_git_last_commit 1      # Show time since last commit
 ```
 
 **Local Features:**
@@ -296,10 +298,10 @@ set -g @tokyo-night-tmux_git_last_commit 1      # Show time since last commit
 
 ```bash
 # Disable auto-fetch for large repositories
-set -g @tokyo-night-tmux_git_disable_auto_fetch 1
+set -g @yoru_git_disable_auto_fetch 1
 
 # Set fetch timeout (default: 5 seconds)
-set -g @tokyo-night-tmux_git_fetch_timeout 10
+set -g @yoru_git_fetch_timeout 10
 ```
 
 ### Network Widget
@@ -307,12 +309,12 @@ set -g @tokyo-night-tmux_git_fetch_timeout 10
 Professional network monitoring with clean, minimalist design.
 
 ```bash
-set -g @tokyo-night-tmux_show_netspeed 1
-set -g @tokyo-night-tmux_netspeed_ping 1         # Show ping latency
-set -g @tokyo-night-tmux_netspeed_vpn 1          # Show VPN indicator
-set -g @tokyo-night-tmux_netspeed_vpn_name 1     # Show VPN connection name
-set -g @tokyo-night-tmux_netspeed_wifi 1          # Show WiFi signal strength
-set -g @tokyo-night-tmux_netspeed_refresh 1      # Update interval (seconds)
+set -g @yoru_show_netspeed 1
+set -g @yoru_netspeed_ping 1         # Show ping latency
+set -g @yoru_netspeed_vpn 1          # Show VPN indicator
+set -g @yoru_netspeed_vpn_name 1     # Show VPN connection name
+set -g @yoru_netspeed_wifi 1          # Show WiFi signal strength
+set -g @yoru_netspeed_refresh 1      # Update interval (seconds)
 ```
 
 **Features:**
@@ -334,7 +336,7 @@ set -g @tokyo-night-tmux_netspeed_refresh 1      # Update interval (seconds)
 Date, time, path, SSH, session, music, updates, and more.
 
 ```bash
-set -g @tokyo-night-tmux_show_context 1
+set -g @yoru_show_context 1
 ```
 
 **Components:**
@@ -342,9 +344,9 @@ set -g @tokyo-night-tmux_show_context 1
 #### Date and Time
 
 ```bash
-set -g @tokyo-night-tmux_show_datetime 1
-set -g @tokyo-night-tmux_date_format YMD      # YMD, MDY, DMY, hide
-set -g @tokyo-night-tmux_time_format 24H       # 24H, 12H, hide
+set -g @yoru_show_datetime 1
+set -g @yoru_date_format YMD      # YMD, MDY, DMY, hide
+set -g @yoru_time_format 24H       # 24H, 12H, hide
 ```
 
 **Date formats:**
@@ -361,8 +363,8 @@ set -g @tokyo-night-tmux_time_format 24H       # 24H, 12H, hide
 **Timezone Support:**
 
 ```bash
-set -g @tokyo-night-tmux_show_timezone 1
-set -g @tokyo-night-tmux_timezone "America/Los_Angeles,America/New_York,Europe/London"
+set -g @yoru_show_timezone 1
+set -g @yoru_timezone "America/Los_Angeles,America/New_York,Europe/London"
 ```
 
 Shows abbreviated timezones (PST, EST, GMT) with 󰥔 icon. Supports multiple timezones.
@@ -370,8 +372,8 @@ Shows abbreviated timezones (PST, EST, GMT) with 󰥔 icon. Supports multiple ti
 #### Weather
 
 ```bash
-set -g @tokyo-night-tmux_context_weather 1
-set -g @tokyo-night-tmux_context_weather_units "m"  # m=metric, u=US, M=SI
+set -g @yoru_context_weather 1
+set -g @yoru_context_weather_units "m"  # m=metric, u=US, M=SI
 ```
 
 Shows current temperature with dynamic icons (requires `curl` or `wget`).
@@ -395,7 +397,7 @@ Shows current temperature with dynamic icons (requires `curl` or `wget`).
 Control how often widgets update:
 
 ```bash
-set -g @tokyo-night-tmux_refresh_rate 5  # Update every 5 seconds (default)
+set -g @yoru_refresh_rate 5  # Update every 5 seconds (default)
 ```
 
 ### Temperature Monitoring
@@ -420,34 +422,34 @@ Temperature colors:
 
 ```bash
 # Widget order
-set -g @tokyo-night-tmux_widgets_order "system,git,netspeed,context"
+set -g @yoru_widgets_order "system,git,netspeed,context"
 
 # System widget with all features
-set -g @tokyo-night-tmux_show_system 1
-set -g @tokyo-night-tmux_system_cpu 1
-set -g @tokyo-night-tmux_system_memory 1
-set -g @tokyo-night-tmux_system_disk 1
-set -g @tokyo-night-tmux_system_battery 1
+set -g @yoru_show_system 1
+set -g @yoru_system_cpu 1
+set -g @yoru_system_memory 1
+set -g @yoru_system_disk 1
+set -g @yoru_system_battery 1
 
 # Git with all features
-set -g @tokyo-night-tmux_show_git 1
-set -g @tokyo-night-tmux_git_untracked 1
-set -g @tokyo-night-tmux_git_web 1
-set -g @tokyo-night-tmux_git_stash 1
-set -g @tokyo-night-tmux_git_ahead_behind 1
-set -g @tokyo-night-tmux_git_last_commit 1
+set -g @yoru_show_git 1
+set -g @yoru_git_untracked 1
+set -g @yoru_git_web 1
+set -g @yoru_git_stash 1
+set -g @yoru_git_ahead_behind 1
+set -g @yoru_git_last_commit 1
 
 # Network with all features
-set -g @tokyo-night-tmux_show_netspeed 1
-set -g @tokyo-night-tmux_netspeed_ping 1
-set -g @tokyo-night-tmux_netspeed_vpn 1
-set -g @tokyo-night-tmux_netspeed_vpn_name 1
-set -g @tokyo-night-tmux_netspeed_wifi 1
+set -g @yoru_show_netspeed 1
+set -g @yoru_netspeed_ping 1
+set -g @yoru_netspeed_vpn 1
+set -g @yoru_netspeed_vpn_name 1
+set -g @yoru_netspeed_wifi 1
 
 # Context with all features
-set -g @tokyo-night-tmux_show_context 1
-set -g @tokyo-night-tmux_context_weather 1
-set -g @tokyo-night-tmux_context_timezone 1
+set -g @yoru_show_context 1
+set -g @yoru_context_weather 1
+set -g @yoru_context_timezone 1
 ```
 
 ---
@@ -666,7 +668,7 @@ The following functions are available for use in custom scripts or extensions:
 ### Widgets not showing
 
 1. Check that widgets are enabled in your configuration
-2. Verify widgets are included in `@tokyo-night-tmux_widgets_order`
+2. Verify widgets are included in `@yoru_widgets_order`
 3. Ensure you're not in minimal mode
 4. Check tmux logs: `tmux show-messages`
 
@@ -691,8 +693,8 @@ The following functions are available for use in custom scripts or extensions:
 
 ### Performance issues
 
-1. Increase refresh rate: `set -g @tokyo-night-tmux_refresh_rate 10`
-2. Disable auto-fetch for large repos: `set -g @tokyo-night-tmux_git_disable_auto_fetch 1`
+1. Increase refresh rate: `set -g @yoru_refresh_rate 10`
+2. Disable auto-fetch for large repos: `set -g @yoru_git_disable_auto_fetch 1`
 3. Use minimal mode for better performance
 4. Disable unused widgets
 5. Disable heavy features: temperature, disk I/O, process monitoring if not needed
@@ -731,7 +733,7 @@ We welcome contributions! Please follow these guidelines:
 
 ### Development Setup
 
-1. Clone the repository: `git clone https://github.com/gufranco/tokyo-night-revamped-tmux.git`
+1. Clone the repository: `git clone https://github.com/gufranco/yoru.git`
 2. Create a branch: `git checkout -b feature/your-feature`
 3. Make your changes
 4. Test thoroughly: `make test`

@@ -9,7 +9,7 @@ setup() {
 
 teardown() {
   cleanup_test_environment
-  rm -rf "${HOME}/.tmux/tokyo-night-breakers/" 2>/dev/null || true
+  rm -rf "${HOME}/.tmux/yoru-breakers/" 2>/dev/null || true
 }
 
 @test "retry.sh - retry_command succeeds on first attempt" {
@@ -48,7 +48,7 @@ teardown() {
 @test "retry.sh - circuit_breaker_record_failure increments counter" {
   circuit_breaker_record_failure "test_service"
   
-  local breaker_file="${HOME}/.tmux/tokyo-night-breakers/test_service.breaker"
+  local breaker_file="${HOME}/.tmux/yoru-breakers/test_service.breaker"
   [[ -f "$breaker_file" ]]
   
   local count
@@ -69,14 +69,14 @@ teardown() {
   circuit_breaker_record_failure "test_service"
   circuit_breaker_reset "test_service"
   
-  local breaker_file="${HOME}/.tmux/tokyo-night-breakers/test_service.breaker"
+  local breaker_file="${HOME}/.tmux/yoru-breakers/test_service.breaker"
   [[ ! -f "$breaker_file" ]]
 }
 
 @test "retry.sh - sanitizes service names" {
   circuit_breaker_record_failure "test/../service"
   
-  local breaker_file="${HOME}/.tmux/tokyo-night-breakers/testservice.breaker"
-  [[ -f "$breaker_file" ]] || [[ -f "${HOME}/.tmux/tokyo-night-breakers/test..service.breaker" ]]
+  local breaker_file="${HOME}/.tmux/yoru-breakers/testservice.breaker"
+  [[ -f "$breaker_file" ]] || [[ -f "${HOME}/.tmux/yoru-breakers/test..service.breaker" ]]
 }
 

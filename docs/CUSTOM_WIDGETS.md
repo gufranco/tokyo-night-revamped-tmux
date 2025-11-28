@@ -1,6 +1,6 @@
 # Creating Custom Widgets
 
-This guide shows you how to create custom widgets for Tokyo Night Revamped Tmux.
+This guide shows you how to create custom widgets for yoru.
 
 ## 📋 Table of Contents
 
@@ -81,11 +81,11 @@ source "${PROJECT_ROOT}/src/lib/widget/widget-loader.sh"
 
 # 3. Early exit checks
 is_minimal_session && exit 0
-is_widget_enabled "@tokyo-night-tmux_show_mywidget" || exit 0
+is_widget_enabled "@yoru_show_mywidget" || exit 0
 
 # 4. Cache configuration
 cache_key="mywidget"
-cache_ttl=$(get_tmux_option "@tokyo-night-tmux_mywidget_refresh" "5")
+cache_ttl=$(get_tmux_option "@yoru_mywidget_refresh" "5")
 
 # 5. Check cache
 if is_cache_valid "$cache_key" "$cache_ttl"; then
@@ -198,13 +198,13 @@ In `.tmux.conf`:
 
 ```bash
 # Enable widget
-set -g @tokyo-night-tmux_show_mywidget 1
+set -g @yoru_show_mywidget 1
 
 # Custom refresh rate
-set -g @tokyo-night-tmux_mywidget_refresh 10
+set -g @yoru_mywidget_refresh 10
 
 # Custom options
-set -g @tokyo-night-tmux_mywidget_location "New York"
+set -g @yoru_mywidget_location "New York"
 ```
 
 ### Step 6: Integrate with Status Line
@@ -264,7 +264,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib/widget/widget-loader.sh"
 
 is_minimal_session && exit 0
-is_widget_enabled "@tokyo-night-tmux_show_cpu_simple" || exit 0
+is_widget_enabled "@yoru_show_cpu_simple" || exit 0
 
 cpu=$(get_cpu_usage_percentage)
 color=$(get_system_color "$cpu")
@@ -282,7 +282,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib/widget/widget-loader.sh"
 
 is_minimal_session && exit 0
-is_widget_enabled "@tokyo-night-tmux_show_api" || exit 0
+is_widget_enabled "@yoru_show_api" || exit 0
 
 cache_key="api_status"
 if is_cache_valid "$cache_key" 60; then
@@ -313,7 +313,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib/widget/widget-loader.sh"
 
 is_minimal_session && exit 0
-is_widget_enabled "@tokyo-night-tmux_show_multi" || exit 0
+is_widget_enabled "@yoru_show_multi" || exit 0
 
 # Collect multiple metrics
 cpu=$(get_cpu_usage_percentage)
@@ -489,6 +489,6 @@ my-widget/
 
 ## Need Help?
 
-- [Ask a Question](https://github.com/gufranco/tokyo-night-revamped-tmux/discussions)
-- [Report an Issue](https://github.com/gufranco/tokyo-night-revamped-tmux/issues)
+- [Ask a Question](https://github.com/gufranco/yoru/discussions)
+- [Report an Issue](https://github.com/gufranco/yoru/issues)
 

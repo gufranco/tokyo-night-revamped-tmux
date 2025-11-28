@@ -1,4 +1,4 @@
-# Pre-commit hooks for Tokyo Night Revamped Tmux
+# Pre-commit hooks for yoru
 # Install: pip install pre-commit && pre-commit install
 # See https://pre-commit.com for more information
 

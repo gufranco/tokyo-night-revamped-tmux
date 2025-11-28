@@ -1,6 +1,6 @@
 # Debugging Guide
 
-This guide helps you debug issues with Tokyo Night Revamped Tmux.
+This guide helps you debug issues with yoru.
 
 ## 🔍 Quick Diagnosis
 
@@ -21,7 +21,7 @@ bash --version
 ### Verify Plugin Installation
 
 ```bash
-ls -la ~/.tmux/plugins/tokyo-night-revamped-tmux/
+ls -la ~/.tmux/plugins/yoru/
 # Should see src/, test/, tokyo-night.tmux
 ```
 
@@ -58,10 +58,10 @@ tmux show-options -g status-right
 **Diagnosis**:
 ```bash
 # Test widget directly
-bash ~/.tmux/plugins/tokyo-night-revamped-tmux/src/system-widget.sh
+bash ~/.tmux/plugins/yoru/src/system-widget.sh
 
 # Check for errors
-bash -x ~/.tmux/plugins/tokyo-night-revamped-tmux/src/system-widget.sh 2>&1 | less
+bash -x ~/.tmux/plugins/yoru/src/system-widget.sh 2>&1 | less
 ```
 
 **Solutions**:
@@ -82,7 +82,7 @@ git status
 
 # Test git widget
 cd /path/to/repo
-bash ~/.tmux/plugins/tokyo-night-revamped-tmux/src/git-widget.sh $(pwd)
+bash ~/.tmux/plugins/yoru/src/git-widget.sh $(pwd)
 
 # Check git web features
 gh --version  # For GitHub
@@ -91,7 +91,7 @@ jq --version  # For JSON parsing
 ```
 
 **Solutions**:
-1. Enable git widget: `set -g @tokyo-night-tmux_show_git 1`
+1. Enable git widget: `set -g @yoru_show_git 1`
 2. Navigate to a git repository
 3. Install dependencies: `brew install gh jq` or `apt install gh jq`
 4. Authenticate: `gh auth login`
@@ -109,14 +109,14 @@ route get default  # macOS
 ip route show default  # Linux
 
 # Test network widget
-bash ~/.tmux/plugins/tokyo-night-revamped-tmux/src/network-widget.sh
+bash ~/.tmux/plugins/yoru/src/network-widget.sh
 
 # Check interface name
 tmux show-options -g | grep netspeed_iface
 ```
 
 **Solutions**:
-1. Set correct interface: `set -g @tokyo-night-tmux_netspeed_iface "en0"`
+1. Set correct interface: `set -g @yoru_netspeed_iface "en0"`
 2. Check interface exists: `ifconfig` or `ip addr`
 3. Clear cache: `rm ~/.tmux/tokyo-night-cache/network.cache`
 
@@ -128,22 +128,22 @@ tmux show-options -g | grep netspeed_iface
 
 ```bash
 # In .tmux.conf
-set -g @tokyo-night-tmux_enable_logging 1
-set -g @tokyo-night-tmux_enable_profiling 1
+set -g @yoru_enable_logging 1
+set -g @yoru_enable_profiling 1
 
 # Reload config
 tmux source ~/.tmux.conf
 
 # View logs
-tail -f ~/.tmux/tokyo-night-logs/errors.log
-tail -f ~/.tmux/tokyo-night-logs/performance.log
+tail -f ~/.tmux/yoru-logs/errors.log
+tail -f ~/.tmux/yoru-logs/performance.log
 ```
 
 ### Debug Individual Functions
 
 ```bash
 # Source the library
-source ~/.tmux/plugins/tokyo-night-revamped-tmux/src/lib/platform-detector.sh
+source ~/.tmux/plugins/yoru/src/lib/platform-detector.sh
 
 # Call function directly
 get_cpu_usage_percentage
@@ -151,7 +151,7 @@ get_total_memory_kb
 get_gpu_usage_percentage
 
 # Test with different values
-source ~/.tmux/plugins/tokyo-night-revamped-tmux/src/lib/utils/system.sh
+source ~/.tmux/plugins/yoru/src/lib/utils/system.sh
 safe_divide 100 0 999  # Should return 999
 validate_percentage 150  # Should return 100
 ```
@@ -160,7 +160,7 @@ validate_percentage 150  # Should return 100
 
 ```bash
 # Enable bash debug mode
-bash -x ~/.tmux/plugins/tokyo-night-revamped-tmux/src/system-widget.sh 2>&1 | tee debug.log
+bash -x ~/.tmux/plugins/yoru/src/system-widget.sh 2>&1 | tee debug.log
 
 # Specific function
 bash -c 'set -x; source src/lib/cpu/cpu.sh; get_cpu_usage_percentage'
@@ -189,7 +189,7 @@ rm -rf ~/.tmux/tokyo-night-cache/
 
 ```bash
 # Source platform functions
-source ~/.tmux/plugins/tokyo-night-revamped-tmux/src/lib/platform-detector.sh
+source ~/.tmux/plugins/yoru/src/lib/platform-detector.sh
 
 # Check OS
 get_os  # Should return "Darwin" or "Linux"
@@ -208,7 +208,7 @@ is_apple_silicon && echo "Apple Silicon" || echo "Not Apple Silicon"
 ### Run All Tests
 
 ```bash
-cd ~/.tmux/plugins/tokyo-night-revamped-tmux
+cd ~/.tmux/plugins/yoru
 make test
 ```
 
@@ -261,13 +261,13 @@ done
 
 ```bash
 # Enable profiling
-set -g @tokyo-night-tmux_enable_profiling 1
+set -g @yoru_enable_profiling 1
 
 # Reload and use tmux
 tmux source ~/.tmux.conf
 
 # Check performance log
-cat ~/.tmux/tokyo-night-logs/performance.log | sort -t: -k3 -n
+cat ~/.tmux/yoru-logs/performance.log | sort -t: -k3 -n
 ```
 
 ### Check System Call Overhead
@@ -381,7 +381,7 @@ sudo apt install git gh jq  # Ubuntu
 **Solution**:
 ```bash
 # Fix script permissions
-chmod +x ~/.tmux/plugins/tokyo-night-revamped-tmux/src/*.sh
+chmod +x ~/.tmux/plugins/yoru/src/*.sh
 
 # Fix cache permissions
 chmod 755 ~/.tmux/tokyo-night-cache/
@@ -411,7 +411,7 @@ sudo chsh -s /usr/local/bin/bash
 ### Before Asking for Help
 
 1. Check this debugging guide
-2. Search [existing issues](https://github.com/gufranco/tokyo-night-revamped-tmux/issues)
+2. Search [existing issues](https://github.com/gufranco/yoru/issues)
 3. Enable logging and check logs
 4. Test with minimal configuration
 
@@ -426,7 +426,7 @@ tmux -V
 bash --version
 
 # Plugin info
-ls -la ~/.tmux/plugins/tokyo-night-revamped-tmux/
+ls -la ~/.tmux/plugins/yoru/
 
 # Configuration
 tmux show-options -g | grep tokyo-night
@@ -435,7 +435,7 @@ tmux show-options -g | grep tokyo-night
 bash -x src/system-widget.sh 2>&1 | tee error.log
 
 # Logs (if enabled)
-cat ~/.tmux/tokyo-night-logs/errors.log
+cat ~/.tmux/yoru-logs/errors.log
 ```
 
 ### Useful Commands
@@ -479,7 +479,7 @@ Before reporting a bug, check:
 ```bash
 # Complete reset
 rm -rf ~/.tmux/tokyo-night-cache/
-rm -rf ~/.tmux/tokyo-night-logs/
+rm -rf ~/.tmux/yoru-logs/
 tmux kill-server
 tmux
 ```
@@ -490,7 +490,7 @@ Test with minimal `.tmux.conf`:
 
 ```bash
 set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'gufranco/tokyo-night-revamped-tmux'
+set -g @plugin 'gufranco/yoru'
 run '~/.tmux/plugins/tpm/tpm'
 ```
 
@@ -513,8 +513,8 @@ cat ~/tmux-*.log
 
 - [Tmux Manual](https://man7.org/linux/man-pages/man1/tmux.1.html)
 - [Bash Debugging](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html)
-- [GitHub Issues](https://github.com/gufranco/tokyo-night-revamped-tmux/issues)
-- [Discussions](https://github.com/gufranco/tokyo-night-revamped-tmux/discussions)
+- [GitHub Issues](https://github.com/gufranco/yoru/issues)
+- [Discussions](https://github.com/gufranco/yoru/discussions)
 
 ---
 

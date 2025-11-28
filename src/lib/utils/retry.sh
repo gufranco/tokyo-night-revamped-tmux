@@ -120,7 +120,7 @@ circuit_breaker_check() {
 
   service_name="${service_name//[^a-zA-Z0-9_-]/}"
 
-  local breaker_dir="${HOME}/.tmux/tokyo-night-breakers"
+  local breaker_dir="${HOME}/.tmux/yoru-breakers"
   mkdir -p "$breaker_dir" 2>/dev/null
 
   local breaker_file="${breaker_dir}/${service_name}.breaker"
@@ -180,7 +180,7 @@ circuit_breaker_record_failure() {
 
   service_name="${service_name//[^a-zA-Z0-9_-]/}"
 
-  local breaker_dir="${HOME}/.tmux/tokyo-night-breakers"
+  local breaker_dir="${HOME}/.tmux/yoru-breakers"
   mkdir -p "$breaker_dir" 2>/dev/null
 
   local breaker_file="${breaker_dir}/${service_name}.breaker"
@@ -223,7 +223,7 @@ circuit_breaker_reset() {
 
   service_name="${service_name//[^a-zA-Z0-9_-]/}"
 
-  local breaker_file="${HOME}/.tmux/tokyo-night-breakers/${service_name}.breaker"
+  local breaker_file="${HOME}/.tmux/yoru-breakers/${service_name}.breaker"
 
   if [[ -f "$breaker_file" ]] && [[ -w "$(dirname "$breaker_file")" ]]; then
     rm -f "$breaker_file" 2>/dev/null

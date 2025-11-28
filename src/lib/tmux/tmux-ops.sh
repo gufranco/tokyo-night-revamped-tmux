@@ -34,7 +34,7 @@ get_session_name() {
 
 is_minimal_session() {
   local minimal_session
-  minimal_session=$(get_tmux_option "@tokyo-night-tmux_minimal_session" "")
+  minimal_session=$(get_tmux_option "@yoru_minimal_session" "")
   [[ -n "$minimal_session" ]] && [[ "$minimal_session" == "$(get_session_name)" ]]
 }
 

@@ -7,7 +7,7 @@ source "${LIB_DIR}/utils/platform-cache.sh"
 source "${LIB_DIR}/utils/tmux-cache.sh"
 source "${LIB_DIR}/utils/coreutils-compat.sh"
 
-CACHE_DIR="/tmp/tmux_tokyo_night_cache"
+CACHE_DIR="/tmp/tmux_yoru_cache"
 mkdir -p "$CACHE_DIR" 2>/dev/null
 
 get_refresh_rate() {

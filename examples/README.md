@@ -145,7 +145,7 @@ cat examples/themes/custom-colors.tmux.conf >> ~/.tmux.conf
 ### Changing Widget Order
 
 ```bash
-set -g @tokyo-night-tmux_widgets_order "system,git,netspeed,context"
+set -g @yoru_widgets_order "system,git,netspeed,context"
 # Change order: "git,system,context,netspeed"
 # Remove widgets: "system,git"  # Only system and git
 ```
@@ -154,23 +154,23 @@ set -g @tokyo-night-tmux_widgets_order "system,git,netspeed,context"
 
 ```bash
 # Default: 5 seconds
-set -g @tokyo-night-tmux_refresh_rate 5
+set -g @yoru_refresh_rate 5
 
 # Faster updates (more CPU usage)
-set -g @tokyo-night-tmux_refresh_rate 2
+set -g @yoru_refresh_rate 2
 
 # Slower updates (less CPU usage)
-set -g @tokyo-night-tmux_refresh_rate 10
+set -g @yoru_refresh_rate 10
 ```
 
 ### Enabling/Disabling Features
 
 ```bash
 # Enable a feature
-set -g @tokyo-night-tmux_show_git 1
+set -g @yoru_show_git 1
 
 # Disable a feature
-set -g @tokyo-night-tmux_show_git 0
+set -g @yoru_show_git 0
 ```
 
 ### Custom Colors
@@ -228,13 +228,13 @@ See [themes/custom-colors.tmux.conf](themes/custom-colors.tmux.conf) for all ava
 
 1. Increase refresh rate:
    ```bash
-   set -g @tokyo-night-tmux_refresh_rate 10
+   set -g @yoru_refresh_rate 10
    ```
 
 2. Disable expensive features:
    ```bash
-   set -g @tokyo-night-tmux_git_disable_auto_fetch 1
-   set -g @tokyo-night-tmux_netspeed_ping 0
+   set -g @yoru_git_disable_auto_fetch 1
+   set -g @yoru_netspeed_ping 0
    ```
 
 3. Use minimal configuration
@@ -252,7 +252,7 @@ You can mix and match settings from different examples:
 cp examples/minimal.tmux.conf ~/.tmux.conf
 
 # Add Git widget from developer config
-echo "set -g @tokyo-night-tmux_show_git 1" >> ~/.tmux.conf
+echo "set -g @yoru_show_git 1" >> ~/.tmux.conf
 ```
 
 ### Testing Changes
@@ -284,7 +284,7 @@ cp ~/.tmux.conf ~/.tmux.conf.backup
 
 ## 🆘 Need Help?
 
-- [Report an Issue](https://github.com/gufranco/tokyo-night-revamped-tmux/issues)
-- [Ask a Question](https://github.com/gufranco/tokyo-night-revamped-tmux/discussions)
-- [Read the Docs](https://github.com/gufranco/tokyo-night-revamped-tmux#readme)
+- [Report an Issue](https://github.com/gufranco/yoru/issues)
+- [Ask a Question](https://github.com/gufranco/yoru/discussions)
+- [Read the Docs](https://github.com/gufranco/yoru#readme)
 

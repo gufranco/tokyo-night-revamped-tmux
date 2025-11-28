@@ -116,7 +116,7 @@ detect_vpn() {
 }
 
 get_ping_latency() {
-  local cache_file="/tmp/tmux_tokyo_night_ping_cache"
+  local cache_file="/tmp/tmux_yoru_ping_cache"
   local cache_ttl=10
 
   if [[ -f "$cache_file" ]]; then

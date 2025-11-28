@@ -79,8 +79,8 @@ body:
       description: Relevant parts of your `.tmux.conf`
       render: bash
       placeholder: |
-        set -g @plugin "gufranco/tokyo-night-revamped-tmux"
-        set -g @tokyo-night-tmux_show_system 1
+        set -g @plugin "gufranco/yoru"
+        set -g @yoru_show_system 1
 
   - type: textarea
     id: logs

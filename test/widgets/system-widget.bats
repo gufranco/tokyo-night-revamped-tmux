@@ -29,7 +29,7 @@ teardown() {
   export TMUX_REFRESH_RATE="5"
 
   # Cache mock
-  cache_file="${TEST_TMPDIR}/tmux_tokyo_night_cache/system.cache"
+  cache_file="${TEST_TMPDIR}/tmux_yoru_cache/system.cache"
   mkdir -p "$(dirname "$cache_file")"
   echo "cached output" > "$cache_file"
   current_time=$(get_current_timestamp)

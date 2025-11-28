@@ -11,7 +11,7 @@ source "${LIB_DIR}/widget/widget-config.sh"
 load_widget_dependencies "git"
 
 validate_minimal_session
-validate_widget_enabled "@tokyo-night-tmux_show_git"
+validate_widget_enabled "@yoru_show_git"
 
 cd "$1" || exit 0
 git rev-parse --git-dir &>/dev/null || exit 0
@@ -20,11 +20,11 @@ cache_key="git_$(pwd | sed 's/\//_/g')"
 cached_output=$(get_cached_widget_output "git" "$cache_key")
 should_use_cache "$cached_output" && echo "$cached_output" && exit 0
 
-CHECK_UNTRACKED=$(is_widget_feature_enabled "@tokyo-night-tmux_git_untracked" "1")
-SHOW_WEB=$(is_widget_feature_enabled "@tokyo-night-tmux_git_web" "1")
-SHOW_STASH=$(is_widget_feature_enabled "@tokyo-night-tmux_git_stash" "0")
-SHOW_AHEAD_BEHIND=$(is_widget_feature_enabled "@tokyo-night-tmux_git_ahead_behind" "0")
-SHOW_LAST_COMMIT=$(is_widget_feature_enabled "@tokyo-night-tmux_git_last_commit" "0")
+CHECK_UNTRACKED=$(is_widget_feature_enabled "@yoru_git_untracked" "1")
+SHOW_WEB=$(is_widget_feature_enabled "@yoru_git_web" "1")
+SHOW_STASH=$(is_widget_feature_enabled "@yoru_git_stash" "0")
+SHOW_AHEAD_BEHIND=$(is_widget_feature_enabled "@yoru_git_ahead_behind" "0")
+SHOW_LAST_COMMIT=$(is_widget_feature_enabled "@yoru_git_last_commit" "0")
 
 main() {
 BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)

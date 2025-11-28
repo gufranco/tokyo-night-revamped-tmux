@@ -13,15 +13,15 @@ init_tmux_cache() {
     return
   fi
 
-  TMUX_OPTION_CACHE[refresh_rate]="$(tmux show-option -gv @tokyo-night-tmux_refresh_rate 2>/dev/null || echo "5")"
-  TMUX_OPTION_CACHE[widgets_order]="$(tmux show-option -gv @tokyo-night-tmux_widgets_order 2>/dev/null || echo "")"
-  TMUX_OPTION_CACHE[show_system]="$(tmux show-option -gv @tokyo-night-tmux_show_system 2>/dev/null || echo "1")"
-  TMUX_OPTION_CACHE[show_git]="$(tmux show-option -gv @tokyo-night-tmux_show_git 2>/dev/null || echo "1")"
-  TMUX_OPTION_CACHE[show_netspeed]="$(tmux show-option -gv @tokyo-night-tmux_show_netspeed 2>/dev/null || echo "1")"
-  TMUX_OPTION_CACHE[show_context]="$(tmux show-option -gv @tokyo-night-tmux_show_context 2>/dev/null || echo "1")"
-  TMUX_OPTION_CACHE[enable_logging]="$(tmux show-option -gv @tokyo-night-tmux_enable_logging 2>/dev/null || echo "0")"
-  TMUX_OPTION_CACHE[enable_profiling]="$(tmux show-option -gv @tokyo-night-tmux_enable_profiling 2>/dev/null || echo "0")"
-  TMUX_OPTION_CACHE[minimal_session]="$(tmux show-option -gv @tokyo-night-tmux_minimal_session 2>/dev/null || echo "")"
+  TMUX_OPTION_CACHE[refresh_rate]="$(tmux show-option -gv @yoru_refresh_rate 2>/dev/null || echo "5")"
+  TMUX_OPTION_CACHE[widgets_order]="$(tmux show-option -gv @yoru_widgets_order 2>/dev/null || echo "")"
+  TMUX_OPTION_CACHE[show_system]="$(tmux show-option -gv @yoru_show_system 2>/dev/null || echo "1")"
+  TMUX_OPTION_CACHE[show_git]="$(tmux show-option -gv @yoru_show_git 2>/dev/null || echo "1")"
+  TMUX_OPTION_CACHE[show_netspeed]="$(tmux show-option -gv @yoru_show_netspeed 2>/dev/null || echo "1")"
+  TMUX_OPTION_CACHE[show_context]="$(tmux show-option -gv @yoru_show_context 2>/dev/null || echo "1")"
+  TMUX_OPTION_CACHE[enable_logging]="$(tmux show-option -gv @yoru_enable_logging 2>/dev/null || echo "0")"
+  TMUX_OPTION_CACHE[enable_profiling]="$(tmux show-option -gv @yoru_enable_profiling 2>/dev/null || echo "0")"
+  TMUX_OPTION_CACHE[minimal_session]="$(tmux show-option -gv @yoru_minimal_session 2>/dev/null || echo "")"
 
   TMUX_CACHE_TIMESTAMP=$current_time
   TMUX_CACHE_INITIALIZED=1
@@ -40,7 +40,7 @@ get_cached_tmux_option() {
   
   local cache_key="${option#@}"
   cache_key="${cache_key//-/_}"
-  cache_key="${cache_key//tokyo_night_tmux_/}"
+  cache_key="${cache_key//yoru_tmux_/}"
   
   if [[ -n "${TMUX_OPTION_CACHE[$cache_key]:-}" ]]; then
     echo "${TMUX_OPTION_CACHE[$cache_key]}"

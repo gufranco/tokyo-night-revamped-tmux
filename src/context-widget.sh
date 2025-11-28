@@ -11,14 +11,14 @@ source "${LIB_DIR}/widget/widget-config.sh"
 load_widget_dependencies "context"
 
 validate_minimal_session
-validate_widget_enabled "@tokyo-night-tmux_show_context"
+validate_widget_enabled "@yoru_show_context"
 
-SHOW_WEATHER=$(is_widget_feature_enabled "@tokyo-night-tmux_context_weather" "1")
-WEATHER_UNITS=$(get_tmux_option "@tokyo-night-tmux_context_weather_units" "m")
-DATE_FORMAT=$(get_tmux_option "@tokyo-night-tmux_context_date_format" "YMD")
-TIME_FORMAT=$(get_tmux_option "@tokyo-night-tmux_context_time_format" "24H")
-SHOW_TIMEZONE=$(is_widget_feature_enabled "@tokyo-night-tmux_context_timezone" "0")
-TIMEZONES=$(get_tmux_option "@tokyo-night-tmux_context_timezones" "")
+SHOW_WEATHER=$(is_widget_feature_enabled "@yoru_context_weather" "1")
+WEATHER_UNITS=$(get_tmux_option "@yoru_context_weather_units" "m")
+DATE_FORMAT=$(get_tmux_option "@yoru_context_date_format" "YMD")
+TIME_FORMAT=$(get_tmux_option "@yoru_context_time_format" "24H")
+SHOW_TIMEZONE=$(is_widget_feature_enabled "@yoru_context_timezone" "0")
+TIMEZONES=$(get_tmux_option "@yoru_context_timezones" "")
 
 get_date_format() {
   case "${1}" in
@@ -44,7 +44,7 @@ main() {
 
   if [[ $SHOW_WEATHER -eq 1 ]]; then
     local WEATHER_CACHE weather_data cache_time current_time cache_age weather_url weather_display
-    WEATHER_CACHE="/tmp/tmux_tokyo_night_weather_cache"
+    WEATHER_CACHE="/tmp/tmux_yoru_weather_cache"
     weather_data=""
 
     if [[ -f "$WEATHER_CACHE" ]]; then

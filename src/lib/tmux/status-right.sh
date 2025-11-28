@@ -9,7 +9,7 @@ netspeed="#($SCRIPTS_PATH/network-widget.sh)"
 git="#($SCRIPTS_PATH/git-widget.sh #{pane_current_path})"
 context="#($SCRIPTS_PATH/context-widget.sh)"
 
-WIDGETS_ORDER="$(tmux show-option -gv @tokyo-night-tmux_widgets_order 2>/dev/null)"
+WIDGETS_ORDER="$(tmux show-option -gv @yoru_widgets_order 2>/dev/null)"
 [[ -z "$WIDGETS_ORDER" ]] && WIDGETS_ORDER="system,git,netspeed,context"
 
 declare -A WIDGET_MAP=(

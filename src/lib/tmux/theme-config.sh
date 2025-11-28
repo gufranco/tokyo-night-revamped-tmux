@@ -30,7 +30,7 @@ tmux set -g window-status-separator ""
 status_left_script="#(${PROJECT_ROOT}/src/lib/tmux/status-left.sh)"
 tmux set -g status-left "$status_left_script"
 
-WIDGETS_ORDER="$(tmux show-option -gv @tokyo-night-tmux_widgets_order 2>/dev/null)"
+WIDGETS_ORDER="$(tmux show-option -gv @yoru_widgets_order 2>/dev/null)"
 [[ -z "$WIDGETS_ORDER" ]] && WIDGETS_ORDER="system,git,netspeed,context"
 
 STATUS_RIGHT=""

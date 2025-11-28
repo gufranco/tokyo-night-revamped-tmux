@@ -149,11 +149,11 @@ echo ""
 if [[ -f ~/.tmux.conf ]]; then
   echo -e "${GREEN}✓${NC} .tmux.conf found"
   
-  if grep -q "tokyo-night-revamped-tmux" ~/.tmux.conf 2>/dev/null; then
+  if grep -q "yoru" ~/.tmux.conf 2>/dev/null; then
     echo -e "${GREEN}✓${NC} Plugin configured in .tmux.conf"
   else
     echo -e "${YELLOW}○${NC} Plugin not found in .tmux.conf"
-    echo -e "  ${BLUE}Add:${NC} set -g @plugin 'gufranco/tokyo-night-revamped-tmux'"
+    echo -e "  ${BLUE}Add:${NC} set -g @plugin 'gufranco/yoru'"
   fi
 else
   echo -e "${RED}✗${NC} .tmux.conf not found"
@@ -167,10 +167,10 @@ else
   echo -e "  ${BLUE}Install:${NC} git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
 fi
 
-if [[ -d ~/.tmux/plugins/tokyo-night-revamped-tmux ]]; then
+if [[ -d ~/.tmux/plugins/yoru ]]; then
   echo -e "${GREEN}✓${NC} Plugin installed"
   
-  cd ~/.tmux/plugins/tokyo-night-revamped-tmux
+  cd ~/.tmux/plugins/yoru
   local version
   version=$(git describe --tags 2>/dev/null || echo "unknown")
   echo -e "  ${BLUE}Version:${NC} $version"
@@ -186,7 +186,7 @@ echo ""
 
 if [[ $required_ok -eq 0 ]]; then
   echo -e "${GREEN}✓ All required dependencies are installed${NC}"
-  echo -e "${GREEN}✓ You can use Tokyo Night Revamped Tmux${NC}"
+  echo -e "${GREEN}✓ You can use yoru${NC}"
 else
   echo -e "${RED}✗ Some required dependencies are missing${NC}"
   echo -e "${RED}✗ Install missing dependencies before using the plugin${NC}"
@@ -195,7 +195,7 @@ fi
 
 echo ""
 echo -e "${BLUE}For more help, see:${NC}"
-echo -e "  ${BLUE}•${NC} README: https://github.com/gufranco/tokyo-night-revamped-tmux#readme"
+echo -e "  ${BLUE}•${NC} README: https://github.com/gufranco/yoru#readme"
 echo -e "  ${BLUE}•${NC} Troubleshooting: docs/DEBUGGING.md"
 echo ""
 

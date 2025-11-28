@@ -5,17 +5,17 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 setup() {
   setup_test_environment
   source "${BATS_TEST_DIRNAME}/../../src/lib/utils/historical-data.sh"
-  mkdir -p "${HOME}/.tmux/tokyo-night-data" 2>/dev/null
+  mkdir -p "${HOME}/.tmux/yoru-data" 2>/dev/null
 }
 
 teardown() {
   cleanup_test_environment
-  rm -f "${HOME}/.tmux/tokyo-night-data"/*.csv 2>/dev/null || true
+  rm -f "${HOME}/.tmux/yoru-data"/*.csv 2>/dev/null || true
 }
 
 @test "historical-data.sh - save_historical_point creates data file" {
   save_historical_point "test_metric" "50"
-  [[ -f "${HOME}/.tmux/tokyo-night-data/test_metric.csv" ]]
+  [[ -f "${HOME}/.tmux/yoru-data/test_metric.csv" ]]
 }
 
 @test "historical-data.sh - get_historical_trend returns trend" {

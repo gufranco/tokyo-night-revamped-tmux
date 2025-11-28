@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SELECTED_THEME="$(tmux show-option -gv @tokyo-night-tmux_theme 2>/dev/null)"
+SELECTED_THEME="$(tmux show-option -gv @yoru_theme 2>/dev/null)"
 
 case $SELECTED_THEME in
 "storm")

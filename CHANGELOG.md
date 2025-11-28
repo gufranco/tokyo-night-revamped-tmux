@@ -104,7 +104,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Previous Releases]
 
-For changes in previous releases, see the [GitHub Releases](https://github.com/gufranco/tokyo-night-revamped-tmux/releases) page.
+For changes in previous releases, see the [GitHub Releases](https://github.com/gufranco/yoru/releases) page.
 
 ---
 
@@ -114,7 +114,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on contributing to this pr
 
 ## Support
 
-- 📝 [Report a Bug](https://github.com/gufranco/tokyo-night-revamped-tmux/issues/new?template=bug_report.yml)
-- ✨ [Request a Feature](https://github.com/gufranco/tokyo-night-revamped-tmux/issues/new?template=feature_request.yml)
-- 💬 [Ask a Question](https://github.com/gufranco/tokyo-night-revamped-tmux/discussions)
+- 📝 [Report a Bug](https://github.com/gufranco/yoru/issues/new?template=bug_report.yml)
+- ✨ [Request a Feature](https://github.com/gufranco/yoru/issues/new?template=feature_request.yml)
+- 💬 [Ask a Question](https://github.com/gufranco/yoru/discussions)
 
