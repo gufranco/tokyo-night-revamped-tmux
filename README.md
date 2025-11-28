@@ -4,6 +4,8 @@
 ![Bash](https://img.shields.io/badge/bash-4.2+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)
+![Tests](https://github.com/gufranco/tokyo-night-revamped-tmux/workflows/Tests/badge.svg)
+![Lint](https://github.com/gufranco/tokyo-night-revamped-tmux/workflows/Lint/badge.svg)
 
 A beautiful, feature-rich tmux theme inspired by the vibrant lights of Downtown Tokyo at night.  
 Perfect companion for [tokyonight-vim](https://github.com/ghifarit53/tokyonight-vim) and adapted from the original [Tokyo Night VSCode theme](https://github.com/enkia/tokyo-night-vscode-theme).

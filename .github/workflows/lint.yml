@@ -1,0 +1,66 @@
+name: Lint
+
+on:
+  push:
+    branches: [ master, main, develop ]
+  pull_request:
+    branches: [ master, main, develop ]
+
+jobs:
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: './src'
+          severity: warning
+          format: gcc
+          additional_files: 'tokyo-night.tmux'
+
+  markdown-lint:
+    name: Markdown Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Lint Markdown files
+        uses: actionshub/markdownlint@main
+
+  validate-bash-syntax:
+    name: Validate Bash Syntax
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check bash syntax
+        run: |
+          find src -name '*.sh' -type f | while read file; do
+            echo "Checking $file"
+            bash -n "$file" || exit 1
+          done
+          bash -n tokyo-night.tmux || exit 1
+
+  check-formatting:
+    name: Check Code Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for trailing whitespace
+        run: |
+          ! git grep -In '\s$' -- '*.sh' '*.bats' '*.md' || \
+          (echo "Found trailing whitespace" && exit 1)
+
+      - name: Check for tabs
+        run: |
+          ! git grep -In $'\t' -- '*.sh' '*.bats' || \
+          (echo "Found tabs (use spaces)" && exit 1)
+

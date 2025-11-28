@@ -99,6 +99,9 @@ test-system: check-bats ## Run system tests
 test-themes: check-bats ## Run themes tests
 	@bats $(LIB_TEST_DIR)/themes.bats
 
+test-retry: check-bats ## Run retry tests
+	@bats $(LIB_TEST_DIR)/retry.bats
+
 test-tmux-config: check-bats ## Run tmux-config tests
 	@bats $(LIB_TEST_DIR)/tmux-config.bats
 

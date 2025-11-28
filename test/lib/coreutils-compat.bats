@@ -19,7 +19,7 @@ teardown() {
 @test "coreutils-compat.sh - get_file_mtime returns timestamp for file existente" {
   test_file="${TEST_TMPDIR}/test_file.txt"
   echo "test" > "$test_file"
-  
+
   result=$(get_file_mtime "$test_file")
   [[ "$result" =~ ^[0-9]+$ ]]
   [[ "$result" != "0" ]]
@@ -34,7 +34,7 @@ teardown() {
 @test "coreutils-compat.sh - get_time_diff calculates difference correctly" {
   start_time=1000
   end_time=1500
-  
+
   result=$(get_time_diff "$start_time" "$end_time")
   [[ "$result" == "500" ]]
 }
@@ -43,7 +43,7 @@ teardown() {
   start_time=$(get_current_timestamp)
   sleep 1
   result=$(get_time_diff "$start_time")
-  
+
   # should ser by menos 1 segundo
   [[ "$result" -ge 1 ]]
 }
@@ -52,7 +52,7 @@ teardown() {
   export MOCK_UNAME_S="Darwin"
   test_file="${TEST_TMPDIR}/test_file.txt"
   echo "test" > "$test_file"
-  
+
   export MOCK_FILE_MTIME="1234567890"
   result=$(get_file_mtime "$test_file")
   [[ "$result" == "1234567890" ]]
@@ -62,7 +62,7 @@ teardown() {
   export MOCK_UNAME_S="Linux"
   test_file="${TEST_TMPDIR}/test_file.txt"
   echo "test" > "$test_file"
-  
+
   export MOCK_FILE_MTIME="1234567890"
   result=$(get_file_mtime "$test_file")
   [[ "$result" == "1234567890" ]]

@@ -1,0 +1,19 @@
+# ShellCheck configuration for Tokyo Night Revamped Tmux
+
+# Disable specific checks
+disable=SC2034  # Unused variables (may be used in sourced files)
+disable=SC2154  # Referenced but not assigned (tmux env vars)
+disable=SC1090  # Can't follow non-constant source
+disable=SC1091  # Not following sourced files
+disable=SC2155  # Declare and assign separately
+
+# Enable optional checks
+enable=avoid-nullary-conditions
+enable=quote-safe-variables
+
+# Shell dialect
+shell=bash
+
+# Source path for resolving sourced files
+source-path=SCRIPTDIR
+

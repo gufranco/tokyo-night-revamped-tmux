@@ -37,7 +37,7 @@ teardown() {
   echo "+15°C" > "$weather_cache"
   current_time=$(get_current_timestamp)
   export MOCK_FILE_MTIME=$(( current_time - 100 ))
-  
+
   # Basic test
   [[ -f "$weather_cache" ]]
 }
@@ -49,7 +49,7 @@ teardown() {
   weather_cache="${TEST_TMPDIR}/tmux_tokyo_night_weather_cache"
   old_time=$(( $(get_current_timestamp) - 1000 ))
   create_test_cache_file "$weather_cache" "+15°C" "$old_time"
-  
+
   # Basic test
   [[ -f "$weather_cache" ]]
 }
@@ -62,7 +62,7 @@ teardown() {
   export MOCK_TIME_24H="14:30"
   export MOCK_TIMEZONE="EST"
   export MOCK_DAY_OF_WEEK="1"
-  
+
   # Basic test - functions exist
   function_exists get_timezone_period_icon
   function_exists get_timezone_period_color

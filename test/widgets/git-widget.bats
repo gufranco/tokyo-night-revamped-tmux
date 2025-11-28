@@ -40,14 +40,14 @@ teardown() {
   export TMUX_SHOW_GIT="1"
   export MOCK_GIT_REPO=1
   export TMUX_REFRESH_RATE="5"
-  
+
   # Cache mock
   cache_file="${TEST_TMPDIR}/tmux_tokyo_night_cache/git__tmp.cache"
   mkdir -p "$(dirname "$cache_file")"
   echo "cached output" > "$cache_file"
   current_time=$(get_current_timestamp)
   export MOCK_FILE_MTIME=$(( current_time - 1 ))
-  
+
   # Basic test
   [[ -f "$cache_file" ]]
 }
@@ -56,7 +56,7 @@ teardown() {
   export TMUX_SHOW_GIT="1"
   export MOCK_GIT_REPO=1
   export MOCK_GIT_BRANCH="uma-branch-muito-long-que-should-ser-truncates"
-  
+
   # Basic test
   [[ ${#MOCK_GIT_BRANCH} -gt 25 ]]
 }
@@ -67,7 +67,7 @@ teardown() {
   export MOCK_GIT_STATUS="M  file1.txt
  M file2.txt"
   export MOCK_GIT_DIFF_NUMSTAT="10  5  file1.txt"
-  
+
   # Basic test
   function_exists get_git_changes_color
   function_exists get_git_changes_icon
@@ -77,7 +77,7 @@ teardown() {
   export TMUX_SHOW_GIT="1"
   export MOCK_GIT_REPO=1
   export MOCK_GIT_DIFF_NUMSTAT="100  50  file1.txt"
-  
+
   # Basic test
   function_exists get_git_lines_color
   function_exists get_git_insertions_icon
@@ -91,7 +91,7 @@ teardown() {
   export MOCK_GIT_UNTRACKED_FILES="file1.txt
 file2.txt"
   export MOCK_WC_LINES="2"
-  
+
   # Basic test
   function_exists get_git_untracked_color
   function_exists get_git_untracked_icon
@@ -102,7 +102,7 @@ file2.txt"
   export TMUX_GIT_WEB="1"
   export MOCK_GIT_REPO=1
   export MOCK_GIT_REMOTE_URL="https://github.with/user/repo.git"
-  
+
   # Basic test
   function_exists get_git_pr_color
   function_exists get_git_review_color
@@ -115,7 +115,7 @@ file2.txt"
   export TMUX_GIT_WEB="1"
   export MOCK_GIT_REPO=1
   export MOCK_GIT_REMOTE_URL="https://github.with/user/repo.git"
-  
+
   # Basic test
   [[ "$MOCK_GIT_REMOTE_URL" =~ github\.with ]]
 }
@@ -125,7 +125,7 @@ file2.txt"
   export TMUX_GIT_WEB="1"
   export MOCK_GIT_REPO=1
   export MOCK_GIT_REMOTE_URL="https://gitlab.with/user/repo.git"
-  
+
   # Basic test
   [[ "$MOCK_GIT_REMOTE_URL" =~ gitlab\.with ]]
 }
@@ -137,7 +137,7 @@ file2.txt"
   export MOCK_GIT_REMOTE_URL="https://github.with/user/repo.git"
   export MOCK_GH_PR_LIST='[{"number":1},{"number":2}]'
   export MOCK_JQ_OUTPUT="2"
-  
+
   # Basic test
   function_exists get_git_pr_icon
 }
@@ -149,7 +149,7 @@ file2.txt"
   export MOCK_GIT_REMOTE_URL="https://github.with/user/repo.git"
   export MOCK_GH_PR_STATUS='{"needsReview":[{"number":1}]}'
   export MOCK_JQ_OUTPUT="1"
-  
+
   # Basic test
   function_exists get_git_review_icon
 }
@@ -161,7 +161,7 @@ file2.txt"
   export MOCK_GIT_REMOTE_URL="https://github.with/user/repo.git"
   export MOCK_GH_ISSUE_LIST='[{"assignees":[],"labels":[]}]'
   export MOCK_JQ_OUTPUT="1"
-  
+
   # Basic test
   function_exists get_git_issue_icon
 }
@@ -173,7 +173,7 @@ file2.txt"
   export MOCK_GIT_REMOTE_URL="https://github.with/user/repo.git"
   export MOCK_GH_ISSUE_LIST='[{"assignees":[],"labels":[{"name":"bug"}]}]'
   export MOCK_JQ_OUTPUT="1"
-  
+
   # Basic test
   function_exists get_git_bug_color
 }

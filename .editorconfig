@@ -1,18 +1,31 @@
-# ++++++++++++++++++++++
-# + Base Configuration +
-# ++++++++++++++++++++++
+root = true
+
 [*]
 charset = utf-8
 end_of_line = lf
-indent_size = 2
-indent_style = space
 insert_final_newline = true
-max_line_length = 160
 trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
 
-# +++++++++++++
-# + Languages +
-# +++++++++++++
-# +++ Markdown +++
-[*.{md,gfm}]
+# Shell scripts
+[*.sh]
+max_line_length = 120
+
+# Bash test files
+[*.bats]
+max_line_length = 120
+
+# Markdown files
+[*.md]
 trim_trailing_whitespace = false
+max_line_length = off
+
+# Makefile
+[Makefile]
+indent_style = tab
+indent_size = 4
+
+# Documentation
+[*.{md,txt,rst}]
+max_line_length = off

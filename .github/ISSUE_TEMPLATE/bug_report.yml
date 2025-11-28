@@ -1,0 +1,104 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug! Please fill out the information below.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear description of the bug
+      placeholder: What happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Install the plugin
+        2. Configure with...
+        3. Open tmux
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+      placeholder: "macOS 14.1 (Apple Silicon) or Ubuntu 22.04"
+    validations:
+      required: true
+
+  - type: input
+    id: tmux-version
+    attributes:
+      label: Tmux Version
+      description: Run `tmux -V`
+      placeholder: "tmux 3.3a"
+    validations:
+      required: true
+
+  - type: input
+    id: bash-version
+    attributes:
+      label: Bash Version
+      description: Run `bash --version`
+      placeholder: "GNU bash, version 5.2.15"
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: Relevant parts of your `.tmux.conf`
+      render: bash
+      placeholder: |
+        set -g @plugin "gufranco/tokyo-night-revamped-tmux"
+        set -g @tokyo-night-tmux_show_system 1
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs/Output
+      description: Any relevant logs or error messages
+      render: shell
+      placeholder: Paste any error messages here
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues
+          required: true
+        - label: I have read the documentation
+          required: true
+        - label: I am using the latest version
+          required: true
+
