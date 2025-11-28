@@ -26,7 +26,7 @@ validate_config() {
   fi
 
   local refresh_rate
-  refresh_rate=$(tmux show-option -gv @yoru_refresh_rate 2>/dev/null)
+  refresh_rate=$(tmux show-option -gv @yoru_revamped_refresh_rate 2>/dev/null)
   if [[ -n "$refresh_rate" ]] && [[ ! "$refresh_rate" =~ ^[0-9]+$ ]]; then
     log_error "config" "Invalid refresh_rate: ${refresh_rate} (must be a number)"
     ((errors++))
@@ -36,7 +36,7 @@ validate_config() {
   fi
 
   local widgets_order
-  widgets_order=$(tmux show-option -gv @yoru_widgets_order 2>/dev/null)
+  widgets_order=$(tmux show-option -gv @yoru_revamped_widgets_order 2>/dev/null)
   if [[ -n "$widgets_order" ]]; then
     local valid_widgets="system git netspeed context process docker"
     IFS=',' read -ra widgets <<< "$widgets_order"
@@ -50,14 +50,14 @@ validate_config() {
   fi
 
   local date_format
-  date_format=$(tmux show-option -gv @yoru_context_date_format 2>/dev/null)
+  date_format=$(tmux show-option -gv @yoru_revamped_context_date_format 2>/dev/null)
   if [[ -n "$date_format" ]] && [[ ! "$date_format" =~ ^(YMD|MDY|DMY|hide)$ ]]; then
     log_error "config" "Invalid date_format: ${date_format}"
     ((errors++))
   fi
 
   local time_format
-  time_format=$(tmux show-option -gv @yoru_context_time_format 2>/dev/null)
+  time_format=$(tmux show-option -gv @yoru_revamped_context_time_format 2>/dev/null)
   if [[ -n "$time_format" ]] && [[ ! "$time_format" =~ ^(24H|12H|hide)$ ]]; then
     log_error "config" "Invalid time_format: ${time_format}"
     ((errors++))
@@ -86,7 +86,7 @@ check_dependencies() {
 
   case "$widget_name" in
     git)
-      if [[ "$(tmux show-option -gv @yoru_git_web 2>/dev/null)" == "1" ]]; then
+      if [[ "$(tmux show-option -gv @yoru_revamped_git_web 2>/dev/null)" == "1" ]]; then
         if ! has_command gh && ! has_command glab; then
           missing_deps+=("gh or glab")
         fi
@@ -99,14 +99,14 @@ check_dependencies() {
       if ! has_command docker; then
         missing_deps+=("docker")
       fi
-      if [[ "$(tmux show-option -gv @yoru_docker_kubernetes 2>/dev/null)" == "1" ]]; then
+      if [[ "$(tmux show-option -gv @yoru_revamped_docker_kubernetes 2>/dev/null)" == "1" ]]; then
         if ! has_command kubectl; then
           missing_deps+=("kubectl")
         fi
       fi
       ;;
     context)
-      if [[ "$(tmux show-option -gv @yoru_context_weather 2>/dev/null)" == "1" ]]; then
+      if [[ "$(tmux show-option -gv @yoru_revamped_context_weather 2>/dev/null)" == "1" ]]; then
         if ! has_command curl && ! has_command wget; then
           missing_deps+=("curl or wget")
         fi

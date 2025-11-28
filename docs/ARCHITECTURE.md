@@ -147,7 +147,7 @@ source "${LIB_DIR}/widget/widget-loader.sh"
 
 # 2. Early exit checks
 is_minimal_session && exit 0
-is_widget_enabled "@yoru_show_<widget>" || exit 0
+is_widget_enabled "@yoru_revamped_show_<widget>" || exit 0
 
 # 3. Check cache
 local cache_key="<widget>"
@@ -309,7 +309,7 @@ User Config → Color Config → Color Scale → Widget
 **Purpose**: Debug issues in production
 
 **Features**:
-- Opt-in logging (`@yoru_enable_logging`)
+- Opt-in logging (`@yoru_revamped_enable_logging`)
 - Rotating log files
 - Performance profiling
 - Sanitized output

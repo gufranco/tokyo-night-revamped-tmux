@@ -6,25 +6,25 @@ should_display_widget() {
   
   case "$widget_name" in
     system)
-      condition=$(tmux show-option -gv @yoru_show_system 2>/dev/null)
+      condition=$(tmux show-option -gv @yoru_revamped_show_system 2>/dev/null)
       ;;
     git)
-      condition=$(tmux show-option -gv @yoru_show_git 2>/dev/null)
+      condition=$(tmux show-option -gv @yoru_revamped_show_git 2>/dev/null)
       ;;
     netspeed)
-      condition=$(tmux show-option -gv @yoru_show_netspeed 2>/dev/null)
+      condition=$(tmux show-option -gv @yoru_revamped_show_netspeed 2>/dev/null)
       ;;
     context)
-      condition=$(tmux show-option -gv @yoru_show_context 2>/dev/null)
+      condition=$(tmux show-option -gv @yoru_revamped_show_context 2>/dev/null)
       ;;
     process)
-      condition=$(tmux show-option -gv @yoru_show_process 2>/dev/null)
+      condition=$(tmux show-option -gv @yoru_revamped_show_process 2>/dev/null)
       ;;
     docker)
-      condition=$(tmux show-option -gv @yoru_show_docker 2>/dev/null)
+      condition=$(tmux show-option -gv @yoru_revamped_show_docker 2>/dev/null)
       ;;
     health)
-      condition=$(tmux show-option -gv @yoru_show_health 2>/dev/null)
+      condition=$(tmux show-option -gv @yoru_revamped_show_health 2>/dev/null)
       ;;
     *)
       return 0

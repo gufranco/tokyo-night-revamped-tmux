@@ -91,7 +91,7 @@ jq --version  # For JSON parsing
 ```
 
 **Solutions**:
-1. Enable git widget: `set -g @yoru_show_git 1`
+1. Enable git widget: `set -g @yoru_revamped_show_git 1`
 2. Navigate to a git repository
 3. Install dependencies: `brew install gh jq` or `apt install gh jq`
 4. Authenticate: `gh auth login`
@@ -116,7 +116,7 @@ tmux show-options -g | grep netspeed_iface
 ```
 
 **Solutions**:
-1. Set correct interface: `set -g @yoru_netspeed_iface "en0"`
+1. Set correct interface: `set -g @yoru_revamped_netspeed_iface "en0"`
 2. Check interface exists: `ifconfig` or `ip addr`
 3. Clear cache: `rm ~/.tmux/tokyo-night-cache/network.cache`
 
@@ -128,8 +128,8 @@ tmux show-options -g | grep netspeed_iface
 
 ```bash
 # In .tmux.conf
-set -g @yoru_enable_logging 1
-set -g @yoru_enable_profiling 1
+set -g @yoru_revamped_enable_logging 1
+set -g @yoru_revamped_enable_profiling 1
 
 # Reload config
 tmux source ~/.tmux.conf
@@ -261,7 +261,7 @@ done
 
 ```bash
 # Enable profiling
-set -g @yoru_enable_profiling 1
+set -g @yoru_revamped_enable_profiling 1
 
 # Reload and use tmux
 tmux source ~/.tmux.conf

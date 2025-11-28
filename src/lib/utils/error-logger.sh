@@ -17,7 +17,7 @@ log_error() {
 
   widget_name="${widget_name//[^a-zA-Z0-9_-]/}"
 
-  if [[ "$(tmux show-option -gv @yoru_enable_logging 2>/dev/null)" == "1" ]]; then
+  if [[ "$(tmux show-option -gv @yoru_revamped_enable_logging 2>/dev/null)" == "1" ]]; then
     local timestamp
     timestamp=$(date '+%Y-%m-%d %H:%M:%S' 2>/dev/null || echo "")
 
@@ -46,7 +46,7 @@ log_performance() {
 
   widget_name="${widget_name//[^a-zA-Z0-9_-]/}"
 
-  if [[ "$(tmux show-option -gv @yoru_enable_profiling 2>/dev/null)" == "1" ]]; then
+  if [[ "$(tmux show-option -gv @yoru_revamped_enable_profiling 2>/dev/null)" == "1" ]]; then
     local perf_file="${ERROR_LOG_DIR}/performance.log"
     local timestamp
     timestamp=$(date '+%Y-%m-%d %H:%M:%S' 2>/dev/null || echo "")

@@ -587,7 +587,7 @@ fi
 ```bash
 source src/lib/widget/widget-base.sh
 
-if is_widget_enabled "@yoru_show_git"; then
+if is_widget_enabled "@yoru_revamped_show_git"; then
   echo "Git widget enabled"
 fi
 ```
@@ -623,7 +623,7 @@ fi
 ```bash
 source src/lib/tmux/tmux-config.sh
 
-refresh=$(get_tmux_option "@yoru_refresh_rate" "5")
+refresh=$(get_tmux_option "@yoru_revamped_refresh_rate" "5")
 echo "Refresh rate: ${refresh}s"
 ```
 
@@ -642,7 +642,7 @@ source "${SCRIPT_DIR}/lib/widget/widget-loader.sh"
 
 # Early exit checks
 is_minimal_session && exit 0
-is_widget_enabled "@yoru_show_cpu" || exit 0
+is_widget_enabled "@yoru_revamped_show_cpu" || exit 0
 
 # Check cache
 cache_key="custom_cpu"

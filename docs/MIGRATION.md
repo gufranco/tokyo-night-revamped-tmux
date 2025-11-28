@@ -140,16 +140,16 @@ Choose which widgets to enable:
 
 ```bash
 # System widget
-set -g @yoru_show_system 1
+set -g @yoru_revamped_show_system 1
 
 # Git widget
-set -g @yoru_show_git 1
+set -g @yoru_revamped_show_git 1
 
 # Network widget
-set -g @yoru_show_netspeed 1
+set -g @yoru_revamped_show_netspeed 1
 
 # Context widget
-set -g @yoru_show_context 1
+set -g @yoru_revamped_show_context 1
 ```
 
 #### Step 5: Reload

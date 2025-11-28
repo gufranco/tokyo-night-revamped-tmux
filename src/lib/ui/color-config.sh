@@ -8,7 +8,7 @@ source "${LIB_DIR}/tmux/tmux-config.sh"
 get_custom_color() {
   local color_key="${1}"
   local default_value="${2}"
-  local option_name="@yoru_color_${color_key}"
+  local option_name="@yoru_revamped_color_${color_key}"
 
   local custom_color
   custom_color=$(get_tmux_option "${option_name}" "")
@@ -51,7 +51,7 @@ get_widget_color() {
   local widget_type="${1}"
   local color_type="${2}"
   local default_color="${3}"
-  local option_name="@yoru_color_${widget_type}_${color_type}"
+  local option_name="@yoru_revamped_color_${widget_type}_${color_type}"
 
   local custom_color
   custom_color=$(get_tmux_option "${option_name}" "")

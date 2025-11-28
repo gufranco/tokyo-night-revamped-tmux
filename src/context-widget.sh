@@ -11,14 +11,14 @@ source "${LIB_DIR}/widget/widget-config.sh"
 load_widget_dependencies "context"
 
 validate_minimal_session
-validate_widget_enabled "@yoru_show_context"
+validate_widget_enabled "@yoru_revamped_show_context"
 
-SHOW_WEATHER=$(is_widget_feature_enabled "@yoru_context_weather" "1")
-WEATHER_UNITS=$(get_tmux_option "@yoru_context_weather_units" "m")
-DATE_FORMAT=$(get_tmux_option "@yoru_context_date_format" "YMD")
-TIME_FORMAT=$(get_tmux_option "@yoru_context_time_format" "24H")
-SHOW_TIMEZONE=$(is_widget_feature_enabled "@yoru_context_timezone" "0")
-TIMEZONES=$(get_tmux_option "@yoru_context_timezones" "")
+SHOW_WEATHER=$(is_widget_feature_enabled "@yoru_revamped_context_weather" "1")
+WEATHER_UNITS=$(get_tmux_option "@yoru_revamped_context_weather_units" "m")
+DATE_FORMAT=$(get_tmux_option "@yoru_revamped_context_date_format" "YMD")
+TIME_FORMAT=$(get_tmux_option "@yoru_revamped_context_time_format" "24H")
+SHOW_TIMEZONE=$(is_widget_feature_enabled "@yoru_revamped_context_timezone" "0")
+TIMEZONES=$(get_tmux_option "@yoru_revamped_context_timezones" "")
 
 get_date_format() {
   case "${1}" in

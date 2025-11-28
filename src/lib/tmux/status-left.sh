@@ -8,13 +8,13 @@ source "${LIB_DIR}/ui/color-config.sh"
 source "${LIB_DIR}/tmux/tmux-ops.sh"
 source "${LIB_DIR}/widget/widget-config.sh"
 
-SHOW_SESSION=$(is_widget_feature_enabled "@yoru_status_left_show_session" "1")
-SHOW_WINDOWS=$(is_widget_feature_enabled "@yoru_status_left_show_windows" "0")
-SHOW_PANES=$(is_widget_feature_enabled "@yoru_status_left_show_panes" "0")
-SHOW_SYNC=$(is_widget_feature_enabled "@yoru_status_left_show_sync" "1")
-SHOW_ZOOM=$(is_widget_feature_enabled "@yoru_status_left_show_zoom" "1")
-SHOW_MOUSE=$(is_widget_feature_enabled "@yoru_status_left_show_mouse" "0")
-SHOW_HOSTNAME=$(is_widget_feature_enabled "@yoru_status_left_show_hostname" "0")
+SHOW_SESSION=$(is_widget_feature_enabled "@yoru_revamped_status_left_show_session" "1")
+SHOW_WINDOWS=$(is_widget_feature_enabled "@yoru_revamped_status_left_show_windows" "0")
+SHOW_PANES=$(is_widget_feature_enabled "@yoru_revamped_status_left_show_panes" "0")
+SHOW_SYNC=$(is_widget_feature_enabled "@yoru_revamped_status_left_show_sync" "1")
+SHOW_ZOOM=$(is_widget_feature_enabled "@yoru_revamped_status_left_show_zoom" "1")
+SHOW_MOUSE=$(is_widget_feature_enabled "@yoru_revamped_status_left_show_mouse" "0")
+SHOW_HOSTNAME=$(is_widget_feature_enabled "@yoru_revamped_status_left_show_hostname" "0")
 
 USERNAME="${USER:-$(whoami)}"
 GREEN=$(get_custom_color "status_left_green" "${THEME[green]}")

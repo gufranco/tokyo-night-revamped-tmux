@@ -10,18 +10,18 @@ source "${LIB_DIR}/widget/widget-config.sh"
 
 load_widget_dependencies "network"
 
-validate_widget_enabled "@yoru_show_netspeed"
+validate_widget_enabled "@yoru_revamped_show_netspeed"
 
 cached_output=$(get_cached_widget_output "network")
 should_use_cache "$cached_output" && echo "$cached_output" && exit 0
 
-INTERFACE=$(get_tmux_option "@yoru_netspeed_iface" "")
-SHOW_PING=$(is_widget_feature_enabled "@yoru_netspeed_ping" "0")
-SHOW_VPN=$(is_widget_feature_enabled "@yoru_netspeed_vpn" "1")
-SHOW_VPN_NAME=$(is_widget_feature_enabled "@yoru_netspeed_vpn_name" "0")
-SHOW_WIFI=$(is_widget_feature_enabled "@yoru_netspeed_wifi" "0")
-SHOW_CONNECTIONS=$(is_widget_feature_enabled "@yoru_netspeed_connections" "0")
-SHOW_INTERFACE=$(is_widget_feature_enabled "@yoru_netspeed_show_interface" "0")
+INTERFACE=$(get_tmux_option "@yoru_revamped_netspeed_iface" "")
+SHOW_PING=$(is_widget_feature_enabled "@yoru_revamped_netspeed_ping" "0")
+SHOW_VPN=$(is_widget_feature_enabled "@yoru_revamped_netspeed_vpn" "1")
+SHOW_VPN_NAME=$(is_widget_feature_enabled "@yoru_revamped_netspeed_vpn_name" "0")
+SHOW_WIFI=$(is_widget_feature_enabled "@yoru_revamped_netspeed_wifi" "0")
+SHOW_CONNECTIONS=$(is_widget_feature_enabled "@yoru_revamped_netspeed_connections" "0")
+SHOW_INTERFACE=$(is_widget_feature_enabled "@yoru_revamped_netspeed_show_interface" "0")
 
 main() {
   local interface
@@ -29,7 +29,7 @@ main() {
 
   if [[ -z "$interface" ]]; then
     interface=$(find_interface) || exit 0
-    tmux set-option -g @yoru_netspeed_iface "$interface"
+    tmux set-option -g @yoru_revamped_netspeed_iface "$interface"
   fi
 
   source "${LIB_DIR}/network/network-speed.sh"

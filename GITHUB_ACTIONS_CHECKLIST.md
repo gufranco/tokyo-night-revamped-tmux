@@ -207,7 +207,7 @@ We've rebranded from tokyo-night-revamped-tmux to **yoru** (夜 - night in Japan
 ## What changed?
 - Repository name: yoru
 - Plugin name: gufranco/yoru-revamped-tmux
-- Option prefix: @yoru_* (instead of @tokyo-night-tmux_*)
+- Option prefix: @yoru_revamped_* (instead of @tokyo-night-tmux_*)
 
 ## Migration
 See [MIGRATION.md](docs/MIGRATION.md) for migration instructions.

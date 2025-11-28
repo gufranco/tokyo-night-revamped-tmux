@@ -13,15 +13,15 @@ init_tmux_cache() {
     return
   fi
 
-  TMUX_OPTION_CACHE[refresh_rate]="$(tmux show-option -gv @yoru_refresh_rate 2>/dev/null || echo "5")"
-  TMUX_OPTION_CACHE[widgets_order]="$(tmux show-option -gv @yoru_widgets_order 2>/dev/null || echo "")"
-  TMUX_OPTION_CACHE[show_system]="$(tmux show-option -gv @yoru_show_system 2>/dev/null || echo "1")"
-  TMUX_OPTION_CACHE[show_git]="$(tmux show-option -gv @yoru_show_git 2>/dev/null || echo "1")"
-  TMUX_OPTION_CACHE[show_netspeed]="$(tmux show-option -gv @yoru_show_netspeed 2>/dev/null || echo "1")"
-  TMUX_OPTION_CACHE[show_context]="$(tmux show-option -gv @yoru_show_context 2>/dev/null || echo "1")"
-  TMUX_OPTION_CACHE[enable_logging]="$(tmux show-option -gv @yoru_enable_logging 2>/dev/null || echo "0")"
-  TMUX_OPTION_CACHE[enable_profiling]="$(tmux show-option -gv @yoru_enable_profiling 2>/dev/null || echo "0")"
-  TMUX_OPTION_CACHE[minimal_session]="$(tmux show-option -gv @yoru_minimal_session 2>/dev/null || echo "")"
+  TMUX_OPTION_CACHE[refresh_rate]="$(tmux show-option -gv @yoru_revamped_refresh_rate 2>/dev/null || echo "5")"
+  TMUX_OPTION_CACHE[widgets_order]="$(tmux show-option -gv @yoru_revamped_widgets_order 2>/dev/null || echo "")"
+  TMUX_OPTION_CACHE[show_system]="$(tmux show-option -gv @yoru_revamped_show_system 2>/dev/null || echo "1")"
+  TMUX_OPTION_CACHE[show_git]="$(tmux show-option -gv @yoru_revamped_show_git 2>/dev/null || echo "1")"
+  TMUX_OPTION_CACHE[show_netspeed]="$(tmux show-option -gv @yoru_revamped_show_netspeed 2>/dev/null || echo "1")"
+  TMUX_OPTION_CACHE[show_context]="$(tmux show-option -gv @yoru_revamped_show_context 2>/dev/null || echo "1")"
+  TMUX_OPTION_CACHE[enable_logging]="$(tmux show-option -gv @yoru_revamped_enable_logging 2>/dev/null || echo "0")"
+  TMUX_OPTION_CACHE[enable_profiling]="$(tmux show-option -gv @yoru_revamped_enable_profiling 2>/dev/null || echo "0")"
+  TMUX_OPTION_CACHE[minimal_session]="$(tmux show-option -gv @yoru_revamped_minimal_session 2>/dev/null || echo "")"
 
   TMUX_CACHE_TIMESTAMP=$current_time
   TMUX_CACHE_INITIALIZED=1

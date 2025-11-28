@@ -7,10 +7,10 @@ source "${PROJECT_ROOT}/src/lib/widget/widget-loader.sh"
 
 is_minimal_session && exit 0
 
-is_widget_enabled "@yoru_show_custom" || exit 0
+is_widget_enabled "@yoru_revamped_show_custom" || exit 0
 
 cache_key="custom_widget"
-cache_ttl=$(get_tmux_option "@yoru_custom_refresh" "5")
+cache_ttl=$(get_tmux_option "@yoru_revamped_custom_refresh" "5")
 
 if is_cache_valid "$cache_key" "$cache_ttl"; then
   get_cached_value "$cache_key"
