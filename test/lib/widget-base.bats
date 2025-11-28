@@ -4,6 +4,7 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 
 setup() {
   setup_test_environment
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/platform-cache.sh"
   source "${BATS_TEST_DIRNAME}/../../src/lib/widget/widget-base.sh"
 }
 
@@ -62,7 +63,7 @@ teardown() {
 }
 
 @test "widget-base.sh - is_macos returns true on macOS" {
-  export OSTYPE="darwin21.0"
+  export MOCK_UNAME_S="Darwin"
   if is_macos; then
     true
   else
@@ -71,7 +72,7 @@ teardown() {
 }
 
 @test "widget-base.sh - is_macos returns false on Linux" {
-  export OSTYPE="linux-gnu"
+  export MOCK_UNAME_S="Linux"
   if ! is_macos; then
     true
   else
@@ -80,7 +81,7 @@ teardown() {
 }
 
 @test "widget-base.sh - is_linux returns true on Linux" {
-  export OSTYPE="linux-gnu"
+  export MOCK_UNAME_S="Linux"
   if is_linux; then
     true
   else
@@ -89,7 +90,7 @@ teardown() {
 }
 
 @test "widget-base.sh - is_linux returns false on macOS" {
-  export OSTYPE="darwin21.0"
+  export MOCK_UNAME_S="Darwin"
   if ! is_linux; then
     true
   else

@@ -4,7 +4,7 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 
 setup() {
   setup_test_environment
-  source "${BATS_TEST_DIRNAME}/../../src/lib/tooltip.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/ui/tooltip.sh"
   mkdir -p /tmp/tmux_tokyo_night_tooltips 2>/dev/null
 }
 

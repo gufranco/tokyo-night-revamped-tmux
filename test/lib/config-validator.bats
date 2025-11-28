@@ -4,8 +4,8 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 
 setup() {
   setup_test_environment
-  source "${BATS_TEST_DIRNAME}/../../src/lib/config-validator.sh"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/error-logger.sh" 2>/dev/null || true
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/config-validator.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/error-logger.sh" 2>/dev/null || true
 }
 
 teardown() {

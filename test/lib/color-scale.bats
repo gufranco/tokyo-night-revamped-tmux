@@ -56,7 +56,7 @@ teardown() {
 @test "color-scale.sh - get_system_color uses correct limits" {
   result_low=$(get_system_color "30")
   result_high=$(get_system_color "90")
-  
+
   [[ "$result_low" == "$COLOR_CYAN" ]]
   [[ "$result_high" == "$COLOR_RED" ]]
 }
@@ -79,7 +79,7 @@ teardown() {
 @test "color-scale.sh - get_git_changes_color uses correct limits" {
   result_low=$(get_git_changes_color "3")
   result_high=$(get_git_changes_color "35")
-  
+
   [[ "$result_low" =~ "#7dcfff" ]]
   [[ "$result_high" =~ "#f7768e" ]]
 }
@@ -87,7 +87,7 @@ teardown() {
 @test "color-scale.sh - get_git_lines_color uses correct limits" {
   result_low=$(get_git_lines_color "50")
   result_high=$(get_git_lines_color "1500")
-  
+
   [[ "$result_low" =~ "#7dcfff" ]]
   [[ "$result_high" =~ "#f7768e" ]]
 }
@@ -242,7 +242,7 @@ teardown() {
   result_noon=$(get_timezone_period_icon "12" "0")
   result_evening=$(get_timezone_period_icon "19" "0")
   result_night=$(get_timezone_period_icon "23" "0")
-  
+
   [[ -n "$result_morning" ]]
   [[ -n "$result_noon" ]]
   [[ -n "$result_evening" ]]
@@ -260,7 +260,7 @@ teardown() {
   result_noon=$(get_timezone_period_color "12" "0")
   result_evening=$(get_timezone_period_color "19" "0")
   result_night=$(get_timezone_period_color "23" "0")
-  
+
   [[ -n "$result_morning" ]]
   [[ -n "$result_noon" ]]
   [[ -n "$result_evening" ]]
@@ -270,7 +270,7 @@ teardown() {
 @test "color-scale.sh - get_git_changes_icon returns correct icon" {
   result_low=$(get_git_changes_icon "3")
   result_high=$(get_git_changes_icon "35")
-  
+
   [[ -n "$result_low" ]]
   [[ -n "$result_high" ]]
 }
@@ -278,7 +278,7 @@ teardown() {
 @test "color-scale.sh - get_git_insertions_icon returns correct icon" {
   result_low=$(get_git_insertions_icon "50")
   result_high=$(get_git_insertions_icon "1500")
-  
+
   [[ -n "$result_low" ]]
   [[ -n "$result_high" ]]
 }
@@ -286,7 +286,7 @@ teardown() {
 @test "color-scale.sh - get_git_deletions_icon returns correct icon" {
   result_low=$(get_git_deletions_icon "50")
   result_high=$(get_git_deletions_icon "1500")
-  
+
   [[ -n "$result_low" ]]
   [[ -n "$result_high" ]]
 }
@@ -294,7 +294,7 @@ teardown() {
 @test "color-scale.sh - get_git_untracked_icon returns correct icon" {
   result_low=$(get_git_untracked_icon "2")
   result_high=$(get_git_untracked_icon "15")
-  
+
   [[ -n "$result_low" ]]
   [[ -n "$result_high" ]]
 }
@@ -303,7 +303,7 @@ teardown() {
   result_zero=$(get_git_pr_icon "0")
   result_low=$(get_git_pr_icon "2")
   result_high=$(get_git_pr_icon "5")
-  
+
   [[ -n "$result_zero" ]]
   [[ -n "$result_low" ]]
   [[ -n "$result_high" ]]
@@ -313,7 +313,7 @@ teardown() {
   result_zero=$(get_git_review_icon "0")
   result_low=$(get_git_review_icon "2")
   result_high=$(get_git_review_icon "3")
-  
+
   [[ -n "$result_zero" ]]
   [[ -n "$result_low" ]]
   [[ -n "$result_high" ]]
@@ -323,7 +323,7 @@ teardown() {
   result_zero=$(get_git_issue_icon "0")
   result_low=$(get_git_issue_icon "3")
   result_high=$(get_git_issue_icon "12")
-  
+
   [[ -n "$result_zero" ]]
   [[ -n "$result_low" ]]
   [[ -n "$result_high" ]]

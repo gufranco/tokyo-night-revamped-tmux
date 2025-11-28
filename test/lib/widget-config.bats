@@ -4,8 +4,8 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 
 setup() {
   setup_test_environment
-  source "${BATS_TEST_DIRNAME}/../../src/lib/tmux-ops.sh"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/widget-config.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/tmux/tmux-ops.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/widget/widget-config.sh"
 }
 
 teardown() {

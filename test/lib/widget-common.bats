@@ -6,7 +6,7 @@ setup() {
   setup_test_environment
   source "${BATS_TEST_DIRNAME}/../../src/lib/utils/cache.sh"
   source "${BATS_TEST_DIRNAME}/../../src/lib/widget/widget-base.sh"
-  source "${BATS_TEST_DIRNAME}/../../src/lib/widget-common.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/widget/widget-common.sh"
 }
 
 teardown() {

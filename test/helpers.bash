@@ -401,7 +401,7 @@ format_uptime() {
   local days=$(( seconds / 86400 ))
   local hours=$(( (seconds % 86400) / 3600 ))
   local minutes=$(( (seconds % 3600) / 60 ))
-  
+
   if [[ $days -gt 0 ]]; then
     echo "${days}d ${hours}h ${minutes}m"
   elif [[ $hours -gt 0 ]]; then
@@ -515,9 +515,31 @@ ipconfig() {
   fi
 }
 
+command() {
+  if [[ "$1" == "-v" ]] && [[ -n "$2" ]]; then
+    local cmd="$2"
+    case "$cmd" in
+      ip)
+        echo "/usr/bin/ip"
+        return 0
+        ;;
+      *)
+        type "$cmd" >/dev/null 2>&1
+        return $?
+        ;;
+    esac
+  else
+    builtin command command "$@"
+  fi
+}
+
 ip() {
-  if [[ "$1" == "addr" ]] && [[ "$2" == "show" ]]; then
+  if [[ "$1" == "addr" ]] && [[ "$2" == "show" ]] && [[ -n "$3" ]]; then
     echo "${MOCK_IP_ADDR_OUTPUT:-}"
+  elif [[ "$1" == "addr" ]] && [[ "$2" == "show" ]]; then
+    echo "${MOCK_IP_ADDR_OUTPUT:-}"
+  elif [[ "$1" == "link" ]] && [[ "$2" == "show" ]] && [[ "$3" == "up" ]]; then
+    echo "${MOCK_IP_LINK_OUTPUT:-}"
   elif [[ "$1" == "link" ]] && [[ "$2" == "show" ]]; then
     echo "${MOCK_IP_LINK_OUTPUT:-}"
   else
@@ -708,6 +730,7 @@ export -f ps
 export -f top
 export -f pmset
 export -f ipconfig
+export -f command
 export -f ip
 export -f ifconfig
 export -f free

@@ -135,7 +135,4 @@ export -f get_memory_icon
 export -f get_disk_icon
 export -f format_widget_output
 export -f format_widget_value
-export -f is_macos
-export -f is_linux
-export -f is_apple_silicon
 export -f is_widget_enabled

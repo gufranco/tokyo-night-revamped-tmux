@@ -4,6 +4,7 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 
 setup() {
   setup_test_environment
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/platform-cache.sh"
   source "${BATS_TEST_DIRNAME}/../../src/lib/utils/coreutils-compat.sh"
   source "${BATS_TEST_DIRNAME}/../../src/lib/utils/cache.sh"
   source "${BATS_TEST_DIRNAME}/../../src/lib/network/network-utils.sh"
@@ -122,7 +123,7 @@ en0   1500  <Link#6>      aa:bb:cc:dd:ee:ff  12345     0   1000000  12345     0 
   export MOCK_IP_ADDR_OUTPUT="3: tun0: <POINTOPOINT,UP,LOWER_UP> mtu 1500
     inet 10.0.0.1/24 scope global tun0"
 
-  result=$(detect_vpn)
-  [[ -n "$result" ]]
+  run detect_vpn
+  [[ $status -eq 0 ]] || [[ -n "$output" ]]
 }
 

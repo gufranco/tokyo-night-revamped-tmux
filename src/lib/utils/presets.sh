@@ -2,7 +2,7 @@
 
 apply_preset() {
   local preset_name=$1
-  
+
   case "$preset_name" in
     minimal)
       tmux set-option -g @tokyo-night-tmux_show_system 0
@@ -55,7 +55,7 @@ apply_preset() {
       return 1
       ;;
   esac
-  
+
   return 0
 }
 

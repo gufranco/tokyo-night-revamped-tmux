@@ -4,7 +4,8 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 
 setup() {
   setup_test_environment
-  source "${BATS_TEST_DIRNAME}/../../src/lib/system.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/system.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/has-command.sh"
 }
 
 teardown() {
@@ -41,49 +42,19 @@ teardown() {
   [[ "$result" == "50" ]]
 }
 
-@test "system.sh - command_exists returns true for command existente" {
-  run command_exists "echo"
-  [[ $status -eq 0 ]]
+@test "system.sh - has_command returns true for command existente" {
+  if has_command "echo"; then
+    true
+  else
+    false
+  fi
 }
 
-@test "system.sh - command_exists returns false for command non-existent" {
-  run command_exists "command_inexistente_xyz123"
-  [[ $status -ne 0 ]]
-}
-
-@test "system.sh - require_command returns true for command existente" {
-  run require_command "echo"
-  [[ $status -eq 0 ]]
-}
-
-@test "system.sh - require_command returns false for command non-existent" {
-  run require_command "command_inexistente_xyz123"
-  [[ $status -ne 0 ]]
-}
-
-@test "system.sh - check_required_command returns true for command existente" {
-  run check_required_command "echo" "install message"
-  [[ $status -eq 0 ]]
-}
-
-@test "system.sh - check_required_command returns false e mensagem for command non-existent" {
-  run check_required_command "command_inexistente_xyz123" "install message"
-  [[ $status -ne 0 ]]
-  [[ "$output" =~ install ]]
-}
-
-@test "system.sh - check_any_command returns true when primeiro exists" {
-  run check_any_command "echo" "command_inexistente"
-  [[ $status -eq 0 ]]
-}
-
-@test "system.sh - check_any_command returns true when segundo exists" {
-  run check_any_command "command_inexistente" "echo"
-  [[ $status -eq 0 ]]
-}
-
-@test "system.sh - check_any_command returns false when nenhum exists" {
-  run check_any_command "command_inexistente1" "command_inexistente2"
-  [[ $status -ne 0 ]]
+@test "system.sh - has_command returns false for command non-existent" {
+  if ! has_command "command_inexistente_xyz123"; then
+    true
+  else
+    false
+  fi
 }
 

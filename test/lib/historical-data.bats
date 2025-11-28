@@ -4,7 +4,7 @@ load "${BATS_TEST_DIRNAME}/../helpers.bash"
 
 setup() {
   setup_test_environment
-  source "${BATS_TEST_DIRNAME}/../../src/lib/historical-data.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/historical-data.sh"
   mkdir -p "${HOME}/.tmux/tokyo-night-data" 2>/dev/null
 }
 
