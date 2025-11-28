@@ -27,7 +27,7 @@ Settings → General → Website
 ```
 **Sugestão:**
 ```
-https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux
+https://github.com/gufranco/yoru-revamped-tmux
 ```
 
 ### 4. Atualizar Topics/Tags
@@ -127,7 +127,7 @@ with Tokyo Night aesthetics and enterprise-grade developer tooling.
 set -g @plugin 'gufranco/yoru-revamped-tmux'
 \```
 
-See [README](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux#readme) for complete documentation.
+See [README](https://github.com/gufranco/yoru-revamped-tmux#readme) for complete documentation.
 
 ## 🎉 New in 1.0.0
 
@@ -141,11 +141,11 @@ See [README](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux#readme
 
 ## 📚 Documentation
 
-- [README](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux#readme)
-- [Configuration Examples](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/tree/master/examples)
-- [API Documentation](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/blob/master/docs/API.md)
-- [Architecture](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/blob/master/docs/ARCHITECTURE.md)
-- [Contributing](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/blob/master/CONTRIBUTING.md)
+- [README](https://github.com/gufranco/yoru-revamped-tmux#readme)
+- [Configuration Examples](https://github.com/gufranco/yoru-revamped-tmux/tree/master/examples)
+- [API Documentation](https://github.com/gufranco/yoru-revamped-tmux/blob/master/docs/API.md)
+- [Architecture](https://github.com/gufranco/yoru-revamped-tmux/blob/master/docs/ARCHITECTURE.md)
+- [Contributing](https://github.com/gufranco/yoru-revamped-tmux/blob/master/CONTRIBUTING.md)
 ```
 
 ---
@@ -184,7 +184,7 @@ Se você mencionou o projeto em:
 - [ ] Reddit
 - [ ] Outros projetos/READMEs
 
-Atualize para: `github.com/gufranco/yoru-revamped-tmux-revamped-tmux`
+Atualize para: `github.com/gufranco/yoru-revamped-tmux`
 
 ---
 
