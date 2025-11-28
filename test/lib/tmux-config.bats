@@ -77,7 +77,7 @@ teardown() {
   [[ "$result" == "100" ]]
 }
 
-@test "tmux-config.sh - get_numeric_option keeps value dentro of limits" {
+@test "tmux-config.sh - get_numeric_option keeps value within limits" {
   export TMUX_REFRESH_RATE="50"
   result=$(get_numeric_option "@tokyo-night-tmux_refresh_rate" "5" "1" "100")
   [[ "$result" == "50" ]]

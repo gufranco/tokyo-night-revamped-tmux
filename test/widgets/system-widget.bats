@@ -18,7 +18,7 @@ teardown() {
   cleanup_test_environment
 }
 
-@test "system-widget.sh - sai when widget disabled" {
+@test "system-widget.sh - exits when widget disabled" {
   export TMUX_SHOW_SYSTEM="0"
   run bash -c 'cd "${BATS_TEST_DIRNAME}/../../" && bash src/system-widget.sh 2>/dev/null' || true
   [[ $status -eq 0 ]] || true
@@ -28,28 +28,28 @@ teardown() {
   export TMUX_SHOW_SYSTEM="1"
   export TMUX_REFRESH_RATE="5"
   
-  # Mock of cache
+  # Cache mock
   cache_file="${TEST_TMPDIR}/tmux_tokyo_night_cache/system.cache"
   mkdir -p "$(dirname "$cache_file")"
   echo "cached output" > "$cache_file"
   current_time=$(get_current_timestamp)
   export MOCK_FILE_MTIME=$(( current_time - 1 ))
   
-  # Teste básico
+  # Basic test
   [[ -f "$cache_file" ]]
 }
 
 @test "system-widget.sh - validates percentages" {
   export TMUX_SHOW_SYSTEM="1"
   
-  # Teste básico
+  # Basic test
   function_exists validate_percentage
 }
 
 @test "system-widget.sh - formats percentages" {
   export TMUX_SHOW_SYSTEM="1"
   
-  # Teste básico
+  # Basic test
   function_exists pad_percentage
 }
 
@@ -72,7 +72,7 @@ teardown() {
   export MOCK_MEM_TOTAL="17179869184"
   export MOCK_PAGE_SIZE="4096"
   
-  # Teste básico
+  # Basic test
   function_exists get_total_memory_kb
   function_exists get_active_memory_kb
 }
@@ -84,7 +84,7 @@ teardown() {
   mkdir -p "${TEST_TMPDIR}/proc"
   echo -e "MemTotal:        8192000 kB\nMemAvailable:    4096000 kB" > "${TEST_TMPDIR}/proc/meminfo"
   
-  # Teste básico
+  # Basic test
   function_exists get_total_memory_kb
   function_exists get_active_memory_kb
 }
@@ -111,14 +111,14 @@ teardown() {
   function_exists validate_percentage
 }
 
-@test "system-widget.sh - shows battery status correct" {
+@test "system-widget.sh - shows correct battery status" {
   export TMUX_SHOW_SYSTEM="1"
   export TMUX_SYSTEM_BATTERY="1"
   export MOCK_UNAME_S="Darwin"
   export MOCK_BATTERY_STATUS="charging"
   export MOCK_BATTERY_PERCENT="80"
   
-  # Teste básico
+  # Basic test
   [[ "$MOCK_BATTERY_STATUS" == "charging" ]]
 }
 
@@ -130,7 +130,7 @@ teardown() {
   export MOCK_BATTERY_STATUS="discharging"
   export MOCK_BATTERY_PERCENT="15"
   
-  # Teste básico
+  # Basic test
   [[ $MOCK_BATTERY_PERCENT -lt $TMUX_SYSTEM_BATTERY_THRESHOLD ]]
 }
 

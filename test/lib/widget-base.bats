@@ -27,7 +27,7 @@ teardown() {
   [[ "$result" == "1" ]]
 }
 
-@test "widget-base.sh - validate_percentage returns 100 for value acima of 100" {
+@test "widget-base.sh - validate_percentage returns 100 for value above 100" {
   result=$(validate_percentage "150")
   [[ "$result" == "100" ]]
 }

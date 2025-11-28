@@ -12,7 +12,7 @@ teardown() {
   cleanup_test_environment
 }
 
-@test "system.sh - safe_divide returns default when denominador é zero" {
+@test "system.sh - safe_divide returns default when denominator is zero" {
   result=$(safe_divide "100" "0" "42")
   [[ "$result" == "42" ]]
 }
@@ -37,7 +37,7 @@ teardown() {
   [[ "$result" == "100" ]]
 }
 
-@test "system.sh - clamp_value returns value when dentro of limits" {
+@test "system.sh - clamp_value returns value when within limits" {
   result=$(clamp_value "50" "10" "100")
   [[ "$result" == "50" ]]
 }

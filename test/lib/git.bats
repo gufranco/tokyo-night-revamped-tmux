@@ -54,7 +54,7 @@ commit def456"
   [[ -n "$result" ]]
 }
 
-@test "git.sh - is_remote_ahead returns false when not there are difference" {
+@test "git.sh - is_remote_ahead returns false when no difference" {
   export MOCK_GIT_BRANCH="main"
   export MOCK_GIT_DIFF_OUTPUT=""
   if ! is_remote_ahead; then
@@ -73,7 +73,7 @@ commit def456"
   fi
 }
 
-@test "git.sh - get_repository_sync_status returns local_changes when there are modifications" {
+@test "git.sh - get_repository_sync_status returns local_changes when modifications exist" {
   export MOCK_GIT_STATUS="M  file1.txt"
   result=$(get_repository_sync_status)
   [[ "$result" == "local_changes" ]]

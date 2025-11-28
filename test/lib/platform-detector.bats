@@ -124,7 +124,7 @@ teardown() {
   echo "Iface   Destination     Gateway         Flags   RefCnt  Use     Metric  Mask            MTU     Window  IRTT" > "${TEST_TMPDIR}/proc/net/route"
   echo "eth0    00000000        0101A8C0        0003    0       0       0       00000000        0       0       0" >> "${TEST_TMPDIR}/proc/net/route"
   
-  # Não podemos facilmente mockar o awk, então vamos testar o comportamento geral
+  # Cannot easily mock awk, so test general behavior
   result=$(get_default_network_interface)
   [[ -n "$result" ]]
 }
@@ -141,7 +141,7 @@ teardown() {
   mkdir -p "${TEST_TMPDIR}/proc"
   echo -e "processor\t: 0\nprocessor\t: 1\nprocessor\t: 2\nprocessor\t: 3" > "${TEST_TMPDIR}/proc/cpuinfo"
   
-  # Teste básico
+  # Basic test
   result=$(get_cpu_count)
   [[ -n "$result" ]]
 }
@@ -159,7 +159,7 @@ teardown() {
   mkdir -p "${TEST_TMPDIR}/proc"
   echo "MemTotal:        8192000 kB" > "${TEST_TMPDIR}/proc/meminfo"
   
-  # Teste básico
+  # Basic test
   result=$(get_total_memory_kb)
   [[ -n "$result" ]]
 }

@@ -27,7 +27,7 @@ Perfect companion for [tokyonight-vim](https://github.com/ghifarit53/tokyonight-
 - Background processing for long-running operations
 
 ### 📊 **Rich Widgets**
-- **System Monitoring**: CPU, GPU, Memory, Swap, Disk, Battery, Temperature, Uptime, Disk I/O
+- **System Monitoring**: CPU, GPU, Memory, Swap, Disk, Battery
 - **Process Monitoring**: Top processes by CPU usage
 - **Docker/Kubernetes**: Container and pod status
 - **Git Integration**: Local repository status + GitHub/GitLab web stats (stash, ahead/behind, last commit)
@@ -244,10 +244,6 @@ set -g @tokyo-night-tmux_system_battery_threshold 20
 - **Swap** (󰾴): Swap usage (only shown if > 0)
 - **Disk** (󰋊): Disk usage percentage
 - **Battery** (󰚥): 11-level battery indicator with charging state
-- **Load** (󰧑): System load average (optional)
-- **Temperature** (󰏈): CPU/GPU temperature in °C (optional)
-- **Uptime** (󰅐): System uptime in days/hours/minutes (optional)
-- **Disk I/O** (󰋊): Read/Write speeds in KB/s (optional)
 
 **Color Scale:**
 - 🟢 **Cyan** (< 50%): Normal usage

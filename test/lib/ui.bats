@@ -18,7 +18,7 @@ teardown() {
   [[ "$result" =~ RESET ]] || true
 }
 
-@test "ui.sh - format_segment uses colors default" {
+@test "ui.sh - format_segment uses default colors" {
   result=$(format_segment "test")
   [[ -n "$result" ]]
   [[ "$result" =~ test ]]
@@ -30,7 +30,7 @@ teardown() {
   [[ -n "$result" ]] || true
 }
 
-@test "ui.sh - format_icon uses cor default" {
+@test "ui.sh - format_icon uses default color" {
   result=$(format_icon "󰖙")
   [[ -n "$result" ]]
 }
@@ -79,7 +79,7 @@ teardown() {
   [[ -n "$result" ]] || true
 }
 
-@test "ui.sh - format_status uses cor default" {
+@test "ui.sh - format_status uses default color" {
   result=$(format_status "active")
   [[ -n "$result" ]]
 }
@@ -90,12 +90,12 @@ teardown() {
   [[ "$result" =~ \] ]]
 }
 
-@test "ui.sh - format_progress_bar uses caracteres default" {
+@test "ui.sh - format_progress_bar uses default characters" {
   result=$(format_progress_bar "50" "10")
   [[ -n "$result" ]]
 }
 
-@test "ui.sh - format_progress_bar uses caracteres customizados" {
+@test "ui.sh - format_progress_bar uses custom characters" {
   result=$(format_progress_bar "50" "10" "X" ".")
   [[ "$result" =~ X ]]
   [[ "$result" =~ \. ]]

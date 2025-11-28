@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Script para executar todos os testes unitários
+# Script to run all unit tests
 
 set -euo pipefail
 
@@ -13,7 +13,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Verificar se bats está instalado
+# Check if bats is installed
 if ! command -v bats &> /dev/null; then
   echo -e "${RED}Erro: bats não está instalado${NC}"
   echo "Instale com:"

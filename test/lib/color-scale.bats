@@ -6,6 +6,10 @@ setup() {
   setup_test_environment
   source "${BATS_TEST_DIRNAME}/../../src/lib/utils/constants.sh"
   source "${BATS_TEST_DIRNAME}/../../src/lib/ui/themes.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/utils/tmux-cache.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/tmux/tmux-ops.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/tmux/tmux-config.sh"
+  source "${BATS_TEST_DIRNAME}/../../src/lib/ui/color-config.sh"
   source "${BATS_TEST_DIRNAME}/../../src/lib/ui/color-scale.sh"
 }
 

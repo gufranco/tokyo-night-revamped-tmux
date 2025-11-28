@@ -39,7 +39,7 @@ teardown() {
   [[ "$result" == "500" ]]
 }
 
-@test "coreutils-compat.sh - get_time_diff uses timestamp atual when end not fornecido" {
+@test "coreutils-compat.sh - get_time_diff uses current timestamp when end not provided" {
   start_time=$(get_current_timestamp)
   sleep 1
   result=$(get_time_diff "$start_time")

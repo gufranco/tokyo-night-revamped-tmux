@@ -48,7 +48,7 @@ teardown() {
   [[ -n "${THEME[ghyellow]:-}" ]] || true
 }
 
-@test "themes.sh - THEME tem todas as colors básicas" {
+@test "themes.sh - THEME has all basic colors" {
   [[ -n "${THEME[black]:-}" ]] || true
   [[ -n "${THEME[blue]:-}" ]] || true
   [[ -n "${THEME[cyan]:-}" ]] || true

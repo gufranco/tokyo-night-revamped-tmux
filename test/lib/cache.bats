@@ -18,7 +18,7 @@ teardown() {
   [[ "$result" == "5" ]]
 }
 
-@test "cache.sh - get_refresh_rate returns value of tmux" {
+@test "cache.sh - get_refresh_rate returns tmux value" {
   export TMUX_REFRESH_RATE="10"
   result=$(get_refresh_rate)
   [[ "$result" == "10" ]]
@@ -70,7 +70,7 @@ teardown() {
 
   export CACHE_DIR="${TEST_TMPDIR}"
 
-  # Criar função mock for get_cache_file
+  # Create mock function for get_cache_file
   get_cache_file() {
     echo "${CACHE_DIR}/test_widget.cache"
   }

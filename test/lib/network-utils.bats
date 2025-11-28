@@ -21,7 +21,7 @@ teardown() {
   echo " face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed" >> "${TEST_TMPDIR}/proc/net/dev"
   echo "  eth0: 1000000    1000    0    0    0     0          0         0  2000000    2000    0    0    0     0       0          0" >> "${TEST_TMPDIR}/proc/net/dev"
 
-  # Teste básico - função exists
+  # Basic test - function exists
   function_exists get_bytes
 }
 
@@ -30,7 +30,7 @@ teardown() {
   export MOCK_NETSTAT_OUTPUT="Name  Mtu   Network       Address            Ipkts Ierrs     Ibytes    Opkts Oerrs     Obytes  Coll
 en0   1500  <Link#6>      aa:bb:cc:dd:ee:ff  12345     0   1000000  12345     0   2000000     0"
 
-  # Teste básico - função exists
+  # Basic test - function exists
   function_exists get_bytes
 }
 
@@ -49,24 +49,24 @@ en0   1500  <Link#6>      aa:bb:cc:dd:ee:ff  12345     0   1000000  12345     0 
   [[ "$result" =~ MB/s ]]
 }
 
-@test "network-utils.sh - find_interface encontra interface on Linux" {
+@test "network-utils.sh - find_interface finds interface on Linux" {
   export MOCK_UNAME_S="Linux"
   mkdir -p "${TEST_TMPDIR}/proc/net"
   echo "Iface   Destination     Gateway         Flags   RefCnt  Use     Metric  Mask            MTU     Window  IRTT" > "${TEST_TMPDIR}/proc/net/route"
   echo "eth0    00000000        0101A8C0        0003    0       0       0       00000000        0       0       0" >> "${TEST_TMPDIR}/proc/net/route"
 
-  # Teste básico
+  # Basic test
   function_exists find_interface
 }
 
-@test "network-utils.sh - find_interface encontra interface on macOS" {
+@test "network-utils.sh - find_interface finds interface on macOS" {
   export MOCK_UNAME_S="Darwin"
   export MOCK_ROUTE_INTERFACE="en0"
   result=$(find_interface)
   [[ "$result" == "en0" ]]
 }
 
-@test "network-utils.sh - find_interface substitui utun por en0 on macOS" {
+@test "network-utils.sh - find_interface replaces utun with en0 on macOS" {
   export MOCK_UNAME_S="Darwin"
   export MOCK_ROUTE_INTERFACE="utun0"
   result=$(find_interface)
@@ -89,7 +89,7 @@ en0   1500  <Link#6>      aa:bb:cc:dd:ee:ff  12345     0   1000000  12345     0 
   [[ -n "$result" ]]
 }
 
-@test "network-utils.sh - detect_vpn_macos returns error when not there are VPN" {
+@test "network-utils.sh - detect_vpn_macos returns error when no VPN found" {
   export MOCK_UNAME_S="Darwin"
   export MOCK_NETSTAT_ROUTES=""
 

@@ -31,7 +31,7 @@ teardown() {
   [[ "$result" == "100ms" ]]
 }
 
-@test "format.sh - pad_number uses largura default when not especificada" {
+@test "format.sh - pad_number uses default width when not specified" {
   result=$(pad_number "50" "ms")
   [[ -n "$result" ]]
   [[ "$result" =~ ms ]]
