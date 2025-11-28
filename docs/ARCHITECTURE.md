@@ -501,5 +501,5 @@ Typical widget execution times (cached):
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md) for development guidelines.
 
-For questions about architecture, open a [Discussion](https://github.com/gufranco/yoru/discussions).
+For questions about architecture, open a [Discussion](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/discussions).
 

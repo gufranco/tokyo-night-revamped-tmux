@@ -689,6 +689,6 @@ echo "$output"
 
 ## Need Help?
 
-- [Report an Issue](https://github.com/gufranco/yoru/issues)
-- [Ask a Question](https://github.com/gufranco/yoru/discussions)
+- [Report an Issue](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/issues)
+- [Ask a Question](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/discussions)
 

@@ -489,6 +489,6 @@ my-widget/
 
 ## Need Help?
 
-- [Ask a Question](https://github.com/gufranco/yoru/discussions)
-- [Report an Issue](https://github.com/gufranco/yoru/issues)
+- [Ask a Question](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/discussions)
+- [Report an Issue](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/issues)
 

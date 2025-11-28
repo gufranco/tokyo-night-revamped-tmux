@@ -409,9 +409,9 @@ See [DEBUGGING.md](docs/DEBUGGING.md) for debugging tips.
 
 ## Questions?
 
-- Open a [Discussion](https://github.com/gufranco/yoru/discussions)
+- Open a [Discussion](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/discussions)
 - Join our community (if applicable)
-- Check existing [Issues](https://github.com/gufranco/yoru/issues)
+- Check existing [Issues](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/issues)
 
 ---
 

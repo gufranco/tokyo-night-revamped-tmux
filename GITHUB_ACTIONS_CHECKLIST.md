@@ -8,7 +8,7 @@ Complete estas ações no GitHub para finalizar o rebranding para **yoru**:
 ```
 Settings → General → Repository name
 Antigo: tokyo-night-revamped-tmux
-Novo:   yoru
+Novo:   yoru-revamped-tmux
 ```
 ✅ **Importante:** GitHub cria redirect automático
 
@@ -27,7 +27,7 @@ Settings → General → Website
 ```
 **Sugestão:**
 ```
-https://github.com/gufranco/yoru
+https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux
 ```
 
 ### 4. Atualizar Topics/Tags
@@ -124,10 +124,10 @@ with Tokyo Night aesthetics and enterprise-grade developer tooling.
 ## 📦 Installation
 
 \```bash
-set -g @plugin 'gufranco/yoru'
+set -g @plugin 'gufranco/yoru-revamped-tmux'
 \```
 
-See [README](https://github.com/gufranco/yoru#readme) for complete documentation.
+See [README](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux#readme) for complete documentation.
 
 ## 🎉 New in 1.0.0
 
@@ -141,11 +141,11 @@ See [README](https://github.com/gufranco/yoru#readme) for complete documentation
 
 ## 📚 Documentation
 
-- [README](https://github.com/gufranco/yoru#readme)
-- [Configuration Examples](https://github.com/gufranco/yoru/tree/master/examples)
-- [API Documentation](https://github.com/gufranco/yoru/blob/master/docs/API.md)
-- [Architecture](https://github.com/gufranco/yoru/blob/master/docs/ARCHITECTURE.md)
-- [Contributing](https://github.com/gufranco/yoru/blob/master/CONTRIBUTING.md)
+- [README](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux#readme)
+- [Configuration Examples](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/tree/master/examples)
+- [API Documentation](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/blob/master/docs/API.md)
+- [Architecture](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/blob/master/docs/ARCHITECTURE.md)
+- [Contributing](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/blob/master/CONTRIBUTING.md)
 ```
 
 ---
@@ -164,11 +164,11 @@ Settings → General → Social preview
 ### 11. README Badges
 Já incluído! Mas você pode adicionar mais:
 ```markdown
-![GitHub release](https://img.shields.io/github/v/release/gufranco/yoru)
-![GitHub stars](https://img.shields.io/github/stars/gufranco/yoru)
-![GitHub forks](https://img.shields.io/github/forks/gufranco/yoru)
-![GitHub issues](https://img.shields.io/github/issues/gufranco/yoru)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/gufranco/yoru)
+![GitHub release](https://img.shields.io/github/v/release/gufranco/yoru-revamped-tmux)
+![GitHub stars](https://img.shields.io/github/stars/gufranco/yoru-revamped-tmux)
+![GitHub forks](https://img.shields.io/github/forks/gufranco/yoru-revamped-tmux)
+![GitHub issues](https://img.shields.io/github/issues/gufranco/yoru-revamped-tmux)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/gufranco/yoru-revamped-tmux)
 ```
 
 ---
@@ -184,7 +184,7 @@ Se você mencionou o projeto em:
 - [ ] Reddit
 - [ ] Outros projetos/READMEs
 
-Atualize para: `github.com/gufranco/yoru`
+Atualize para: `github.com/gufranco/yoru-revamped-tmux-revamped-tmux`
 
 ---
 
@@ -206,7 +206,7 @@ We've rebranded from tokyo-night-revamped-tmux to **yoru** (夜 - night in Japan
 
 ## What changed?
 - Repository name: yoru
-- Plugin name: gufranco/yoru
+- Plugin name: gufranco/yoru-revamped-tmux
 - Option prefix: @yoru_* (instead of @tokyo-night-tmux_*)
 
 ## Migration
@@ -244,7 +244,7 @@ Opcional:
 Após renomear no GitHub, os usuários podem instalar com:
 
 ```bash
-set -g @plugin 'gufranco/yoru'
+set -g @plugin 'gufranco/yoru-revamped-tmux'
 ```
 
 **O redirect do nome antigo funciona automaticamente!** ✨

@@ -121,7 +121,7 @@ Add to your `.tmux.conf`:
 
 ```bash
 set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'gufranco/yoru'
+set -g @plugin 'gufranco/yoru-revamped-tmux'
 
 # Your configuration here
 
@@ -225,7 +225,7 @@ tmux source ~/.tmux.conf
 If migration fails:
 
 1. Check [DEBUGGING.md](DEBUGGING.md)
-2. Search [existing issues](https://github.com/gufranco/yoru/issues)
+2. Search [existing issues](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/issues)
 3. Open a new issue with:
    - Old version
    - New version
@@ -323,6 +323,6 @@ git log HEAD..origin/master --oneline
 
 ## Questions?
 
-- [Report Migration Issue](https://github.com/gufranco/yoru/issues/new?template=bug_report.yml)
-- [Ask Question](https://github.com/gufranco/yoru/discussions)
+- [Report Migration Issue](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/issues/new?template=bug_report.yml)
+- [Ask Question](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/discussions)
 

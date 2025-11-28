@@ -79,7 +79,7 @@ body:
       description: Relevant parts of your `.tmux.conf`
       render: bash
       placeholder: |
-        set -g @plugin "gufranco/yoru"
+        set -g @plugin "gufranco/yoru-revamped-tmux"
         set -g @yoru_show_system 1
 
   - type: textarea

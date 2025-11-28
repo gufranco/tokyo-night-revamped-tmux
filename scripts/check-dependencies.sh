@@ -153,7 +153,7 @@ if [[ -f ~/.tmux.conf ]]; then
     echo -e "${GREEN}✓${NC} Plugin configured in .tmux.conf"
   else
     echo -e "${YELLOW}○${NC} Plugin not found in .tmux.conf"
-    echo -e "  ${BLUE}Add:${NC} set -g @plugin 'gufranco/yoru'"
+    echo -e "  ${BLUE}Add:${NC} set -g @plugin 'gufranco/yoru-revamped-tmux'"
   fi
 else
   echo -e "${RED}✗${NC} .tmux.conf not found"
@@ -195,7 +195,7 @@ fi
 
 echo ""
 echo -e "${BLUE}For more help, see:${NC}"
-echo -e "  ${BLUE}•${NC} README: https://github.com/gufranco/yoru#readme"
+echo -e "  ${BLUE}•${NC} README: https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux#readme"
 echo -e "  ${BLUE}•${NC} Troubleshooting: docs/DEBUGGING.md"
 echo ""
 

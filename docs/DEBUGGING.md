@@ -411,7 +411,7 @@ sudo chsh -s /usr/local/bin/bash
 ### Before Asking for Help
 
 1. Check this debugging guide
-2. Search [existing issues](https://github.com/gufranco/yoru/issues)
+2. Search [existing issues](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/issues)
 3. Enable logging and check logs
 4. Test with minimal configuration
 
@@ -490,7 +490,7 @@ Test with minimal `.tmux.conf`:
 
 ```bash
 set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'gufranco/yoru'
+set -g @plugin 'gufranco/yoru-revamped-tmux'
 run '~/.tmux/plugins/tpm/tpm'
 ```
 
@@ -513,8 +513,8 @@ cat ~/tmux-*.log
 
 - [Tmux Manual](https://man7.org/linux/man-pages/man1/tmux.1.html)
 - [Bash Debugging](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html)
-- [GitHub Issues](https://github.com/gufranco/yoru/issues)
-- [Discussions](https://github.com/gufranco/yoru/discussions)
+- [GitHub Issues](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/issues)
+- [Discussions](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/discussions)
 
 ---
 

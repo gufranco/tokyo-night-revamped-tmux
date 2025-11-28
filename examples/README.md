@@ -284,7 +284,7 @@ cp ~/.tmux.conf ~/.tmux.conf.backup
 
 ## 🆘 Need Help?
 
-- [Report an Issue](https://github.com/gufranco/yoru/issues)
-- [Ask a Question](https://github.com/gufranco/yoru/discussions)
-- [Read the Docs](https://github.com/gufranco/yoru#readme)
+- [Report an Issue](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/issues)
+- [Ask a Question](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/discussions)
+- [Read the Docs](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux#readme)
 

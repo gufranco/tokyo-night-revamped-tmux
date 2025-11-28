@@ -4,8 +4,8 @@
 ![Bash](https://img.shields.io/badge/bash-4.2+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)
-![Tests](https://github.com/gufranco/yoru/workflows/Tests/badge.svg)
-![Lint](https://github.com/gufranco/yoru/workflows/Lint/badge.svg)
+![Tests](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/workflows/Tests/badge.svg)
+![Lint](https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux/workflows/Lint/badge.svg)
 
 > A nocturnal tmux experience inspired by Tokyo nights
 
@@ -101,7 +101,7 @@ These are only required for specific features:
 Add to your `~/.tmux.conf`:
 
 ```bash
-set -g @plugin "gufranco/yoru"
+set -g @plugin "gufranco/yoru-revamped-tmux"
 ```
 
 Then press `Prefix + I` to install the plugin.
@@ -109,7 +109,7 @@ Then press `Prefix + I` to install the plugin.
 ### Manual Installation
 
 ```bash
-git clone https://github.com/gufranco/yoru.git ~/.tmux/plugins/yoru
+git clone https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux.git ~/.tmux/plugins/yoru
 ```
 
 Add to `~/.tmux.conf`:
@@ -733,7 +733,7 @@ We welcome contributions! Please follow these guidelines:
 
 ### Development Setup
 
-1. Clone the repository: `git clone https://github.com/gufranco/yoru.git`
+1. Clone the repository: `git clone https://github.com/gufranco/yoru-revamped-tmux-revamped-tmux.git`
 2. Create a branch: `git checkout -b feature/your-feature`
 3. Make your changes
 4. Test thoroughly: `make test`
