@@ -37,9 +37,13 @@ get_cpu_usage_percentage() {
       if command -v iostat >/dev/null 2>&1; then
         local iostat_output
         iostat_output=$(iostat -w 1 -c 2 2>/dev/null | tail -1)
-        cpu_user=$(echo "$iostat_output" | awk '{printf "%.0f", $6}')
-        cpu_sys=$(echo "$iostat_output" | awk '{printf "%.0f", $7}')
+        cpu_user=$(echo "$iostat_output" | awk '{us=$(NF-5); printf "%.0f", us+0}')
+        cpu_sys=$(echo "$iostat_output" | awk '{sy=$(NF-4); printf "%.0f", sy+0}')
         cpu_total=$((cpu_user + cpu_sys))
+        [[ -z "$cpu_user" ]] && cpu_user=0
+        [[ -z "$cpu_sys" ]] && cpu_sys=0
+        [[ $cpu_total -lt 0 ]] && cpu_total=0
+        [[ $cpu_total -gt 100 ]] && cpu_total=100
       else
         local cpu_line cpu_user cpu_sys
         cpu_line=$(top -l 1 -n 0 2>/dev/null | grep "CPU usage")
